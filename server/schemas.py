@@ -1,9 +1,7 @@
 from datetime import datetime
 from typing import Optional, Dict, Any, List, Literal
 from uuid import UUID
-
 from pydantic import BaseModel, Field
-
 from enums import (
     ConversationStage,
     IntentLevel,
@@ -13,6 +11,8 @@ from enums import (
     TemplateStatus,
     MessageFrom,
 )
+from pydantic import EmailStr
+
 
 # ======================================================
 # Auth Context
@@ -24,6 +24,62 @@ class AuthContext(BaseModel):
     email: str
     is_active: bool
 
+
+# ======================================================
+# Shared JWT Response
+# ======================================================
+
+class AuthTokenOut(BaseModel):
+    access_token: str
+    token_type: Literal["bearer"] = "bearer"
+
+
+# ======================================================
+# Login
+# ======================================================
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(AuthTokenOut):
+    user_id: UUID
+    organization_id: UUID
+
+
+# ======================================================
+# Signup – Create New Organization
+# ======================================================
+
+class SignupCreateOrgRequest(BaseModel):
+    name: str                 # user's name
+    email: EmailStr
+    password: str
+
+    organization_name: str
+
+
+class SignupCreateOrgResponse(AuthTokenOut):
+    user_id: UUID
+    organization_id: UUID
+
+
+# ======================================================
+# Signup – Join Existing Organization
+# ======================================================
+
+class SignupJoinOrgRequest(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+
+    organization_id: UUID
+
+
+class SignupJoinOrgResponse(AuthTokenOut):
+    user_id: UUID
+    organization_id: UUID
 
 # ======================================================
 # Standard Responses

@@ -1,35 +1,33 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import SessionLocal
+from ..database import get_db
+from ..dependencies import get_auth_context
 from ..models import Lead
-from ..schemas import LeadCreate, LeadResponse, LeadUpdate
-from ..dependencies import get_db
+from ..schemas import LeadOut, LeadUpdate, AuthContext
+from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/", response_model=List[LeadResponse])
-def get_leads(db: Session = Depends(get_db)):
-    return db.query(Lead).all()
+@router.get("/", response_model=List[LeadOut])
+def get_leads(
+    db: Session = Depends(get_db),
+    auth: AuthContext = Depends(get_auth_context)
+):
+    return db.query(Lead).filter(Lead.organization_id == auth.organization_id).all()
 
-@router.post("/", response_model=LeadResponse)
-def create_lead(lead: LeadCreate, db: Session = Depends(get_db)):
-    db_lead = Lead(**lead.model_dump(by_alias=False))
-    db.add(db_lead)
-    db.commit()
-    db.refresh(db_lead)
-    return db_lead
-
-@router.get("/{lead_id}", response_model=LeadResponse)
-def get_lead(lead_id: str, db: Session = Depends(get_db)):
-    db_lead = db.query(Lead).filter(Lead.id == lead_id).first()
-    if not db_lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-    return db_lead
-
-@router.patch("/{lead_id}", response_model=LeadResponse)
-def update_lead(lead_id: str, lead: LeadUpdate, db: Session = Depends(get_db)):
-    db_lead = db.query(Lead).filter(Lead.id == lead_id).first()
+@router.put("/{lead_id}", response_model=LeadOut)
+def update_lead(
+    lead_id: UUID,
+    lead: LeadUpdate,
+    db: Session = Depends(get_db),
+    auth: AuthContext = Depends(get_auth_context)
+):
+    db_lead = db.query(Lead).filter(
+        Lead.id == lead_id,
+        Lead.organization_id == auth.organization_id
+    ).first()
+    
     if not db_lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     
@@ -40,3 +38,21 @@ def update_lead(lead_id: str, lead: LeadUpdate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_lead)
     return db_lead
+
+@router.delete("/{lead_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_lead(
+    lead_id: UUID,
+    db: Session = Depends(get_db),
+    auth: AuthContext = Depends(get_auth_context)
+):
+    db_lead = db.query(Lead).filter(
+        Lead.id == lead_id,
+        Lead.organization_id == auth.organization_id
+    ).first()
+    
+    if not db_lead:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    
+    db.delete(db_lead)
+    db.commit()
+    return None
