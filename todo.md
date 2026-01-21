@@ -139,3 +139,10 @@ Settings / Integrations
 
 System / Infra
 	•	audit_logs
+
+
+
+Add users page to list all people of the organisation
+add Org details in settings
+also in the bottom left, my name should be there
+backend apis to be done properly
