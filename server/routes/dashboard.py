@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..schemas import DashboardStatsOut, AuthContext
-from ..models import Conversation, Message, Lead
-from datetime import datetime, timedelta
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.schemas import DashboardStatsOut, AuthContext
+from server.models import Conversation, Message, Lead
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
-from ..services.websocket_manager import manager
-from ..dependencies import get_ws_auth_context, get_db
+from server.services.websocket_manager import manager
+from server.dependencies import get_ws_auth_context, get_db
 from sqlalchemy.orm import Session
-from ..schemas import AuthContext
+from server.schemas import AuthContext
 from typing import Optional
 
 router = APIRouter()

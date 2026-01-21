@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..models import Analytics as AnalyticsModel
-from ..schemas import AnalyticsOut, AuthContext
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.models import Analytics as AnalyticsModel
+from server.schemas import AnalyticsOut, AuthContext
 from datetime import datetime, timedelta
 
 router = APIRouter()

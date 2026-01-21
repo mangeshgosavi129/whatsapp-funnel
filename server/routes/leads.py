@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..models import Lead
-from ..schemas import LeadOut, LeadUpdate, AuthContext
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.models import Lead
+from server.schemas import LeadOut, LeadUpdate, AuthContext
 from uuid import UUID
 
 router = APIRouter()

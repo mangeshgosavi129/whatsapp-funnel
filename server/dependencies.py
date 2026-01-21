@@ -3,11 +3,11 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from .database import SessionLocal
-from .schemas import AuthContext
-from .models import User
-from .config import config
-from .security import security
+from server.database import SessionLocal
+from server.schemas import AuthContext
+from server.models import User
+from server.config import config
+from server.security import security
 from uuid import UUID
 
 def get_db():

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..models import Template
-from ..schemas import TemplateCreate, TemplateUpdate, TemplateOut, TemplateStatusOut, AuthContext
-from ..enums import TemplateStatus
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.models import Template
+from server.schemas import TemplateCreate, TemplateUpdate, TemplateOut, TemplateStatusOut, AuthContext
+from server.enums import TemplateStatus
 from uuid import UUID
 from datetime import datetime
 

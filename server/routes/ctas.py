@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..schemas import CTAOut, CTACreate, CTAUpdate, AuthContext
-from ..models import CTA
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.schemas import CTAOut, CTACreate, CTAUpdate, AuthContext
+from server.models import CTA
 from uuid import UUID
 
 router = APIRouter()

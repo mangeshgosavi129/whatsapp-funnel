@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, Dict, Any, List, Literal
 from uuid import UUID
 from pydantic import BaseModel, Field
-from enums import (
+from server.enums import (
     ConversationStage,
     IntentLevel,
     CTAType,

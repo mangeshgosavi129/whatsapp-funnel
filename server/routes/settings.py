@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..models import WhatsAppIntegration
-from ..schemas import (
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.models import WhatsAppIntegration
+from server.schemas import (
     WhatsAppIntegrationOut, 
     WhatsAppIntegrationCreate, 
     WhatsAppIntegrationUpdate, 

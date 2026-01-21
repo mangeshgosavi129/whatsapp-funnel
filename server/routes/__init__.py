@@ -5,7 +5,6 @@ from . import (
     conversations, 
     templates, 
     analytics, 
-    credits, 
     dashboard, 
     ctas, 
     settings, 
@@ -24,5 +23,4 @@ router.include_router(ctas.router, prefix="/ctas", tags=["CTAs"])
 router.include_router(templates.router, prefix="/templates", tags=["Templates"])
 router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 router.include_router(settings.router, prefix="/settings", tags=["Settings"])
-router.include_router(credits.router, prefix="/credits", tags=["Credits"])
 router.include_router(websockets.router, tags=["WebSockets"])

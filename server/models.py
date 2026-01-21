@@ -13,7 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
-from enums import (
+from server.enums import (
     ConversationStage,
     IntentLevel,
     CTAType,
@@ -214,7 +214,6 @@ class WhatsAppIntegration(Base):
     phone_number_id = Column(String(255), nullable=False)
     business_account_id = Column(String(255), nullable=False)
     is_connected = Column(Boolean, default=False)
-    metadata = Column(JSON, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -233,5 +232,4 @@ class AuditLog(Base):
     entity_id = Column(UUID(as_uuid=True), nullable=False)
     action = Column(String(100), nullable=False)
 
-    metadata = Column(JSON, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

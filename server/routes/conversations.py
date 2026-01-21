@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from ..database import get_db
-from ..dependencies import get_auth_context
-from ..schemas import (
+from server.dependencies import get_db
+from server.dependencies import get_auth_context
+from server.schemas import (
     ConversationOut, 
     MessageOut, 
     MessageCreate,
     AuthContext
 )
-from ..models import Conversation, Message
-from ..enums import ConversationMode, MessageFrom
+from server.models import Conversation, Message
+from server.enums import ConversationMode, MessageFrom
 from uuid import UUID
 
 router = APIRouter()
