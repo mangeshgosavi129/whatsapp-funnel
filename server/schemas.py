@@ -115,6 +115,14 @@ class DashboardStatsOut(BaseModel):
 # User / Org
 # ======================================================
 
+class OrganizationOut(BaseModel):
+    id: UUID
+    name: str
+    is_active: bool
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+
 class UserOut(BaseModel):
     id: UUID
     organization_id: UUID
@@ -123,6 +131,12 @@ class UserOut(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime]
+
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = None
 
 
 # ======================================================
@@ -299,6 +313,13 @@ class AnalyticsOut(BaseModel):
     metric_date: datetime
     total_conversations: int
     total_messages: int
+
+
+class AnalyticsReportOut(BaseModel):
+    sentiment_breakdown: Dict[str, int]
+    peak_activity_time: Dict[str, int]
+    message_from_stats: Dict[str, int]
+    intent_level_stats: Dict[str, int]
 
 
 # ======================================================

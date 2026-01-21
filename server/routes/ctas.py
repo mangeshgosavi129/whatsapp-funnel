@@ -31,7 +31,7 @@ def create_cta(
     db.refresh(db_cta)
     return db_cta
 
-@router.put("/{cta_id}", response_model=CTAOut)
+@router.patch("/{cta_id}", response_model=CTAOut)
 def update_cta(
     cta_id: UUID,
     cta: CTAUpdate,

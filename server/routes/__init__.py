@@ -8,8 +8,10 @@ from . import (
     dashboard, 
     ctas, 
     settings, 
+    settings, 
     messages,
-    websockets
+    websockets,
+    users
 )
 
 router = APIRouter()
@@ -23,4 +25,5 @@ router.include_router(ctas.router, prefix="/ctas", tags=["CTAs"])
 router.include_router(templates.router, prefix="/templates", tags=["Templates"])
 router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 router.include_router(settings.router, prefix="/settings", tags=["Settings"])
+router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(websockets.router, tags=["WebSockets"])

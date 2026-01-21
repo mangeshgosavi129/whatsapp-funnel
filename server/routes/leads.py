@@ -16,7 +16,7 @@ def get_leads(
 ):
     return db.query(Lead).filter(Lead.organization_id == auth.organization_id).all()
 
-@router.post("/", response_model=LeadOut)
+@router.post("/create", response_model=LeadOut)
 def create_lead(
     lead: LeadCreate,
     db: Session = Depends(get_db),
@@ -31,7 +31,7 @@ def create_lead(
     db.refresh(db_lead)
     return db_lead
 
-@router.put("/{lead_id}", response_model=LeadOut)
+@router.patch("/{lead_id}", response_model=LeadOut)
 def update_lead(
     lead_id: UUID,
     lead: LeadUpdate,

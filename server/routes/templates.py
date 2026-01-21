@@ -34,7 +34,7 @@ def create_template(
     db.refresh(db_template)
     return db_template
 
-@router.put("/{template_id}", response_model=TemplateOut)
+@router.patch("/{template_id}", response_model=TemplateOut)
 def update_template(
     template_id: UUID,
     template: TemplateUpdate,

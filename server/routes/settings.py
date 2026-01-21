@@ -57,7 +57,7 @@ def get_whatsapp_status(
         
     return integration
 
-@router.put("/whatsapp/update", response_model=WhatsAppIntegrationOut)
+@router.patch("/whatsapp/update", response_model=WhatsAppIntegrationOut)
 def update_whatsapp_config(
     payload: WhatsAppIntegrationUpdate,
     db: Session = Depends(get_db),
@@ -90,6 +90,6 @@ def disconnect_whatsapp(
     if not integration:
         raise HTTPException(status_code=404, detail="WhatsApp integration not found")
     
-    integration.is_connected = False
+    db.delete(integration)
     db.commit()
     return SuccessResponse()

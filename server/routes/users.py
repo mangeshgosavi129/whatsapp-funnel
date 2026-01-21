@@ -1,119 +1,87 @@
-import pytz
-from typing import List, Optional
-from datetime import datetime
-import logging
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from server.schemas import UserResponse, UserUpdate
+from typing import List
+from server.dependencies import get_db, get_auth_context
 from server.models import User
-from server.enums import Role
-from server.dependencies import get_db, get_current_user, get_current_user_with_role
+from server.schemas import UserOut, UserUpdate, AuthContext
+from uuid import UUID
 
 router = APIRouter()
-ist_tz = pytz.timezone('Asia/Kolkata')
 
-# =========================================================
-# USER ENDPOINTS
-# =========================================================
-@router.get("", response_model=List[UserResponse])
+@router.get("/", response_model=List[UserOut])
 def get_users(
-    name: Optional[str] = Query(None),
-    department: Optional[str] = Query(None),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    auth: AuthContext = Depends(get_auth_context)
 ):
-    # Filter by org_id for tenant isolation
-    query = db.query(User).filter(User.org_id == current_user.org_id)
-    if name:
-        query = query.filter(User.name.ilike(f"%{name}%"))
-    if department:
-        query = query.filter(User.department.ilike(f"%{department}%"))
-    
-    users = query.all()
-    # Populate roles
-    for user in users:
-        # Find role for this user and org
-        user_role = next((r for r in user.roles if r.org_id == current_user.org_id), None)
-        user.role = user_role.role if user_role else Role.intern # Default to intern
-        
-    return users
+    """
+    Get all users for the current organization.
+    """
+    return db.query(User).filter(User.organization_id == auth.organization_id).all()
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserOut)
 def get_user(
-    user_id: int,
+    user_id: UUID,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    auth: AuthContext = Depends(get_auth_context)
 ):
-    # Filter by org_id for tenant isolation
-    user = db.query(User).filter(User.id == user_id, User.org_id == current_user.org_id).first()
+    """
+    Get details for a specific user.
+    """
+    user = db.query(User).filter(
+        User.id == user_id,
+        User.organization_id == auth.organization_id
+    ).first()
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-        
-    # Populate role
-    user_role = next((r for r in user.roles if r.org_id == current_user.org_id), None)
-    user.role = user_role.role if user_role else Role.intern
     
     return user
 
-@router.put("/{user_id}", response_model=UserResponse)
+@router.patch("/{user_id}", response_model=UserOut)
 def update_user(
-    user_id: int,
+    user_id: UUID,
     user_data: UserUpdate,
-    context = Depends(get_current_user_with_role),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    auth: AuthContext = Depends(get_auth_context)
 ):
-    from server.permissions import can_manage_users
+    """
+    Update user details.
+    """
+    user = db.query(User).filter(
+        User.id == user_id,
+        User.organization_id == auth.organization_id
+    ).first()
     
-    current_user = context["user"]
-    current_role = context["role"]
-    
-    # Check permission: User can update themselves, or Manager+ can update anyone
-    if current_user.id != user_id and not can_manage_users(current_role):
-         raise HTTPException(status_code=403, detail="Permission denied: Cannot update other users")
-    # Filter by org_id for tenant isolation
-    user = db.query(User).filter(User.id == user_id, User.org_id == current_user.org_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Idempotency: Check if update would result in no changes
-    changes_detected = False
-    if user_data.name is not None and user.name != user_data.name:
-        changes_detected = True
-    if user_data.department is not None and user.department != user_data.department:
-        changes_detected = True
+    update_data = user_data.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
     
-    if not changes_detected:
-        logging.info(f"[UPDATE_USER] Deduplicated for user {user_id}: no changes detected")
-        return user
-    
-    if user_data.name is not None:
-        user.name = user_data.name
-    if user_data.department is not None:
-        user.department = user_data.department
-    
-    user.updated_at = datetime.now(ist_tz).replace(tzinfo=None)
     db.commit()
     db.refresh(user)
     return user
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(
-    user_id: int,
-    context = Depends(get_current_user_with_role),
-    db: Session = Depends(get_db)
+    user_id: UUID,
+    db: Session = Depends(get_db),
+    auth: AuthContext = Depends(get_auth_context)
 ):
-    from server.permissions import can_manage_users
+    """
+    Delete a user.
+    """
+    user = db.query(User).filter(
+        User.id == user_id,
+        User.organization_id == auth.organization_id
+    ).first()
     
-    current_user = context["user"]
-    current_role = context["role"]
-    
-    # Check permission
-    if not can_manage_users(current_role):
-        raise HTTPException(status_code=403, detail="Permission denied: Manager+ role required")
-    # Filter by org_id for tenant isolation
-    user = db.query(User).filter(User.id == user_id, User.org_id == current_user.org_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    
+    # Optional: Prevent deleting the current user? 
+    # For now, let's keep it simple as requested.
     
     db.delete(user)
     db.commit()
