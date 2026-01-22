@@ -14,4 +14,6 @@ class WhatsAppReceiveConfig:
         self.AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID_SQS")
         self.AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY_SQS")
 
+        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL")
+
 config = WhatsAppReceiveConfig()

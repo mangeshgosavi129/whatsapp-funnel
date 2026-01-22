@@ -20,6 +20,7 @@ from server.enums import (
     UserSentiment,
     TemplateStatus,
     MessageFrom,
+    ScheduledActionStatus,
 )
 from server.database import Base
 
@@ -63,15 +64,27 @@ class Conversation(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
     lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id"), nullable=False)
-    cta_id = Column(UUID(as_uuid=True), ForeignKey("ctas.id"), nullable=True) # Litle bit confusiing
+    cta_id = Column(UUID(as_uuid=True), ForeignKey("ctas.id"), nullable=True)
 
+    # === Sales State ===
     stage = Column(SQLEnum(ConversationStage), nullable=False)
     intent_level = Column(SQLEnum(IntentLevel), nullable=True)
     mode = Column(SQLEnum(ConversationMode), nullable=False)
     user_sentiment = Column(SQLEnum(UserSentiment), nullable=True)
+    
+    # === Context ===
     rolling_summary = Column(Text, nullable=True)
-    last_message_at = Column(DateTime(timezone=True), nullable=True)
     last_message = Column(Text, nullable=True)
+    
+    # === Timing (for WhatsApp window & decisions) ===
+    last_message_at = Column(DateTime(timezone=True), nullable=True)
+    last_user_message_at = Column(DateTime(timezone=True), nullable=True)
+    last_bot_message_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # === Anti-spam tracking ===
+    followup_count_24h = Column(Integer, default=0)
+    total_nudges = Column(Integer, default=0)
+    scheduled_followup_at = Column(DateTime(timezone=True), nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -80,6 +93,7 @@ class Conversation(Base):
     lead = relationship("Lead", back_populates="conversations")
     cta = relationship("CTA", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
+    scheduled_actions = relationship("ScheduledAction", back_populates="conversation", cascade="all, delete-orphan")
 
 class Message(Base):
     __tablename__ = "messages"
@@ -230,4 +244,52 @@ class AuditLog(Base):
     entity_id = Column(UUID(as_uuid=True), nullable=False)
     action = Column(String(100), nullable=False)
 
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+# --------------------
+# HTL Pipeline
+# --------------------
+
+class ScheduledAction(Base):
+    """
+    Scheduled follow-up actions processed by Celery beat.
+    Created when pipeline decides WAIT_SCHEDULE.
+    """
+    __tablename__ = "scheduled_actions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=False)
+    organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
+    
+    scheduled_at = Column(DateTime(timezone=True), nullable=False)
+    status = Column(SQLEnum(ScheduledActionStatus), default=ScheduledActionStatus.PENDING)
+    action_type = Column(String(50), default="followup")  # For future extensibility
+    action_context = Column(Text, nullable=True)  # JSON context if needed
+    
+    executed_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    conversation = relationship("Conversation", back_populates="scheduled_actions")
+
+
+class ConversationEvent(Base):
+    """
+    Audit log for pipeline execution and conversation events.
+    Useful for debugging and analytics.
+    """
+    __tablename__ = "conversation_events"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=False)
+    
+    event_type = Column(String(50), nullable=False)  # message_received, pipeline_run, stage_change, etc.
+    pipeline_step = Column(String(20), nullable=True)  # analyze, decide, generate, summarize
+    
+    input_summary = Column(Text, nullable=True)  # Compact input summary (not full JSON to save space)
+    output_summary = Column(Text, nullable=True)  # Compact output summary
+    
+    latency_ms = Column(Integer, nullable=True)  # For performance tracking
+    tokens_used = Column(Integer, nullable=True)  # For cost tracking
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
