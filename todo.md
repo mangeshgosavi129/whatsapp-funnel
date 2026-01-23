@@ -172,3 +172,6 @@ WA W
 - testing
 WA R
 - testing
+
+delete whatsapp_worker/send.py file
+instead implement that using the api call send_bot, send_human 

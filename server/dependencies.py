@@ -1,14 +1,21 @@
 import jwt
 from typing import Optional
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
+from fastapi import Depends, HTTPException, status, Header
 from server.database import SessionLocal
 from server.schemas import AuthContext
 from server.models import User
 from server.config import config
 from server.security import security
 from uuid import UUID
+
+def require_internal_secret(
+    x_internal_secret: str | None = Header(default=None),
+) -> None:
+    if not x_internal_secret or x_internal_secret != config.SECRET_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized",
+        )
 
 def get_db():
     db = SessionLocal()

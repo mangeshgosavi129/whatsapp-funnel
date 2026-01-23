@@ -386,3 +386,184 @@ class WSActionConversationsFlagged(BaseModel):
 
 class WSActionHumanAttentionRequired(BaseModel):
     conversation_ids: List[UUID]
+
+
+# ======================================================
+# Internal API Schemas (for whatsapp_worker)
+# ======================================================
+
+class InternalIntegrationWithOrgOut(BaseModel):
+    """Combined WhatsApp integration and organization data."""
+    # Integration fields
+    integration_id: UUID
+    access_token: str
+    version: str
+    verify_token: str
+    app_secret: str
+    phone_number_id: str
+    is_connected: bool
+    # Organization fields
+    organization_id: UUID
+    organization_name: str
+    is_active: bool
+
+
+class InternalLeadCreate(BaseModel):
+    """Create a new lead via internal API."""
+    organization_id: UUID
+    phone: str
+    name: Optional[str] = None
+
+
+class InternalLeadOut(BaseModel):
+    """Lead data returned from internal API."""
+    id: UUID
+    organization_id: UUID
+    phone: str
+    name: Optional[str]
+    email: Optional[str]
+    company: Optional[str]
+    conversation_stage: Optional[ConversationStage]
+    intent_level: Optional[IntentLevel]
+    user_sentiment: Optional[UserSentiment]
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+
+class InternalConversationCreate(BaseModel):
+    """Create a new conversation via internal API."""
+    organization_id: UUID
+    lead_id: UUID
+
+
+class InternalConversationOut(BaseModel):
+    """Full conversation data for internal API."""
+    id: UUID
+    organization_id: UUID
+    lead_id: UUID
+    cta_id: Optional[UUID]
+    stage: ConversationStage
+    intent_level: Optional[IntentLevel]
+    mode: ConversationMode
+    user_sentiment: Optional[UserSentiment]
+    rolling_summary: Optional[str]
+    last_message: Optional[str]
+    last_message_at: Optional[datetime]
+    last_user_message_at: Optional[datetime]
+    last_bot_message_at: Optional[datetime]
+    followup_count_24h: int
+    total_nudges: int
+    scheduled_followup_at: Optional[datetime]
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+
+class InternalConversationUpdate(BaseModel):
+    """Update conversation state via internal API."""
+    stage: Optional[ConversationStage] = None
+    mode: Optional[ConversationMode] = None
+    intent_level: Optional[IntentLevel] = None
+    user_sentiment: Optional[UserSentiment] = None
+    rolling_summary: Optional[str] = None
+    last_message: Optional[str] = None
+    followup_count_24h: Optional[int] = None
+    total_nudges: Optional[int] = None
+    scheduled_followup_at: Optional[datetime] = None
+
+
+class InternalMessageContext(BaseModel):
+    """Message context for pipeline input."""
+    sender: str  # "lead", "bot", or "human"
+    text: str
+    timestamp: str
+
+
+class InternalIncomingMessageCreate(BaseModel):
+    """Store incoming lead message."""
+    conversation_id: UUID
+    lead_id: UUID
+    content: str
+
+
+class InternalOutgoingMessageCreate(BaseModel):
+    """Store outgoing bot/human message."""
+    conversation_id: UUID
+    lead_id: UUID
+    content: str
+    message_from: MessageFrom
+
+
+class InternalMessageOut(BaseModel):
+    """Message data returned from internal API."""
+    id: UUID
+    organization_id: UUID
+    conversation_id: UUID
+    lead_id: UUID
+    message_from: MessageFrom
+    content: str
+    status: str
+    created_at: datetime
+
+
+class InternalScheduledActionCreate(BaseModel):
+    """Create a scheduled action."""
+    conversation_id: UUID
+    organization_id: UUID
+    scheduled_at: datetime
+    action_type: str = "followup"
+    action_context: Optional[str] = None
+
+
+class InternalScheduledActionOut(BaseModel):
+    """Scheduled action data."""
+    id: UUID
+    conversation_id: UUID
+    organization_id: UUID
+    scheduled_at: datetime
+    status: str
+    action_type: str
+    action_context: Optional[str]
+    executed_at: Optional[datetime]
+    created_at: datetime
+
+
+class InternalScheduledActionUpdate(BaseModel):
+    """Update scheduled action status."""
+    status: str
+    executed_at: Optional[datetime] = None
+
+
+class InternalPipelineEventCreate(BaseModel):
+    """Log a pipeline execution event."""
+    conversation_id: UUID
+    event_type: str
+    pipeline_step: Optional[str] = None
+    input_summary: Optional[str] = None
+    output_summary: Optional[str] = None
+    latency_ms: Optional[int] = None
+    tokens_used: Optional[int] = None
+
+
+class InternalPipelineEventOut(BaseModel):
+    """Pipeline event data."""
+    id: UUID
+    conversation_id: UUID
+    event_type: str
+    pipeline_step: Optional[str]
+    input_summary: Optional[str]
+    output_summary: Optional[str]
+    latency_ms: Optional[int]
+    tokens_used: Optional[int]
+    created_at: datetime
+
+
+class InternalFollowupContext(BaseModel):
+    """Full context needed for processing a followup."""
+    action: InternalScheduledActionOut
+    conversation: InternalConversationOut
+    lead: InternalLeadOut
+    organization_id: UUID
+    organization_name: str
+    access_token: str
+    phone_number_id: str
+    version: str

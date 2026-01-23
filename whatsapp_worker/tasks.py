@@ -1,21 +1,18 @@
 """
 Celery Tasks for HTL Pipeline.
-Handles scheduled follow-ups and periodic maintenance.
+Handles scheduled follow-ups and periodic maintenance via API calls.
 """
 import logging
 from datetime import datetime, timezone
+from uuid import UUID
+
 from celery import Celery
 
-from server.database import SessionLocal
-from server.models import (
-    ScheduledAction, Conversation, Lead, Organization, WhatsAppIntegration
-)
-from server.enums import ScheduledActionStatus, ConversationMode
-from whatsapp_worker.context import build_pipeline_context
-from whatsapp_worker.actions import handle_pipeline_result, store_outgoing_message, reset_daily_followup_counts
-from whatsapp_worker.send import send_whatsapp_text
+from whatsapp_worker.processors.api_client import api_client, InternalsAPIError
+from whatsapp_worker.processors.context import build_pipeline_context
+from whatsapp_worker.processors.actions import handle_pipeline_result, reset_daily_followup_counts
 from llm.pipeline import run_followup_pipeline
-from server.enums import MessageFrom
+from server.enums import MessageFrom, ConversationMode
 
 logger = logging.getLogger(__name__)
 
@@ -51,20 +48,13 @@ celery_app.conf.timezone = "UTC"
 @celery_app.task(name="whatsapp_worker.tasks.process_due_followups")
 def process_due_followups():
     """
-    Process all due scheduled follow-ups.
+    Process all due scheduled follow-ups via API.
     
     This task runs every minute via Celery beat.
     """
-    db = SessionLocal()
-    
     try:
-        now = datetime.now(timezone.utc)
-        
         # Get all pending follow-ups that are due
-        due_actions = db.query(ScheduledAction).filter(
-            ScheduledAction.status == ScheduledActionStatus.PENDING,
-            ScheduledAction.scheduled_at <= now
-        ).limit(50).all()  # Process max 50 at a time
+        due_actions = api_client.get_due_actions(limit=50)
         
         if not due_actions:
             return {"processed": 0}
@@ -76,159 +66,132 @@ def process_due_followups():
         
         for action in due_actions:
             try:
-                process_single_followup(db, action)
+                process_single_followup(action)
                 processed += 1
             except Exception as e:
-                logger.error(f"Error processing followup {action.id}: {e}", exc_info=True)
+                logger.error(f"Error processing followup {action['id']}: {e}", exc_info=True)
                 errors += 1
-                # Mark as failed to prevent infinite retries
-                action.status = ScheduledActionStatus.CANCELLED
-        
-        db.commit()
+                # Mark as cancelled to prevent infinite retries
+                try:
+                    api_client.update_action_status(
+                        UUID(action["id"]),
+                        status="cancelled"
+                    )
+                except Exception:
+                    pass
         
         return {"processed": processed, "errors": errors}
         
     except Exception as e:
         logger.error(f"process_due_followups error: {e}", exc_info=True)
-        db.rollback()
         return {"error": str(e)}
-        
-    finally:
-        db.close()
 
 
-def process_single_followup(db, action: ScheduledAction):
+def process_single_followup(action: dict):
     """
-    Process a single scheduled follow-up action.
+    Process a single scheduled follow-up action via API.
     """
-    # Get conversation
-    conversation = db.query(Conversation).filter(
-        Conversation.id == action.conversation_id
-    ).first()
+    action_id = UUID(action["id"])
     
-    if not conversation:
-        logger.warning(f"Conversation {action.conversation_id} not found for followup")
-        action.status = ScheduledActionStatus.CANCELLED
+    try:
+        # Get full context for the followup
+        context = api_client.get_followup_context(action_id)
+    except InternalsAPIError as e:
+        logger.warning(f"Could not get context for action {action_id}: {e.detail}")
+        api_client.update_action_status(action_id, status="cancelled")
         return
+    
+    conversation = context["conversation"]
+    lead = context["lead"]
     
     # Skip if conversation is no longer in bot mode
-    if conversation.mode != ConversationMode.BOT:
-        logger.info(f"Skipping followup for {conversation.id}: mode is {conversation.mode.value}")
-        action.status = ScheduledActionStatus.CANCELLED
-        return
-    
-    # Get lead
-    lead = db.query(Lead).filter(Lead.id == conversation.lead_id).first()
-    if not lead:
-        logger.warning(f"Lead {conversation.lead_id} not found")
-        action.status = ScheduledActionStatus.CANCELLED
-        return
-    
-    # Get organization
-    organization = db.query(Organization).filter(
-        Organization.id == conversation.organization_id
-    ).first()
-    if not organization:
-        logger.warning(f"Organization {conversation.organization_id} not found")
-        action.status = ScheduledActionStatus.CANCELLED
-        return
-    
-    # Get WhatsApp integration
-    integration = db.query(WhatsAppIntegration).filter(
-        WhatsAppIntegration.organization_id == organization.id,
-        WhatsAppIntegration.is_connected == True
-    ).first()
-    if not integration:
-        logger.warning(f"No WhatsApp integration for org {organization.id}")
-        action.status = ScheduledActionStatus.CANCELLED
+    if conversation.get("mode") != ConversationMode.BOT.value:
+        logger.info(f"Skipping followup for {conversation['id']}: mode is {conversation.get('mode')}")
+        api_client.update_action_status(action_id, status="cancelled")
         return
     
     # Build pipeline context
-    pipeline_context = build_pipeline_context(db, organization, conversation, lead)
+    pipeline_context = build_pipeline_context(
+        context["organization_name"],
+        conversation,
+        lead
+    )
     
     # Run followup pipeline
-    logger.info(f"Running followup pipeline for conversation {conversation.id}")
+    logger.info(f"Running followup pipeline for conversation {conversation['id']}")
     pipeline_result = run_followup_pipeline(pipeline_context)
     
     # Handle result
     response_message = handle_pipeline_result(
-        db, conversation, lead.id, pipeline_result
+        conversation, UUID(lead["id"]), pipeline_result
     )
     
-    # Send message if needed
+    # Send and store message via API if needed
     if response_message:
-        store_outgoing_message(
-            db, conversation, lead.id, response_message, MessageFrom.BOT
-        )
-        
         try:
-            send_whatsapp_text(
-                to=lead.phone,
-                message=response_message,
-                access_token=integration.access_token,
-                phone_number_id=integration.phone_number_id,
-                version=integration.version,
+            api_client.send_bot_message(
+                organization_id=UUID(context["organization_id"]),
+                conversation_id=UUID(conversation["id"]),
+                content=response_message,
+                access_token=context["access_token"],
+                phone_number_id=context["phone_number_id"],
+                version=context["version"],
+                to=lead["phone"],
             )
-            logger.info(f"Sent followup to {lead.phone}")
+            logger.info(f"Sent followup to {lead['phone']}")
         except Exception as e:
-            logger.error(f"Failed to send followup message: {e}")
+            logger.error(f"Failed to send followup message via API: {e}")
     
     # Mark action as executed
-    action.status = ScheduledActionStatus.EXECUTED
-    action.executed_at = datetime.now(timezone.utc)
+    api_client.update_action_status(
+        action_id,
+        status="executed",
+        executed_at=datetime.now(timezone.utc)
+    )
 
 
 @celery_app.task(name="whatsapp_worker.tasks.reset_daily_counts")
 def reset_daily_counts():
     """
-    Reset daily followup counts for all conversations.
+    Reset daily followup counts for all conversations via API.
     
     This task runs once per day via Celery beat.
     """
-    db = SessionLocal()
-    
     try:
-        count = reset_daily_followup_counts(db)
+        count = reset_daily_followup_counts()
         logger.info(f"Reset daily followup counts for {count} conversations")
         return {"reset": count}
         
     except Exception as e:
         logger.error(f"reset_daily_counts error: {e}", exc_info=True)
         return {"error": str(e)}
-        
-    finally:
-        db.close()
 
 
 @celery_app.task(name="whatsapp_worker.tasks.process_followup")
 def process_followup_task(action_id: str):
     """
-    Process a specific follow-up action by ID.
+    Process a specific follow-up action by ID via API.
     
     This can be used for immediate processing instead of waiting for beat.
     """
-    db = SessionLocal()
-    
     try:
-        action = db.query(ScheduledAction).filter(
-            ScheduledAction.id == action_id
-        ).first()
+        action_uuid = UUID(action_id)
         
-        if not action:
-            return {"error": "Action not found"}
+        # Get the action
+        try:
+            action = api_client.get_scheduled_action(action_uuid)
+        except InternalsAPIError as e:
+            if e.status_code == 404:
+                return {"error": "Action not found"}
+            raise
         
-        if action.status != ScheduledActionStatus.PENDING:
-            return {"error": f"Action status is {action.status.value}"}
+        if action["status"] != "pending":
+            return {"error": f"Action status is {action['status']}"}
         
-        process_single_followup(db, action)
-        db.commit()
+        process_single_followup(action)
         
         return {"status": "processed"}
         
     except Exception as e:
         logger.error(f"process_followup_task error: {e}", exc_info=True)
-        db.rollback()
         return {"error": str(e)}
-        
-    finally:
-        db.close()

@@ -1,7 +1,5 @@
 from fastapi import APIRouter
 from sqlalchemy.orm import Session
-import datetime
-
 from server.database import SessionLocal
 from server.models import Lead, Conversation, Message
 from server.enums import (
@@ -66,7 +64,7 @@ async def debug_send_message():
 
     print("🚀 EMITTING WS MESSAGE")
 
-    payload = MessageOut(
+    message_out = MessageOut(
         id=message.id,
         organization_id=message.organization_id,
         conversation_id=message.conversation_id,
@@ -76,10 +74,10 @@ async def debug_send_message():
         status=message.status,
         created_at=message.created_at,
     )
-    print(f"emitting right now with org_id={org_id} & {payload}")
+    print(f"emitting right now with org_id={org_id} & {message_out}")
 
     # Build conversation payload and include the exact message
     conv_out = ConversationOut.model_validate(conversation, from_attributes=True)
-    await emit_conversation_updated(org_id, conv_out, payload)
+    await emit_conversation_updated(org_id, conv_out, message_out)
 
     return {"ok": True, "message_id": str(message.id), "org_id": str(org_id)}
