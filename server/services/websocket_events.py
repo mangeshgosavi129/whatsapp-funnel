@@ -4,8 +4,6 @@ import time
 from server.services.websocket_manager import manager
 from server.schemas import (
     WebSocketEnvelope,
-    WSMessageReceived,
-    WSMessageSent,
     WSConversationUpdated,
     WSTakeoverStarted,
     WSTakeoverEnded,
@@ -51,7 +49,7 @@ async def handle_takeover_started(user_id: UUID, payload: Dict[str, Any]):
         db.refresh(conversation)
 
         # Broadcast update
-        conv_out = ConversationOut.model_validate(conversation)
+        conv_out = ConversationOut.model_validate(conversation, from_attributes=True)
         await emit_conversation_updated(user.organization_id, conv_out)
         await emit_ack(user_id, "takeover_started")
 
@@ -83,7 +81,7 @@ async def handle_takeover_ended(user_id: UUID, payload: Dict[str, Any]):
         db.refresh(conversation)
 
         # Broadcast update
-        conv_out = ConversationOut.model_validate(conversation)
+        conv_out = ConversationOut.model_validate(conversation, from_attributes=True)
         await emit_conversation_updated(user.organization_id, conv_out)
         await emit_ack(user_id, "takeover_ended")
 
@@ -115,8 +113,8 @@ async def emit_error(user_id: UUID, error_message: str):
     envelope = WebSocketEnvelope(event=WSEvents.ERROR, payload={"message": error_message})
     await manager.send_to_user(user_id, envelope.model_dump())
 
-async def emit_conversation_updated(org_id: UUID, conversation: ConversationOut):
-    payload = WSConversationUpdated(conversation=conversation)
+async def emit_conversation_updated(org_id: UUID, conversation: ConversationOut, message: MessageOut | None = None):
+    payload = WSConversationUpdated(conversation=conversation, message=message)
     envelope = WebSocketEnvelope(event=WSEvents.CONVERSATION_UPDATED, payload=payload.model_dump())
     await manager.broadcast_to_org(org_id, envelope.model_dump())
 

@@ -159,3 +159,16 @@ System / Infra
 
 5) Update Backend to include user and organisation
 
+6) Do not store anything in the session other than the token
+
+7) Remove Pending from enums and full implementation
+
+
+
+
+
+=====
+WA W
+- testing
+WA R
+- testing

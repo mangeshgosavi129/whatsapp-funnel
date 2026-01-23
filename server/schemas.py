@@ -365,16 +365,9 @@ class WebSocketEnvelope(BaseModel):
 # WebSocket Payloads
 # ======================================================
 
-class WSMessageReceived(BaseModel):
-    message: MessageOut
-
-
-class WSMessageSent(BaseModel):
-    message: MessageOut
-
-
 class WSConversationUpdated(BaseModel):
     conversation: ConversationOut
+    message: Optional[MessageOut]
 
 
 class WSTakeoverStarted(BaseModel):

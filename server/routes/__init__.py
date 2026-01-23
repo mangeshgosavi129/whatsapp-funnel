@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from . import (
+    debug,
     auth, 
     leads, 
     conversations, 
@@ -16,7 +17,7 @@ from . import (
 )
 
 router = APIRouter()
-
+router.include_router(debug.router)
 router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
 router.include_router(leads.router, prefix="/leads", tags=["Leads"])
