@@ -9,11 +9,11 @@ from . import (
     dashboard, 
     ctas, 
     settings, 
-    settings, 
     messages,
     websockets,
     users,
-    organisations
+    organisations,
+    internals
 )
 
 router = APIRouter()
@@ -30,3 +30,4 @@ router.include_router(settings.router, prefix="/settings", tags=["Settings"])
 router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(organisations.router, prefix="/organisations", tags=["Organisations"])
 router.include_router(websockets.router, tags=["WebSockets"])
+router.include_router(internals.router, prefix="/internals", tags=["Internals"])

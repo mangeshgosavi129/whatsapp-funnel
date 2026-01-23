@@ -26,8 +26,35 @@ class CTAType(str, Enum):
 class ConversationMode(str, Enum):
     BOT = "bot"
     HUMAN = "human"
-    CLOSED = "closed"
-    PAUSED = "paused"
+
+
+class DecisionAction(str, Enum):
+    """Pipeline Step 2 output: what action to take."""
+    SEND_NOW = "send_now"
+    WAIT_SCHEDULE = "wait_schedule"
+    HANDOFF_HUMAN = "handoff_human"
+
+
+class RiskLevel(str, Enum):
+    """Risk assessment levels for spam/policy/hallucination."""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+class PipelineStep(str, Enum):
+    """Tracking which pipeline step is executing."""
+    ANALYZE = "analyze"
+    DECIDE = "decide"
+    GENERATE = "generate"
+    SUMMARIZE = "summarize"
+
+
+class ScheduledActionStatus(str, Enum):
+    """Status of scheduled follow-up actions."""
+    PENDING = "pending"
+    EXECUTED = "executed"
+    CANCELLED = "cancelled"
 
 class UserSentiment(str, Enum):
     ANNOYED = "annoyed"

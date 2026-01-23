@@ -18,7 +18,7 @@ def push_to_queue(
     headers: Mapping[str, str],
     raw_body: Optional[bytes] = None,
 ) -> Tuple[Mapping, int]:
-    if not validate_signature(raw_body, headers, config.APP_SECRET):
+    if not validate_signature(raw_body or b"", headers, None):
         return {"status": "error", "message": "Invalid signature"}, 403
     
     # --- SQS Logic Starts Here ---
