@@ -1,3 +1,4 @@
+import json
 import hmac
 import hashlib
 import logging
@@ -5,11 +6,13 @@ from typing import Mapping, Optional, Tuple
 import requests
 from whatsapp_receive.config import config
 
+logger = logging.getLogger(__name__)
+
 def verify_webhook(params: Mapping[str, str]) -> Tuple[str | Mapping, int]:
     mode = params.get("hub.mode")
     token = params.get("hub.verify_token")
     challenge = params.get("hub.challenge")
-    logger = logging.getLogger(__name__)
+
     logger.info("Verification began")
     # Check if token matches (dynamic fetch)
     if mode and token and mode == "subscribe" and challenge:
@@ -39,7 +42,7 @@ def validate_signature(raw_body: bytes, headers: Mapping[str, str], app_secret: 
 
     # Dynamic fetch of app_secret based on phone_number_id from webhook payload
     if not app_secret:
-        if not config.INTERNAL_API_BASE_URL:
+        if not config.INTERNAL_API_BASE_URL or not config.INTERNAL_API_SECRET:
             return True
         try:
             body = raw_body.decode("utf-8")
@@ -49,7 +52,6 @@ def validate_signature(raw_body: bytes, headers: Mapping[str, str], app_secret: 
         phone_number_id: Optional[str] = None
         if body:
             try:
-                import json
 
                 payload = json.loads(body)
                 phone_number_id = (
@@ -66,6 +68,7 @@ def validate_signature(raw_body: bytes, headers: Mapping[str, str], app_secret: 
             try:
                 resp = requests.get(
                     f"{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-phone-number-id/{phone_number_id}",
+                    headers={"X-Internal-Secret": config.INTERNAL_API_SECRET},
                     timeout=10,
                 )
                 if resp.status_code == 200:

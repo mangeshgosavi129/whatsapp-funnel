@@ -8,9 +8,9 @@ from whatsapp_receive.security import validate_signature
 # Initialize SQS client outside the function for better performance (warm starts)
 sqs = boto3.client(
     'sqs',
-    region_name=config.AWS_REGION_SQS,
-    aws_access_key_id=config.AWS_ACCESS_KEY_ID_SQS,
-    aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY_SQS
+    region_name=config.AWS_REGION,
+    aws_access_key_id=config.AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=config.AWS_SECRET_ACCESS_KEY
 )
 
 def push_to_queue(
