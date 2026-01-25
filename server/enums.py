@@ -88,6 +88,7 @@ class WSEvents:
     ACTION_CONVERSATIONS_FLAGGED = "action:conversations_flagged"
     ACTION_HUMAN_ATTENTION_REQUIRED = "action:human_attention_required"
 
+    ACTION_CTA_INITIATED = "action:cta_initiated"
     # System
     ACK = "ack"
     ERROR = "error"

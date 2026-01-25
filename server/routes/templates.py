@@ -201,7 +201,7 @@ def get_template_status(
 
     meta_data = fetch_template_status_from_meta(
         template_name=db_template.name,
-        access_token=access_token
+        access_token=auth.meta_access_token
     )
 
     if meta_data:

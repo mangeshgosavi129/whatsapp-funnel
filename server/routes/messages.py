@@ -9,7 +9,7 @@ from sqlalchemy.sql import func
 
 from server.dependencies import get_db, get_auth_context, require_internal_secret
 from server.schemas import MessageOut, AuthContext, ConversationOut
-from server.models import Message, Conversation
+from server.models import Message, Conversation, WhatsAppIntegration
 from server.enums import MessageFrom
 from server.services.websocket_events import emit_conversation_updated
 from uuid import UUID
@@ -142,8 +142,22 @@ async def _send_msg(
     if not conversation_id or not content:
         raise HTTPException(status_code=400, detail="conversation_id and content are required")
 
+    # If creds missing, fetch from WhatsAppIntegration table
     if not access_token or not phone_number_id:
-        raise HTTPException(status_code=400, detail="access_token and phone_number_id are required")
+        integration = (
+            db.query(WhatsAppIntegration)
+            .filter(WhatsAppIntegration.organization_id == organization_id)
+            .first()
+        )
+        if not integration or not integration.is_connected:
+            raise HTTPException(
+                status_code=400, 
+                detail="access_token and phone_number_id are required or WhatsApp integration must be connected"
+            )
+        
+        access_token = access_token or integration.access_token
+        phone_number_id = phone_number_id or integration.phone_number_id
+        version = version or integration.version
 
     # 1) Verify conversation belongs to org
     conv = (

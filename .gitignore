@@ -6,3 +6,7 @@ __pycache__/
 node_modules/
 dist/
 venv/
+.venv/
+whatsapp_receive_lambda.zip
+whatsapp_receive_pkg/
+lambda_build/

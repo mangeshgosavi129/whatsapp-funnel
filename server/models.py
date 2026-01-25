@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Enum as SQLEnum,
+    JSON,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -141,7 +142,11 @@ class Template(Base):
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
 
     name = Column(String(255), nullable=False)
-    content = Column(Text, nullable=False)
+    category = Column(String(50), nullable=True)  # MARKETING, UTILITY, AUTHENTICATION
+    language = Column(String(20), nullable=True)  # e.g., 'en_US'
+    components = Column(JSON, nullable=True)      # List of components (header, body, footer, buttons)
+    
+    content = Column(Text, nullable=True)         # Legacy field, keeping for compatibility but primary content is in components
 
     status = Column(SQLEnum(TemplateStatus), default=TemplateStatus.DRAFT)
     approved_at = Column(DateTime(timezone=True), nullable=True)

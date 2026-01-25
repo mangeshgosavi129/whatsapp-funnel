@@ -13,10 +13,6 @@ else:
 
 class WhatsAppSendConfig:
     def __init__(self) -> None:
-        # self.ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-        # self.VERSION = os.getenv("VERSION")
-        # self.PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-
         self.QUEUE_URL = os.getenv("QUEUE_URL")
         self.AWS_REGION = os.getenv("AWS_REGION")
         self.AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -25,7 +21,7 @@ class WhatsAppSendConfig:
         self.SECRET_KEY = os.getenv("SECRET_KEY")
         self.ALGORITHM = os.getenv("ALGORITHM")
 
-        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL") or "http://localhost:8000"
-        self.INTERNAL_API_SECRET = os.getenv("INTERNAL_API_SECRET") or self.SECRET_KEY
+        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL")
+        self.INTERNAL_API_SECRET = os.getenv("INTERNAL_API_SECRET")
 
 config = WhatsAppSendConfig()

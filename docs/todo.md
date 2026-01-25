@@ -175,3 +175,24 @@ WA R
 
 delete whatsapp_worker/send.py file
 instead implement that using the api call send_bot, send_human 
+
+not sure about validate_signature inside the whatsapp_receive
+
+changes
+    a. lead page - update / delete / view card -- Done
+    b. inbox - initially nothing selected - upon selecting a conversation, the middle section should show chats and the right side bar should show lead details -- Done
+        remove assign button, tags button, display all details, remove edit button, add more details which will go to leads table specific row opened -- done
+    c. whatsapp settings - if disconnected, show connect button else show disconnect button. Correct representation of state. -- Done
+    d. Add user invite button which will automatically copy a link to signup with org page with org id in the link as parameter which will be preintialized -- Done
+    e. update message/send in the frontend to use the api call message/send_human -- Done
+
+    f. remove the buttons for uploading files, attachments and emojis -- done
+    
+    g. submit template needs multiple details to be filled, add that in each api endpoint and the frontend. 
+
+    h. cta is not properly configured, time and name, should be the output of llm, and that should trigger the websocket event so that upon cta selection, the conversation should be shown in the actions page
+    
+    i. the page upon opening always keeps on leading, fix that -- Done
+    
+    j. restructuring the frontend to have a better structure
+    k. analytics is showing incorrect values even after reloading, check for its logic, if it is correct or wrong

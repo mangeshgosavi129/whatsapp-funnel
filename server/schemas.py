@@ -208,7 +208,6 @@ class CTAOut(BaseModel):
     name: str
     cta_type: CTAType
     is_active: bool
-    scheduled_at: Optional[datetime]
     created_at: datetime
     updated_at: Optional[datetime]
 
@@ -219,12 +218,16 @@ class CTAOut(BaseModel):
 
 class TemplateCreate(BaseModel):
     name: str
-    content: str
+    category: str
+    language: str
+    components: List[Dict[str, Any]]
 
 
 class TemplateUpdate(BaseModel):
-    name: Optional[str]
-    content: Optional[str]
+    name: Optional[str] = None
+    category: Optional[str] = None
+    language: Optional[str] = None
+    components: Optional[List[Dict[str, Any]]] = None
 
 
 class TemplateStatusOut(BaseModel):
@@ -237,7 +240,9 @@ class TemplateOut(BaseModel):
     id: UUID
     organization_id: UUID
     name: str
-    content: str
+    category: Optional[str]
+    language: Optional[str]
+    components: Optional[List[Dict[str, Any]]]
     status: TemplateStatus
     approved_at: Optional[datetime]
     rejection_reason: Optional[str]
@@ -343,6 +348,8 @@ class WhatsAppIntegrationOut(BaseModel):
     id: UUID
     organization_id: UUID
     phone_number_id: str
+    version: str
+    verify_token: str
     is_connected: bool
     created_at: datetime
     updated_at: Optional[datetime]

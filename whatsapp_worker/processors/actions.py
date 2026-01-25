@@ -77,6 +77,13 @@ def handle_pipeline_result(
         # updates["mode"] = ConversationMode.HUMAN.value  <-- User requested strict manual takeover
         logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention: {result.decision.why}")
         # TODO: Send WebSocket notification (ACTION_HUMAN_ATTENTION_REQUIRED)
+        # SOLUTION: Call in internal api to emit event based on WSEvents
+    
+    elif result.should_initiate_cta:
+        # Initiate CTA
+        logger.info(f"🚀 ACTION REQUIRED: Conversation {conversation_id} flagged for CTA: {result.decision.why}")
+        # TODO: Send WebSocket notification (ACTION_CTA_INITIATED)
+        # SOLUTION: Call in internal api to emit event based on WSEvents
     
     # ========================================
     # Always update rolling summary
