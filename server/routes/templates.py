@@ -70,14 +70,14 @@ def fetch_template_status_from_meta(
     data = response.json().get("data", [])
     return data[0] if data else None
 
-@router.get("/", response_model=List[TemplateOut])
+@router.get("", response_model=List[TemplateOut])
 def get_templates(
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)
 ):
     return db.query(Template).filter(Template.organization_id == auth.organization_id).all()
 
-@router.post("/", response_model=TemplateOut)
+@router.post("", response_model=TemplateOut)
 def create_template(
     template: TemplateCreate,
     db: Session = Depends(get_db),

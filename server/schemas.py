@@ -322,6 +322,8 @@ class AnalyticsReportOut(BaseModel):
     peak_activity_time: Dict[str, int]
     message_from_stats: Dict[str, int]
     intent_level_stats: Dict[str, int]
+    daily_activity: Dict[str, int]
+    stage_breakdown: Dict[str, int]
 
 
 # ======================================================
@@ -348,6 +350,8 @@ class WhatsAppIntegrationOut(BaseModel):
     id: UUID
     organization_id: UUID
     phone_number_id: str
+    access_token: str
+    app_secret: str
     version: str
     verify_token: str
     is_connected: bool

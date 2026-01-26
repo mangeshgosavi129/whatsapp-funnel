@@ -9,7 +9,7 @@ from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/", response_model=List[ConversationOut])
+@router.get("", response_model=List[ConversationOut])
 def get_conversations(
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)

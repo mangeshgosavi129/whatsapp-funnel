@@ -225,7 +225,7 @@ class WhatsAppIntegration(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
 
-    access_token = Column(String(255), nullable=False)
+    access_token = Column(Text, nullable=False)
     version = Column(String(20), nullable=False)
     verify_token = Column(String(255), nullable=False) 
     app_secret = Column(String(255), nullable=False)

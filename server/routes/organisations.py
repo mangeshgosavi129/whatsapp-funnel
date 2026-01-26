@@ -9,7 +9,7 @@ router = APIRouter()
 # =========================================================
 # ORGANISATION ENDPOINTS
 # =========================================================
-@router.get("/", response_model=OrganizationOut)
+@router.get("", response_model=OrganizationOut)
 def get_organisation(
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)

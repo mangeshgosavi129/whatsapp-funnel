@@ -8,7 +8,7 @@ from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/", response_model=List[UserOut])
+@router.get("", response_model=List[UserOut])
 def get_users(
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)

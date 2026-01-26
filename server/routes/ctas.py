@@ -9,14 +9,14 @@ from uuid import UUID
 
 router = APIRouter()
 
-@router.get("/", response_model=List[CTAOut])
+@router.get("", response_model=List[CTAOut])
 def get_ctas(
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)
 ):
     return db.query(CTA).filter(CTA.organization_id == auth.organization_id).all()
 
-@router.post("/", response_model=CTAOut)
+@router.post("", response_model=CTAOut)
 def create_cta(
     cta: CTACreate,
     db: Session = Depends(get_db),
