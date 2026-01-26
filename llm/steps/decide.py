@@ -81,6 +81,15 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> DecisionOu
         except ValueError:
             pass
     
+    # Parse CTA scheduling fields
+    cta_scheduled_time = data.get("cta_scheduled_time")
+    if cta_scheduled_time == "null" or cta_scheduled_time == "":
+        cta_scheduled_time = None
+    
+    cta_name = data.get("cta_name")
+    if cta_name == "null" or cta_name == "":
+        cta_name = None
+    
     # Ensure followup_in_minutes is reasonable
     followup = data.get("followup_in_minutes", 0)
     if action == DecisionAction.SEND_NOW:
@@ -88,11 +97,17 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> DecisionOu
     elif action == DecisionAction.WAIT_SCHEDULE and followup <= 0:
         followup = 120  # Default 2 hours if not specified
     
+    # If action is INITIATE_CTA but no recommended_cta, default to book_call
+    if action == DecisionAction.INITIATE_CTA and recommended_cta is None:
+        recommended_cta = CTAType.BOOK_CALL
+    
     return DecisionOutput(
         action=action,
         why=data.get("why", "Decision made")[:150],
         next_stage=next_stage,
         recommended_cta=recommended_cta,
+        cta_scheduled_time=cta_scheduled_time,
+        cta_name=cta_name,
         followup_in_minutes=max(0, followup),
         followup_reason=data.get("followup_reason", "")[:100],
         kb_used=data.get("kb_used", False),

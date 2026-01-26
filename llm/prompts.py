@@ -73,6 +73,8 @@ DECISION RULES:
 - missing_info blocks progress: SEND_NOW with 1 question
 - mode=human: must be HANDOFF_HUMAN
 - User asks for human/support: HANDOFF_HUMAN
+- stage=pricing AND intent=high/very_high AND lead ready to commit: INITIATE_CTA
+- User explicitly asks to book/schedule call/demo: INITIATE_CTA
 
 TIMING HEURISTICS:
 - VERY_HIGH intent: 60-120 min followup
@@ -83,10 +85,12 @@ TIMING HEURISTICS:
 
 OUTPUT SCHEMA:
 {
-  "action": "SEND_NOW|WAIT_SCHEDULE|HANDOFF_HUMAN",
+  "action": "SEND_NOW|WAIT_SCHEDULE|HANDOFF_HUMAN|INITIATE_CTA",
   "why": "string (1-2 lines)",
   "next_stage": "greeting|qualification|pricing|cta|followup|closed|lost|ghosted",
   "recommended_cta": "book_call|book_demo|book_meeting|null",
+  "cta_scheduled_time": "ISO 8601 datetime or null (e.g. 2026-01-26T14:00:00+05:30)",
+  "cta_name": "string label for CTA or null (e.g. 'Schedule Demo Call')",
   "followup_in_minutes": 0,
   "followup_reason": "string",
   "kb_used": false,

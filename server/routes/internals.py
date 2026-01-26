@@ -682,3 +682,45 @@ def reset_followup_counts(
     )
     db.commit()
     return {"reset": result}
+
+
+# ========================================
+# WebSocket Event Endpoints
+# ========================================
+
+@router.post("/emit-cta-initiated")
+async def emit_cta_initiated_event(
+    conversation_id: UUID,
+    organization_id: UUID,
+    cta_type: str,
+    cta_name: Optional[str] = None,
+    scheduled_time: Optional[str] = None,
+    _: None = Depends(require_internal_secret),
+):
+    """Emit CTA initiated WebSocket event to frontend."""
+    from server.services.websocket_events import emit_action_cta_initiated
+    
+    await emit_action_cta_initiated(
+        org_id=organization_id,
+        conversation_id=conversation_id,
+        cta_type=cta_type,
+        cta_name=cta_name,
+        scheduled_time=scheduled_time,
+    )
+    return {"status": "emitted"}
+
+
+@router.post("/emit-human-attention")
+async def emit_human_attention_event(
+    conversation_id: UUID,
+    organization_id: UUID,
+    _: None = Depends(require_internal_secret),
+):
+    """Emit human attention required WebSocket event to frontend."""
+    from server.services.websocket_events import emit_action_human_attention_required
+    
+    await emit_action_human_attention_required(
+        org_id=organization_id,
+        conversation_ids=[conversation_id],
+    )
+    return {"status": "emitted"}

@@ -415,6 +415,46 @@ class InternalsAPIClient:
         response = self.client.post("/internals/conversations/reset-followup-counts")
         result = self._handle_response(response)
         return result.get("reset", 0)
+    
+    # ========================================
+    # WebSocket Event Methods
+    # ========================================
+    
+    def emit_cta_initiated(
+        self,
+        conversation_id: UUID,
+        organization_id: UUID,
+        cta_type: str,
+        cta_name: str | None = None,
+        scheduled_time: str | None = None,
+    ) -> Dict:
+        """Emit CTA initiated WebSocket event to frontend."""
+        response = self.client.post(
+            "/internals/emit-cta-initiated",
+            params={
+                "conversation_id": str(conversation_id),
+                "organization_id": str(organization_id),
+                "cta_type": cta_type,
+                "cta_name": cta_name,
+                "scheduled_time": scheduled_time,
+            }
+        )
+        return self._handle_response(response)
+    
+    def emit_human_attention(
+        self,
+        conversation_id: UUID,
+        organization_id: UUID,
+    ) -> Dict:
+        """Emit human attention required WebSocket event to frontend."""
+        response = self.client.post(
+            "/internals/emit-human-attention",
+            params={
+                "conversation_id": str(conversation_id),
+                "organization_id": str(organization_id),
+            }
+        )
+        return self._handle_response(response)
 
 
 # Module-level singleton for convenience

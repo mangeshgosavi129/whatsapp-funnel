@@ -76,14 +76,28 @@ def handle_pipeline_result(
         # Escalate to human
         # updates["mode"] = ConversationMode.HUMAN.value  <-- User requested strict manual takeover
         logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention: {result.decision.why}")
-        # TODO: Send WebSocket notification (ACTION_HUMAN_ATTENTION_REQUIRED)
-        # SOLUTION: Call in internal api to emit event based on WSEvents
+        try:
+            api_client.emit_human_attention(
+                conversation_id=conversation_id,
+                organization_id=UUID(conversation["organization_id"]),
+            )
+        except Exception as e:
+            logger.error(f"Failed to emit human attention event: {e}")
     
     elif result.should_initiate_cta:
-        # Initiate CTA
-        logger.info(f"🚀 ACTION REQUIRED: Conversation {conversation_id} flagged for CTA: {result.decision.why}")
-        # TODO: Send WebSocket notification (ACTION_CTA_INITIATED)
-        # SOLUTION: Call in internal api to emit event based on WSEvents
+        # Initiate CTA - notify frontend
+        cta_type = result.decision.recommended_cta.value if result.decision.recommended_cta else "book_call"
+        logger.info(f"🚀 CTA INITIATED: Conversation {conversation_id}, type={cta_type}")
+        try:
+            api_client.emit_cta_initiated(
+                conversation_id=conversation_id,
+                organization_id=UUID(conversation["organization_id"]),
+                cta_type=cta_type,
+                cta_name=result.decision.cta_name,
+                scheduled_time=result.decision.cta_scheduled_time,
+            )
+        except Exception as e:
+            logger.error(f"Failed to emit CTA initiated event: {e}")
     
     # ========================================
     # Always update rolling summary

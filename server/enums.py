@@ -33,6 +33,7 @@ class DecisionAction(str, Enum):
     SEND_NOW = "send_now"
     WAIT_SCHEDULE = "wait_schedule"
     HANDOFF_HUMAN = "handoff_human"
+    INITIATE_CTA = "initiate_cta"
 
 
 class RiskLevel(str, Enum):

@@ -127,3 +127,21 @@ async def emit_action_human_attention_required(org_id: UUID, conversation_ids: L
     payload = WSActionHumanAttentionRequired(conversation_ids=conversation_ids)
     envelope = WebSocketEnvelope(event=WSEvents.ACTION_HUMAN_ATTENTION_REQUIRED, payload=payload.model_dump(mode='json'))
     await manager.broadcast_to_org(org_id, envelope.model_dump(mode='json'))
+
+
+async def emit_action_cta_initiated(
+    org_id: UUID,
+    conversation_id: UUID,
+    cta_type: str,
+    cta_name: str | None = None,
+    scheduled_time: str | None = None
+):
+    """Emit CTA initiated event to frontend Actions page."""
+    payload = {
+        "conversation_id": str(conversation_id),
+        "cta_type": cta_type,
+        "cta_name": cta_name,
+        "scheduled_time": scheduled_time,
+    }
+    envelope = WebSocketEnvelope(event=WSEvents.ACTION_CTA_INITIATED, payload=payload)
+    await manager.broadcast_to_org(org_id, envelope.model_dump(mode='json'))

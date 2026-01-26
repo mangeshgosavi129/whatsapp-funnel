@@ -116,6 +116,8 @@ class DecisionOutput(BaseModel):
     why: str = Field(..., max_length=150)
     next_stage: ConversationStage
     recommended_cta: Optional[CTAType] = None
+    cta_scheduled_time: Optional[str] = None  # ISO datetime when CTA should occur
+    cta_name: Optional[str] = None  # Human-readable label for the CTA
     followup_in_minutes: int = Field(default=0, ge=0)
     followup_reason: str = ""
     kb_used: bool = False
@@ -188,3 +190,4 @@ class PipelineResult(BaseModel):
     should_send_message: bool = False
     should_schedule_followup: bool = False
     should_escalate: bool = False
+    should_initiate_cta: bool = False

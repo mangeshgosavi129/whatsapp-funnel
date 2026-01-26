@@ -84,6 +84,11 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
     # ========================================
     # Build Final Result
     # ========================================
+    should_initiate_cta = (
+        decision.action == DecisionAction.INITIATE_CTA or 
+        decision.recommended_cta is not None
+    )
+    
     result = PipelineResult(
         analysis=analysis,
         decision=decision,
@@ -94,6 +99,7 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         should_send_message=decision.action == DecisionAction.SEND_NOW and bool(bot_message),
         should_schedule_followup=decision.action == DecisionAction.WAIT_SCHEDULE,
         should_escalate=decision.action == DecisionAction.HANDOFF_HUMAN,
+        should_initiate_cta=should_initiate_cta,
     )
     
     logger.info(
