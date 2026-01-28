@@ -2,6 +2,7 @@ import sys
 import os
 import uuid
 from datetime import datetime
+from sqlalchemy import text
 
 # Add project root to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,15 +16,16 @@ def seed_db(clean=False):
     db = SessionLocal()
     try:
         if clean:
-            print("Cleaning existing dummy data...")
-            # Delete in reverse order of dependencies
-            db.query(Message).delete()
-            db.query(Conversation).delete()
-            db.query(WhatsAppIntegration).delete()
-            db.query(CTA).delete()
-            db.query(User).delete()
-            db.query(Lead).delete()
-            db.query(Organization).delete()
+            print("Cleaning all data using TRUNCATE CASCADE...")
+            # Using raw SQL for TRUNCATE CASCADE to handle all relationships efficiently
+            tables = [
+                "messages", "scheduled_actions", "conversation_events", 
+                "conversations", "whatsapp_integrations", "ctas", 
+                "followups", "templates", "analytics", "audit_logs", 
+                "users", "leads", "organizations"
+            ]
+            table_string = ", ".join(tables)
+            db.execute(text(f"TRUNCATE TABLE {table_string} CASCADE"))
             db.commit()
             print("Cleanup complete.")
 
