@@ -15,7 +15,7 @@ handler = Mangum(app)
 
 @app.get("/health")
 async def health() -> Mapping[str, Any]:
-    return {"status": "ok"}
+    return {"status": "healthy"}
 
 @app.get("/webhook")
 async def webhook_verify(request: Request) -> Response:
@@ -34,7 +34,9 @@ async def webhook_receive(request: Request) -> JSONResponse:
     try:
         body = await request.json()
     except Exception as e:
-        body = {}
+        logger.error(f"Failed to parse JSON body: {e}")
+        return JSONResponse({"status": "error", "message": "Invalid JSON"}, status_code=400)
+        
     logger.info(f"Body from webhook_receive: {body}")
     headers = {k: v for k, v in request.headers.items()}
     content, status = push_to_queue(body, headers, raw_body)

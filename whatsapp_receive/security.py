@@ -20,7 +20,7 @@ def verify_webhook(params: Mapping[str, str]) -> Tuple[str | Mapping, int]:
             return {"status": "error", "message": "Internal API not configured"}, 500
         try:
             resp = requests.get(
-                f"{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-verify-token",
+                f"http://{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-verify-token",
                 params={"verify_token": token},
                 headers={"X-Internal-Secret": config.INTERNAL_API_SECRET},
                 timeout=10,
@@ -35,49 +35,51 @@ def verify_webhook(params: Mapping[str, str]) -> Tuple[str | Mapping, int]:
     return {"status": "error", "message": "Verification failed"}, 403
 
 
-def validate_signature(raw_body: bytes, headers: Mapping[str, str], app_secret: Optional[str]) -> bool:
+def validate_signature(raw_body: bytes, headers: Mapping[str, str]) -> bool:
     signature = headers.get("X-Hub-Signature-256", "")
     if not signature.startswith("sha256="):
-        return True
+        logger.warning("Missing or malformed X-Hub-Signature-256 header")
+        return False
 
     # Dynamic fetch of app_secret based on phone_number_id from webhook payload
-    if not app_secret:
-        if not config.INTERNAL_API_BASE_URL or not config.INTERNAL_API_SECRET:
-            return True
-        try:
-            body = raw_body.decode("utf-8")
-        except Exception:
-            body = ""
-
-        phone_number_id: Optional[str] = None
-        if body:
-            try:
-
-                payload = json.loads(body)
-                phone_number_id = (
-                    payload.get("entry", [{}])[0]
-                    .get("changes", [{}])[0]
-                    .get("value", {})
-                    .get("metadata", {})
-                    .get("phone_number_id")
-                )
-            except Exception:
-                phone_number_id = None
-
+    # We MUST have an app_secret to verify. If we can't find it locally or via API, we must fail.
+    try:
+        body = raw_body.decode("utf-8")
+        payload = json.loads(body)
+        # Safe traversal to get phone_number_id
+        phone_number_id = (
+            payload.get("entry", [{}])[0]
+            .get("changes", [{}])[0]
+            .get("value", {})
+            .get("metadata", {})
+            .get("phone_number_id")
+        )
+        
         if phone_number_id:
-            try:
-                resp = requests.get(
-                    f"{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-phone-number-id/{phone_number_id}",
-                    headers={"X-Internal-Secret": config.INTERNAL_API_SECRET},
-                    timeout=10,
-                )
-                if resp.status_code == 200:
-                    app_secret = resp.json().get("app_secret")
-            except Exception:
-                app_secret = None
+            resp = requests.get(
+                f"http://{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-phone-number-id/{phone_number_id}",
+                headers={"X-Internal-Secret": config.INTERNAL_API_SECRET},
+                timeout=10,
+            )
+            if resp.status_code == 200:
+                app_secret = resp.json().get("app_secret")
+            else:
+                logger.error(f"Internal API returned {resp.status_code} for app_secret fetch")
+        else:
+            logger.warning("Could not extract phone_number_id from payload for dynamic secret fetch")
 
-        if not app_secret:
-            return True
+    except Exception as e:
+        logger.error(f"Error fetching dynamic app_secret: {e}")
+        return False
+
+    if not app_secret:
+        logger.error("No app_secret found for signature verification. Denying request.")
+        return False
+
     provided = signature[7:]
     expected = hmac.new(bytes(app_secret, "latin-1"), msg=raw_body, digestmod=hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected, provided)
+    if not hmac.compare_digest(expected, provided):
+        logger.warning("Signature mismatch")
+        return False
+    
+    return True
