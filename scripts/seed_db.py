@@ -177,6 +177,31 @@ def seed_db(clean=False):
     finally:
         db.close()
 
+def only_clean():
+    db = SessionLocal()
+    try:
+        print("Cleaning all data using TRUNCATE CASCADE...")
+        # Using raw SQL for TRUNCATE CASCADE to handle all relationships efficiently
+        tables = [
+            "messages", "scheduled_actions", "conversation_events", 
+            "conversations", "whatsapp_integrations", "ctas", 
+            "followups", "templates", "analytics", "audit_logs", 
+            "users", "leads", "organizations"
+        ]
+        table_string = ", ".join(tables)
+        db.execute(f"TRUNCATE TABLE {table_string} CASCADE")
+        db.commit()
+        print("Cleanup complete.")
+    except Exception as e:
+        db.rollback()
+        print(f"Error cleaning database: {e}")
+    finally:
+        db.close()
+
 if __name__ == "__main__":
     clean_flag = "--clean" in sys.argv
-    seed_db(clean=clean_flag)
+    only_clean = "--only-clean" in sys.argv
+    if only_clean:
+        only_clean()
+    else:
+        seed_db(clean=clean_flag)
