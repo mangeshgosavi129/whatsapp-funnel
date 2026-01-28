@@ -185,6 +185,7 @@ async def _send_msg(
     db_message = Message(
         organization_id=organization_id,
         conversation_id=conversation_id,
+        lead_id=conv.lead_id,
         content=content,
         message_from=sender_type,
         assigned_user_id=user_id if sender_type == MessageFrom.HUMAN else None,
