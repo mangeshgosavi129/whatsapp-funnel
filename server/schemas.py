@@ -185,7 +185,7 @@ class MessageOut(BaseModel):
     assigned_user_id: Optional[UUID]
 
     content: str
-    status: Literal["sent", "delivered", "read", "failed"]
+    status: Literal["sent", "delivered", "read", "failed", "received"]
     created_at: datetime
 
 
@@ -492,14 +492,14 @@ class InternalMessageContext(BaseModel):
 class InternalIncomingMessageCreate(BaseModel):
     """Store incoming lead message."""
     conversation_id: UUID
-    lead_id: UUID
+    lead_id: Optional[UUID] = None
     content: str
 
 
 class InternalOutgoingMessageCreate(BaseModel):
     """Store outgoing bot/human message."""
     conversation_id: UUID
-    lead_id: UUID
+    lead_id: Optional[UUID] = None
     content: str
     message_from: MessageFrom
 

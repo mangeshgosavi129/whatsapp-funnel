@@ -400,7 +400,7 @@ def store_incoming_message(
     message = Message(
         organization_id=conv.organization_id,
         conversation_id=payload.conversation_id,
-        lead_id=payload.lead_id,
+        lead_id=payload.lead_id or conv.lead_id,
         message_from=MessageFrom.LEAD,
         content=payload.content,
         status="received",
@@ -433,7 +433,7 @@ def store_outgoing_message(
     message = Message(
         organization_id=conv.organization_id,
         conversation_id=payload.conversation_id,
-        lead_id=payload.lead_id,
+        lead_id=payload.lead_id or conv.lead_id,
         message_from=payload.message_from,
         content=payload.content,
         status="sent",
