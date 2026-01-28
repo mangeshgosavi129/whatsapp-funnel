@@ -177,7 +177,7 @@ def seed_db(clean=False):
     finally:
         db.close()
 
-def only_clean():
+def only_clean(clean=True):
     db = SessionLocal()
     try:
         print("Cleaning all data using TRUNCATE CASCADE...")
@@ -202,6 +202,6 @@ if __name__ == "__main__":
     clean_flag = "--clean" in sys.argv
     only_clean = "--only-clean" in sys.argv
     if only_clean:
-        only_clean()
+        only_clean(clean=only_clean)
     else:
         seed_db(clean=clean_flag)
