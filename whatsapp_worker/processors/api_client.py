@@ -38,6 +38,8 @@ class InternalsAPIClient:
         timeout: float = 30.0,
     ):
         self.base_url = (base_url or config.INTERNAL_API_BASE_URL).rstrip("/")
+        if not self.base_url.startswith("http://") and not self.base_url.startswith("https://"):
+            self.base_url = f"http://{self.base_url}"
         self.secret_key = secret_key or config.INTERNAL_API_SECRET
         self.timeout = timeout
         self._client: Optional[httpx.Client] = None
