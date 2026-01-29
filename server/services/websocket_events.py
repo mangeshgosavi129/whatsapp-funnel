@@ -114,9 +114,12 @@ async def emit_error(user_id: UUID, error_message: str):
     await manager.send_to_user(user_id, envelope.model_dump(mode='json'))
 
 async def emit_conversation_updated(org_id: UUID, conversation: ConversationOut, message: MessageOut | None = None):
+    print(f"📢 [WS EMIT] emit_conversation_updated called for org_id={org_id}, conv_id={conversation.id}, has_message={message is not None}")
     payload = WSConversationUpdated(conversation=conversation, message=message)
     envelope = WebSocketEnvelope(event=WSEvents.CONVERSATION_UPDATED, payload=payload.model_dump(mode='json'))
+    print(f"📢 [WS EMIT] Broadcasting to org_id={org_id}...")
     await manager.broadcast_to_org(org_id, envelope.model_dump(mode='json'))
+    print(f"✅ [WS EMIT] Broadcast completed for conv_id={conversation.id}")
 
 async def emit_action_conversations_flagged(org_id: UUID, cta_id: UUID, conversation_ids: List[UUID]):
     payload = WSActionConversationsFlagged(cta_id=cta_id, conversation_ids=conversation_ids)

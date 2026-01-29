@@ -276,12 +276,15 @@ def get_conversation_by_lead(
 
 
 @router.post("/conversations", response_model=InternalConversationOut, status_code=201)
-def create_conversation(
+async def create_conversation(
     payload: InternalConversationCreate,
     _: None = Depends(require_internal_secret),
     db: Session = Depends(get_db),
 ):
     """Create a new conversation."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     conv = Conversation(
         organization_id=payload.organization_id,
         lead_id=payload.lead_id,
@@ -296,6 +299,21 @@ def create_conversation(
     db.add(conv)
     db.commit()
     db.refresh(conv)
+
+    # Emit WebSocket event for real-time frontend updates (new conversation)
+    try:
+        from server.services.websocket_events import emit_conversation_updated
+        from server.schemas import ConversationOut
+        conv_out = ConversationOut.model_validate(conv, from_attributes=True)
+        org_id = conv.organization_id
+        print(f"🆕 [NEW CONV] Creating new conversation {conv.id} for org_id={org_id}, type={type(org_id)}")
+        print(f"🆕 [NEW CONV] About to emit WebSocket event...")
+        await emit_conversation_updated(org_id, conv_out)
+        print(f"✅ [NEW CONV] WebSocket emit completed for conversation {conv.id}")
+    except Exception as e:
+        print(f"❌ [NEW CONV] Failed to emit websocket for new conversation: {e}")
+        logger.warning(f"Failed to emit websocket for new conversation: {e}")
+
     return _conversation_to_schema(conv)
 
 
@@ -385,7 +403,7 @@ def _message_to_schema(msg: Message) -> InternalMessageOut:
 
 
 @router.post("/messages/incoming", response_model=InternalMessageOut, status_code=201)
-def store_incoming_message(
+async def store_incoming_message(
     payload: InternalIncomingMessageCreate,
     _: None = Depends(require_internal_secret),
     db: Session = Depends(get_db),
@@ -414,11 +432,24 @@ def store_incoming_message(
 
     db.commit()
     db.refresh(message)
+    db.refresh(conv)
+
+    # Emit WebSocket event for real-time frontend updates
+    try:
+        from server.services.websocket_events import emit_conversation_updated
+        from server.schemas import ConversationOut, MessageOut
+        conv_out = ConversationOut.model_validate(conv, from_attributes=True)
+        msg_out = MessageOut.model_validate(message, from_attributes=True)
+        await emit_conversation_updated(conv.organization_id, conv_out, msg_out)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to emit websocket for incoming message: {e}")
+
     return _message_to_schema(message)
 
 
 @router.post("/messages/outgoing", response_model=InternalMessageOut, status_code=201)
-def store_outgoing_message(
+async def store_outgoing_message(
     payload: InternalOutgoingMessageCreate,
     _: None = Depends(require_internal_secret),
     db: Session = Depends(get_db),
@@ -447,6 +478,19 @@ def store_outgoing_message(
 
     db.commit()
     db.refresh(message)
+    db.refresh(conv)
+
+    # Emit WebSocket event for real-time frontend updates
+    try:
+        from server.services.websocket_events import emit_conversation_updated
+        from server.schemas import ConversationOut, MessageOut
+        conv_out = ConversationOut.model_validate(conv, from_attributes=True)
+        msg_out = MessageOut.model_validate(message, from_attributes=True)
+        await emit_conversation_updated(conv.organization_id, conv_out, msg_out)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to emit websocket for outgoing message: {e}")
+
     return _message_to_schema(message)
 
 
