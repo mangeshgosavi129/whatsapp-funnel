@@ -36,12 +36,37 @@ def _build_user_prompt(
 
 
 def _parse_response(content: str) -> dict:
-    """Parse JSON from LLM response."""
+    """Parse JSON from LLM response with robust fallback handling."""
+    import re
+    
     content = content.strip()
+    
+    # Strip markdown code blocks
     if content.startswith("```"):
         lines = content.split("\n")
-        content = "\n".join(lines[1:-1] if lines[-1] == "```" else lines[1:])
-    return json.loads(content)
+        content = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
+        content = content.strip()
+    
+    # Try direct JSON parsing first
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+    
+    # Try to extract JSON object with regex
+    json_match = re.search(r'\{[^{}]*"updated_rolling_summary"\s*:\s*"([^"]*)"[^{}]*\}', content, re.DOTALL)
+    if json_match:
+        summary = json_match.group(1)
+        return {"updated_rolling_summary": summary}
+    
+    # Try to find just the summary value after the key
+    summary_match = re.search(r'"updated_rolling_summary"\s*:\s*"([^"]*)', content)
+    if summary_match:
+        return {"updated_rolling_summary": summary_match.group(1)}
+    
+    # Last resort: treat the entire content as the summary
+    logger.warning(f"Could not parse summarize response, using raw content as summary")
+    return {"updated_rolling_summary": content[:400]}
 
 
 def run_summarize(

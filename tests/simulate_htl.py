@@ -58,15 +58,17 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 
 from whatsapp_worker import main as worker_main
 from whatsapp_worker.processors.api_client import api_client
-from llm.config import get_config
+from llm.config import llm_config
 
 # Debug: Check LLM Config
-llm_config = get_config()
+api_key_display = f"{llm_config.api_key[:10]}...{llm_config.api_key[-4:]}" if llm_config.api_key else "NOT SET"
+groq_env = os.environ.get('GROQ_API_KEY', '')
+groq_env_display = f"{groq_env[:5]}..." if groq_env else "Not Set"
 print(f"\n🐛 DEBUG: Local Simulator Config Check")
-print(f"   API Key: {llm_config.api_key[:10]}...{llm_config.api_key[-4:] if llm_config.api_key else 'None'}")
-print(f"   Model: {llm_config.model}")
-print(f"   Base URL: {llm_config.base_url}")
-print(f"   Env Var GROQ_API_KEY: {os.environ.get('GROQ_API_KEY', 'Not Set')[:5]}...\n")
+print(f"   API Key: {api_key_display}")
+print(f"   Model: {llm_config.model or 'NOT SET'}")
+print(f"   Base URL: {llm_config.base_url or 'NOT SET'}")
+print(f"   Env Var GROQ_API_KEY: {groq_env_display}\n")
 
 # ==========================================
 # MOCK / PATCH SETTINGS

@@ -21,7 +21,7 @@ class WhatsAppSendConfig:
         self.SECRET_KEY = os.getenv("SECRET_KEY")
         self.ALGORITHM = os.getenv("ALGORITHM")
 
-        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL")
+        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL", "http://localhost:8000")
         self.INTERNAL_API_SECRET = os.getenv("INTERNAL_API_SECRET")
 
 config = WhatsAppSendConfig()
