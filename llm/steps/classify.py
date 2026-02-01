@@ -11,7 +11,7 @@ from openai import OpenAI
 from llm.config import llm_config
 from llm.schemas import PipelineInput, ClassifyOutput, RiskFlags
 from llm.prompts import CLASSIFY_SYSTEM_PROMPT, CLASSIFY_USER_TEMPLATE
-from llm.utils import normalize_enum
+from llm.utils import normalize_enum, get_classify_schema
 from llm.api_helpers import llm_call_with_retry
 from server.enums import (
     ConversationStage, DecisionAction, IntentLevel, 
@@ -73,7 +73,7 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> ClassifyOu
     # 3. Action Logic
     action = normalize_enum(data.get("action"), DecisionAction, DecisionAction.WAIT_SCHEDULE)
     
-    return ClassifyOutput(
+    result = ClassifyOutput(
         thought_process=data.get("thought_process", "No thought provided")[:300],
         situation_summary=data.get("situation_summary", "")[:200],
         intent_level=normalize_enum(data.get("intent_level"), IntentLevel, IntentLevel.UNKNOWN),
@@ -88,8 +88,12 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> ClassifyOu
         followup_in_minutes=max(0, data.get("followup_in_minutes", 0)),
         followup_reason=data.get("followup_reason", ""),
         
-        confidence=confidence
+        confidence=confidence,
+        needs_human_attention=bool(data.get("needs_human_attention", False))
     )
+    # DEBUG: Log raw needs_human_attention value
+    print(f"[DEBUG] Raw LLM needs_human_attention: {data.get('needs_human_attention', 'NOT_IN_OUTPUT')}")
+    return result
 
 
 def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
@@ -112,7 +116,7 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
                 {"role": "system", "content": CLASSIFY_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_object"},
+            response_format={"type": "json_schema", "json_schema": get_classify_schema()},
             temperature=0.3, # Low temp for decision making
         )
     
@@ -127,6 +131,9 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
         output = _validate_and_build_output(data, context)
         
         logger.info(f"Classify: {output.action.value} -> {output.new_stage.value} (Conf: {output.confidence})")
+        if output.needs_human_attention:
+            print(f"🚨 [DEBUG] needs_human_attention=True detected!")
+            logger.info(f"🚨 Human attention flagged for conversation")
         
         return output, latency_ms, 0 
         

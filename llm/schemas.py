@@ -106,6 +106,7 @@ class ClassifyOutput(BaseModel):
     
     # Metadata
     confidence: float = Field(..., ge=0.0, le=1.0)
+    needs_human_attention: bool = False  # Flag independently of action
 
 
 # ============================================================
@@ -170,7 +171,7 @@ class PipelineResult(BaseModel):
     
     @property
     def should_escalate(self) -> bool:
-        return self.classification.action == DecisionAction.FLAG_ATTENTION
+        return self.classification.needs_human_attention
         
     @property
     def should_initiate_cta(self) -> bool:

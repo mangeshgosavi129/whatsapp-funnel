@@ -29,6 +29,11 @@ def handle_pipeline_result(
     message_to_send = None
     updates = {}
     
+    # DEBUG: Trace should_escalate value
+    print(f"[actions.py] handle_pipeline_result called for {conversation_id}")
+    print(f"[actions.py] result.should_escalate = {result.should_escalate}")
+    print(f"[actions.py] classification.needs_human_attention = {result.classification.needs_human_attention}")
+    
     # Use the unified classification output
     classification = result.classification
     
@@ -54,6 +59,32 @@ def handle_pipeline_result(
     if classification.user_sentiment:
         updates["user_sentiment"] = classification.user_sentiment.value
 
+    # ========================================
+    # INDEPENDENT: Check for human attention flag ALWAYS
+    # (Not mutually exclusive with sending messages)
+    # ========================================
+    if result.should_escalate:
+        # Escalate to human
+        logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
+        print(f"DEBUG: Entering should_escalate block for {conversation_id}") # DEBUG LOG
+        
+        # Flag persistent attention needed in DB
+        updates["needs_human_attention"] = True
+        
+        try:
+            print("DEBUG: Calling emit_human_attention...") # DEBUG LOG
+            api_client.emit_human_attention(
+                conversation_id=conversation_id,
+                organization_id=UUID(conversation["organization_id"]),
+            )
+            print("DEBUG: emit_human_attention called successfully") # DEBUG LOG
+        except Exception as e:
+            logger.error(f"Failed to emit human attention event: {e}")
+            print(f"DEBUG: Exception in emit_human_attention: {e}") # DEBUG LOG
+
+    # ========================================
+    # Handle message sending and other actions
+    # ========================================
     if result.should_send_message:
         # We're sending a message
         if result.response:
@@ -75,25 +106,6 @@ def handle_pipeline_result(
                 followup_minutes,
                 classification.followup_reason
             )
-        
-    elif result.should_escalate:
-        # Escalate to human
-        logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
-        print(f"DEBUG: Entering should_escalate block for {conversation_id}") # DEBUG LOG
-        
-        # Flag persistent attention needed in DB
-        updates["needs_human_attention"] = True
-        
-        try:
-            print("DEBUG: Calling emit_human_attention...") # DEBUG LOG
-            api_client.emit_human_attention(
-                conversation_id=conversation_id,
-                organization_id=UUID(conversation["organization_id"]),
-            )
-            print("DEBUG: emit_human_attention called successfully") # DEBUG LOG
-        except Exception as e:
-            logger.error(f"Failed to emit human attention event: {e}")
-            print(f"DEBUG: Exception in emit_human_attention: {e}") # DEBUG LOG
     
     elif result.should_initiate_cta:
         # Initiate CTA - notify frontend

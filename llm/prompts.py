@@ -27,8 +27,8 @@ TASKS:
    - Choose the Best Action:
      - SEND_NOW: Reply to the user.
      - WAIT_SCHEDULE: User needs time, or we should wait.
-     - HANDOFF_HUMAN: User EXPLICITLY asks for a human, or query is too complex/sensitive.
      - INITIATE_CTA: Time to close.
+   - Set "needs_human_attention": true if user EXPLICITLY asks for a human/representative or if the query is too complex/sensitive. This does NOT change the action - you can still send_now AND set this flag.
 
 OUTPUT SCHEMA (JSON):
 {
@@ -38,9 +38,10 @@ OUTPUT SCHEMA (JSON):
   "user_sentiment": "neutral|happy|angry...",
   "risk_flags": { "spam_risk": "low", "policy_risk": "low", ... },
   
-  "action": "send_now|wait_schedule|flag_attention|initiate_cta",
+  "action": "send_now|wait_schedule|initiate_cta",
   "new_stage": "greeting|qualification|pricing|cta...",
   "should_respond": true|false,
+  "needs_human_attention": true|false,  // Set TRUE if user asks for human or query is too complex/sensitive
   
   "recommended_cta": "book_call|...",
   "followup_in_minutes": 0,

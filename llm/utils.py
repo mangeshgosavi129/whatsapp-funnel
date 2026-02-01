@@ -123,6 +123,88 @@ def normalize_enum(
 # JSON Schema Definitions for Groq Structured Output
 # ============================================================
 
+def get_classify_schema() -> Dict[str, Any]:
+    """JSON Schema for Classify (Brain) step output with strict enforcement."""
+    return {
+        "name": "classify_output",
+        "strict": True,
+        "schema": {
+            "type": "object",
+            "properties": {
+                "thought_process": {
+                    "type": "string",
+                    "description": "Analysis of the situation and reasoning"
+                },
+                "situation_summary": {
+                    "type": "string",
+                    "description": "Brief summary of current conversation state"
+                },
+                "intent_level": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "very_high", "unknown"],
+                    "description": "User's intent level"
+                },
+                "user_sentiment": {
+                    "type": "string",
+                    "enum": ["neutral", "curious", "happy", "annoyed", "distrustful", "confused", "disappointed", "uninterested"],
+                    "description": "User's sentiment"
+                },
+                "risk_flags": {
+                    "type": "object",
+                    "properties": {
+                        "spam_risk": {"type": "string", "enum": ["low", "medium", "high"]},
+                        "policy_risk": {"type": "string", "enum": ["low", "medium", "high"]},
+                        "hallucination_risk": {"type": "string", "enum": ["low", "medium", "high"]}
+                    },
+                    "required": ["spam_risk", "policy_risk", "hallucination_risk"],
+                    "additionalProperties": False
+                },
+                "action": {
+                    "type": "string",
+                    "enum": ["send_now", "wait_schedule", "initiate_cta"],
+                    "description": "Action to take"
+                },
+                "new_stage": {
+                    "type": "string",
+                    "enum": ["greeting", "qualification", "pricing", "cta", "followup", "closed", "lost", "ghosted"],
+                    "description": "Next conversation stage"
+                },
+                "should_respond": {
+                    "type": "boolean",
+                    "description": "Whether to send a response"
+                },
+                "needs_human_attention": {
+                    "type": "boolean",
+                    "description": "Set to true if user explicitly asks for human or query is too complex"
+                },
+                "recommended_cta": {
+                    "type": ["string", "null"],
+                    "enum": ["book_call", "book_demo", "book_meeting", None],
+                    "description": "CTA type if applicable"
+                },
+                "followup_in_minutes": {
+                    "type": "integer",
+                    "description": "Minutes until followup"
+                },
+                "followup_reason": {
+                    "type": "string",
+                    "description": "Reason for followup timing"
+                },
+                "confidence": {
+                    "type": "number",
+                    "description": "Confidence score 0.0-1.0"
+                }
+            },
+            "required": [
+                "thought_process", "situation_summary", "intent_level", "user_sentiment",
+                "risk_flags", "action", "new_stage", "should_respond", "needs_human_attention",
+                "recommended_cta", "followup_in_minutes", "followup_reason", "confidence"
+            ],
+            "additionalProperties": False
+        }
+    }
+
+
 def get_analyze_schema() -> Dict[str, Any]:
     """JSON Schema for Analyze step output."""
     return {
