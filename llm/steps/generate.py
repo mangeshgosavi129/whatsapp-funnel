@@ -35,11 +35,20 @@ def _format_messages(messages: list) -> str:
 def _build_system_prompt(context: PipelineInput) -> str:
     """Build system prompt with constraints."""
     flow_guidance = context.flow_prompt if context.flow_prompt else "Follow standard sales conversation flow."
+    
+    # Determine if this is the first message in the conversation
+    # It's NOT the first message if there are any bot messages in the history
+    has_bot_messages = any(
+        msg.sender == "bot" for msg in (context.last_3_messages or [])
+    )
+    is_first_message = not has_bot_messages and not context.rolling_summary
+    
     return GENERATE_SYSTEM_PROMPT.format(
         max_words=context.max_words,
         questions_per_message=context.questions_per_message,
         language_pref=context.language_pref,
         flow_prompt=flow_guidance,
+        is_first_message=str(is_first_message).lower(),  # "true" or "false"
     )
 
 
