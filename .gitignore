@@ -11,3 +11,4 @@ whatsapp_receive.zip
 whatsapp_receive_pkg/
 lambda_build/
 wabot.pem
+ngrok.exe
