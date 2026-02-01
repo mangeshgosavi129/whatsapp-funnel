@@ -98,6 +98,8 @@ class AnalyzeOutput(BaseModel):
     missing_info: List[str] = Field(default_factory=list, max_length=5)
     detected_objections: List[str] = Field(default_factory=list, max_length=3)
     stage_recommendation: ConversationStage
+    intent_level: IntentLevel
+    user_sentiment: UserSentiment
     risk_flags: RiskFlags
     need_kb: KBRequirement
     confidence: float = Field(..., ge=0.0, le=1.0)

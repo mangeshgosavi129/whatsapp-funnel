@@ -84,6 +84,10 @@ def _validate_and_build_output(data: dict) -> AnalyzeOutput:
         query=kb.get("query", ""),
         reason=kb.get("reason", ""),
     )
+
+    # Extract Intent & Sentiment (Required for analytics)
+    intent_level = normalize_enum(data.get("intent_level"), IntentLevel, IntentLevel.UNKNOWN)
+    user_sentiment = normalize_enum(data.get("user_sentiment"), UserSentiment, UserSentiment.NEUTRAL)
     
     # ---------------------------------------------------------
     # REFINE STAGE WITH KEYWORDS (Heuristic Boost)
@@ -113,6 +117,8 @@ def _validate_and_build_output(data: dict) -> AnalyzeOutput:
         missing_info=data.get("missing_info", [])[:5],
         detected_objections=data.get("detected_objections", [])[:3],
         stage_recommendation=stage,
+        intent_level=intent_level,
+        user_sentiment=user_sentiment,
         risk_flags=risk_flags,
         need_kb=need_kb,
         confidence=confidence,
@@ -177,6 +183,8 @@ def _get_fallback_output() -> AnalyzeOutput:
         missing_info=[],
         detected_objections=[],
         stage_recommendation=ConversationStage.GREETING,
+        intent_level=IntentLevel.UNKNOWN,
+        user_sentiment=UserSentiment.NEUTRAL,
         risk_flags=RiskFlags(
             spam_risk=RiskLevel.MEDIUM,
             policy_risk=RiskLevel.MEDIUM,

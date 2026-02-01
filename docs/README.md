@@ -157,7 +157,7 @@ HTL is not a simple chatbot. It's a **digital sales mind** that processes each c
 │   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
 │   │ PostgreSQL  │  │    Redis    │  │   Celery    │  │   Groq      │             │
 │   │ - Orgs      │  │ - Celery    │  │ - Beat      │  │ - LLM API   │             │
-│   │ - Leads     │  │   broker    │  │ - Worker    │  │ - Llama 3.3 │             │
+│   │ - Leads     │  │   broker    │  │ - Worker    │  │ - gpt-oss-20b             │
 │   │ - Messages  │  │             │  │             │  │             │             │
 │   │ - Events    │  │             │  │             │  │             │             │
 │   └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘             │

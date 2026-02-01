@@ -45,11 +45,18 @@ def handle_pipeline_result(
     # Handle decision actions
     # ========================================
     
+    # Always reflect Latest Analysis (Intent & Sentiment)
+    # This ensures "Passive Monitoring" (WAIT) still updates the Dashboard
+    if result.analysis.intent_level:
+        updates["intent_level"] = result.analysis.intent_level.value
+    if result.analysis.user_sentiment:
+        updates["user_sentiment"] = result.analysis.user_sentiment.value
+
     if result.should_send_message:
         # We're sending a message
         message_to_send = result.response.message_text
         
-        # Apply state patch from generation
+        # Apply state patch from generation (Overwrites analysis if specific change occurred)
         if result.response.state_patch:
             patch = result.response.state_patch
             if patch.intent_level:
@@ -113,6 +120,22 @@ def handle_pipeline_result(
     # ========================================
     if updates:
         api_client.update_conversation(conversation_id, **updates)
+        
+        # Also sync relevant fields to Lead model
+        lead_updates = {}
+        if "stage" in updates:
+            lead_updates["conversation_stage"] = updates["stage"]
+        if "intent_level" in updates:
+            lead_updates["intent_level"] = updates["intent_level"]
+        if "user_sentiment" in updates:
+            lead_updates["user_sentiment"] = updates["user_sentiment"]
+            
+        if lead_updates:
+            try:
+                api_client.update_lead(lead_id, **lead_updates)
+                logger.info(f"Synced lead {lead_id} with updates: {lead_updates}")
+            except Exception as e:
+                logger.error(f"Failed to sync lead {lead_id}: {e}")
     
     # ========================================
     # Log pipeline event

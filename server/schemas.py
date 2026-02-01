@@ -109,6 +109,8 @@ class DashboardStatsOut(BaseModel):
     active_leads: int
     peak_hours: Dict[str, int]         
     sentiment_breakdown: Dict[str, int]
+    high_intent_leads: int = 0
+    action_items: List[Dict[str, Any]] = []
 
 
 # ======================================================

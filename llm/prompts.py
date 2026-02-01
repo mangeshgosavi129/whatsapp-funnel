@@ -17,6 +17,18 @@ GOALS:
 5. Flag risks (spam, policy, hallucination)
 6. Recommend if KB lookup needed
 
+DEFINITIONS:
+- Intent Level:
+  - LOW: Casual browsing, vague questions, one-word replies
+  - MEDIUM: Asking about specific features, comparison, general pricing
+  - HIGH: Asking about implementation, contract details, specific price quotes, timeline
+  - VERY_HIGH: Explicitly asking to buy, sign up, or speak to sales immediately
+- Sentiment:
+  - POSITIVE/CURIOUS: Engaged, asking questions, using emojis
+  - NEUTRAL: Professional, direct, no strong emotion
+  - SKEPTICAL/DISTUSTFUL: Questioning validity, asking for proof
+  - NEGATIVE/ANNOYED: Short answers, complaints, "stop", "unsubscribe"
+
 OUTPUT SCHEMA:
 {
   "situation_summary": "string (1-2 lines)",
@@ -24,6 +36,8 @@ OUTPUT SCHEMA:
   "missing_info": ["string"],
   "detected_objections": ["string"],
   "stage_recommendation": "greeting|qualification|pricing|cta|followup|closed|lost|ghosted",
+  "intent_level": "low|medium|high|very_high|unknown",
+  "user_sentiment": "annoyed|distrustful|confused|curious|disappointed|neutral|uninterested",
   "risk_flags": {
     "spam_risk": "low|medium|high",
     "policy_risk": "low|medium|high",

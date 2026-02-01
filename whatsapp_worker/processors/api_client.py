@@ -132,11 +132,25 @@ class InternalsAPIClient:
         )
         return self._handle_response(response)
     
-    def update_lead(self, lead_id: UUID, name: Optional[str] = None) -> Dict:
+    def update_lead(
+        self,
+        lead_id: UUID,
+        name: Optional[str] = None,
+        conversation_stage: Optional[str] = None,
+        intent_level: Optional[str] = None,
+        user_sentiment: Optional[str] = None,
+    ) -> Dict:
         """Update lead details."""
         params = {}
         if name is not None:
             params["name"] = name
+        if conversation_stage is not None:
+            params["conversation_stage"] = conversation_stage
+        if intent_level is not None:
+            params["intent_level"] = intent_level
+        if user_sentiment is not None:
+            params["user_sentiment"] = user_sentiment
+            
         response = self.client.patch(
             f"/internals/leads/{lead_id}",
             params=params

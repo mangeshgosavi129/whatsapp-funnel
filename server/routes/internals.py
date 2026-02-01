@@ -8,10 +8,12 @@ through these endpoints.
 from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import UUID
-
+from server.services.websocket_events import emit_conversation_updated
+from server.schemas import ConversationOut
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from server.dependencies import require_internal_secret, get_db
+import logging
 from server.models import (
     Conversation, ConversationEvent, Lead, Message, Organization,
     ScheduledAction, WhatsAppIntegration
@@ -190,6 +192,9 @@ def create_lead(
 def update_lead(
     lead_id: UUID,
     name: Optional[str] = None,
+    conversation_stage: Optional[ConversationStage] = None,
+    intent_level: Optional[IntentLevel] = None,
+    user_sentiment: Optional[UserSentiment] = None,
     _: None = Depends(require_internal_secret),
     db: Session = Depends(get_db),
 ):
@@ -200,6 +205,12 @@ def update_lead(
 
     if name is not None:
         lead.name = name
+    if conversation_stage is not None:
+        lead.conversation_stage = conversation_stage
+    if intent_level is not None:
+        lead.intent_level = intent_level
+    if user_sentiment is not None:
+        lead.user_sentiment = user_sentiment
 
     db.commit()
     db.refresh(lead)
@@ -305,7 +316,7 @@ def get_conversation(
 
 
 @router.patch("/conversations/{conversation_id}", response_model=InternalConversationOut)
-def update_conversation(
+async def update_conversation(
     conversation_id: UUID,
     payload: InternalConversationUpdate,
     _: None = Depends(require_internal_secret),
@@ -323,6 +334,14 @@ def update_conversation(
 
     db.commit()
     db.refresh(conv)
+
+    # Emit WebSocket event for real-time frontend updates
+    try:
+        conv_out = ConversationOut.model_validate(conv, from_attributes=True)
+        await emit_conversation_updated(conv.organization_id, conv_out)
+    except Exception as e:
+        logging.getLogger(__name__).warning(f"Failed to emit websocket for updated conversation: {e}")
+
     return _conversation_to_schema(conv)
 
 
