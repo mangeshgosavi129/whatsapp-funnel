@@ -13,7 +13,7 @@ from llm.schemas import PipelineInput, AnalyzeOutput, RiskFlags, KBRequirement
 from llm.prompts import ANALYZE_SYSTEM_PROMPT, ANALYZE_USER_TEMPLATE
 from llm.utils import normalize_enum
 from llm.api_helpers import llm_call_with_retry, extract_json_from_text
-from server.enums import ConversationStage, RiskLevel
+from server.enums import ConversationStage, RiskLevel, IntentLevel, UserSentiment
 
 logger = logging.getLogger(__name__)
 
