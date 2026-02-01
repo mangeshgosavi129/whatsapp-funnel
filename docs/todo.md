@@ -187,16 +187,22 @@ changes
     e. update message/send in the frontend to use the api call message/send_human -- Done
 
     f. remove the buttons for uploading files, attachments and emojis -- done
-    i. the page upon opening always keeps on leading, fix that -- Done
+    i. the page upon opening always keeps on loading, fix that -- Done
     l. application start up issue probably due to error 307, temp redirect and websocket connection conflict/ race condition -- Done
     
     
-    h. cta is not properly configured, time and name, should be the output of llm, and that should trigger the websocket event so that upon cta selection, the conversation should be shown in the actions page
-    g. submit template needs multiple details to be filled, add that in each api endpoint and the frontend. 
+    h. cta is not properly configured, time and name, should be the output of llm, and that should trigger the websocket event so that upon cta selection, the conversation should be shown in the actions page -- Done
+    
+    g. submit template needs multiple details to be filled, add that in each api endpoint and the frontend. -- Partially Done
+    
     j. restructuring the frontend to have a better structure
+    
     k. analytics is showing incorrect values even after reloading, check for its logic, if it is correct or wrong
-    m. Host the app on ec2
 
+    m. Host the app on ec2
+        update internal api url
+            in whatsapp_receive - external call
+            in whatsapp_worker - internal call
     github note : always commit should be in the format
     Improvements (1) - Analytics made better, but completely working
     Fixes (2) - wehsocket doesn't initiate until data loaded. Whatsapp config updated

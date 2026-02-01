@@ -1,4 +1,5 @@
 import logging
+import boto3
 from typing import Mapping, Optional, Tuple
 import json
 import base64
@@ -38,5 +39,4 @@ def push_to_queue(
     except Exception as e:
         logging.error(f"Failed to push to SQS: {str(e)}")
         return {"status": "error", "message": "Queue sync failed"}, 500
-    
     return {"status": "ok"}, 200
