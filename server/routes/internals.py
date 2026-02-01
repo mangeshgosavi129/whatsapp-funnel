@@ -126,6 +126,9 @@ def get_integration_with_org(
         organization_id=org.id,
         organization_name=org.name,
         is_active=org.is_active,
+        business_name=org.business_name,
+        business_description=org.business_description,
+        flow_prompt=org.flow_prompt,
     )
 
 
@@ -663,6 +666,9 @@ def get_followup_context(
         access_token=integration.access_token,
         phone_number_id=integration.phone_number_id,
         version=integration.version,
+        business_name=org.business_name,
+        business_description=org.business_description,
+        flow_prompt=org.flow_prompt,
     )
 
 

@@ -110,9 +110,17 @@ def process_single_followup(action: dict):
         api_client.update_action_status(action_id, status="cancelled")
         return
     
+    # Build org config dict from followup context
+    org_config = {
+        "organization_name": context["organization_name"],
+        "business_name": context.get("business_name"),
+        "business_description": context.get("business_description"),
+        "flow_prompt": context.get("flow_prompt"),
+    }
+    
     # Build pipeline context
     pipeline_context = build_pipeline_context(
-        context["organization_name"],
+        org_config,
         conversation,
         lead
     )

@@ -48,6 +48,7 @@ class PipelineInput(BaseModel):
     # Business context
     business_name: str
     business_description: str = ""
+    flow_prompt: str = ""  # Conversation flow/sales script instructions
     
     # Conversation context
     rolling_summary: str = ""

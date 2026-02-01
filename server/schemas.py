@@ -120,9 +120,20 @@ class DashboardStatsOut(BaseModel):
 class OrganizationOut(BaseModel):
     id: UUID
     name: str
+    business_name: Optional[str] = None
+    business_description: Optional[str] = None
+    flow_prompt: Optional[str] = None
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime]
+
+
+class OrganizationUpdate(BaseModel):
+    """Update organization configuration."""
+    name: Optional[str] = None
+    business_name: Optional[str] = None
+    business_description: Optional[str] = None
+    flow_prompt: Optional[str] = None
 
 
 class UserOut(BaseModel):
@@ -416,6 +427,10 @@ class InternalIntegrationWithOrgOut(BaseModel):
     organization_id: UUID
     organization_name: str
     is_active: bool
+    # Business configuration
+    business_name: Optional[str] = None
+    business_description: Optional[str] = None
+    flow_prompt: Optional[str] = None
 
 
 class InternalLeadCreate(BaseModel):
@@ -579,3 +594,7 @@ class InternalFollowupContext(BaseModel):
     access_token: str
     phone_number_id: str
     version: str
+    # Business configuration
+    business_name: Optional[str] = None
+    business_description: Optional[str] = None
+    flow_prompt: Optional[str] = None

@@ -34,10 +34,12 @@ def _format_messages(messages: list) -> str:
 
 def _build_system_prompt(context: PipelineInput) -> str:
     """Build system prompt with constraints."""
+    flow_guidance = context.flow_prompt if context.flow_prompt else "Follow standard sales conversation flow."
     return GENERATE_SYSTEM_PROMPT.format(
         max_words=context.max_words,
         questions_per_message=context.questions_per_message,
         language_pref=context.language_pref,
+        flow_prompt=flow_guidance,
     )
 
 

@@ -241,9 +241,17 @@ def process_message(
         # Step 3: Run HTL Pipeline
         # ========================================
         
+        # Build org config dict from API result
+        org_config = {
+            "organization_name": org_result["organization_name"],
+            "business_name": org_result.get("business_name"),
+            "business_description": org_result.get("business_description"),
+            "flow_prompt": org_result.get("flow_prompt"),
+        }
+        
         # Build pipeline context
         pipeline_context = build_pipeline_context(
-            organization_name, conversation, lead
+            org_config, conversation, lead
         )
         
         # Run the pipeline

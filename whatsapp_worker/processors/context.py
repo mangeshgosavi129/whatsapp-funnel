@@ -63,12 +63,21 @@ def calculate_whatsapp_window(last_user_message_at: Optional[str]) -> bool:
 
 
 def build_pipeline_context(
-    organization_name: str,
+    org_config: Dict,
     conversation: Dict,
     lead: Dict,
 ) -> PipelineInput:
     """
     Build complete pipeline context from API data.
+    
+    Args:
+        org_config: Dict with organization config including:
+            - organization_name: str
+            - business_name: Optional[str]
+            - business_description: Optional[str]
+            - flow_prompt: Optional[str]
+        conversation: Conversation data from API
+        lead: Lead data from API
     """
     conversation_id = UUID(conversation["id"])
     
@@ -102,11 +111,17 @@ def build_pipeline_context(
     user_sentiment = UserSentiment(conversation.get("user_sentiment", UserSentiment.NEUTRAL.value)) if conversation.get("user_sentiment") else UserSentiment.NEUTRAL
     mode = conversation.get("mode", ConversationMode.BOT.value)
     
+    # Get business config from org_config (with fallback to org name)
+    business_name = org_config.get("business_name") or org_config.get("organization_name", "")
+    business_description = org_config.get("business_description") or ""
+    flow_prompt = org_config.get("flow_prompt") or ""
+    
     # Build pipeline input
     context = PipelineInput(
-        # Business context
-        business_name="Global TaxMaster",
-        business_description="Global Tax Masters is a distinguished advisory firm with 15+ years of experience. We have assisted 400+ clients across 20 states, saving over ₹1500 Crores in duties. Our services are cost-effective, with reasonable professional fees tailored to specific client requirements. Core Service (MOOWR Scheme): Allows manufacturing entities (Pvt Ltd, LLP, Partnership, Proprietorship) to import capital goods and raw materials without paying upfront duties. Duty Relief: You do not pay Basic Customs Duty (BCD), IGST, Social Welfare Surcharge, or Anti-Dumping Duty. Payment Terms: Duty is effectively exempted if goods are used for manufacturing indefinitely. Duty is payable only if goods are sold/removed to the domestic market (no interest charged). Future Scope: The license has lifetime validity. Once registered, all future machine imports for that factory are automatically duty-free. Registration & Documents: Timeline & Scope: Approval takes 4–6 weeks. Registration is premises-based (factory-specific); moving locations or adding units requires separate registrations. Verification: Customs Superintendent visits specifically to verify storage safety (CCTV, fire safety, burglary protection). Required Documents: Site Plan, Bank Solvency Certificate, Fire Safety Audit, All-Risk Insurance Policy, Incorporation/Financial documents, and KYC of key personnel. Contact: Email: rohit@saveduty.com | Phone: +91 8797 01 02 03 Address: HD-305, WeWork Futura, Magarpatta, Pune.",  # Mocked for testing
+        # Business context (from organization config)
+        business_name=business_name,
+        business_description=business_description,
+        flow_prompt=flow_prompt,
         
         # Conversation context  
         rolling_summary=conversation.get("rolling_summary", ""),
