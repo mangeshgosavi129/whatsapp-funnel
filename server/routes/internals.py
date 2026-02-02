@@ -27,7 +27,8 @@ from server.schemas import (
     InternalFollowupContext, InternalIncomingMessageCreate, InternalIntegrationWithOrgOut,
     InternalLeadCreate, InternalLeadOut, InternalMessageContext, InternalMessageOut,
     InternalOutgoingMessageCreate, InternalPipelineEventCreate, InternalPipelineEventOut,
-    InternalScheduledActionCreate, InternalScheduledActionOut, InternalScheduledActionUpdate
+    InternalScheduledActionCreate, InternalScheduledActionOut, InternalScheduledActionUpdate, 
+    CTAOut, CTA
 )
 
 router = APIRouter()
