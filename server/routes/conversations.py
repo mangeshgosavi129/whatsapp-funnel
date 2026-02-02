@@ -13,6 +13,7 @@ router = APIRouter()
 def get_conversations(
     mode: str = None,
     needs_human_attention: bool = None,
+    actionable: bool = None,
     attended_only: bool = False,
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)
@@ -25,11 +26,18 @@ def get_conversations(
     if needs_human_attention is not None:
         query = query.filter(Conversation.needs_human_attention == needs_human_attention)
         
+    if actionable is True:
+        from sqlalchemy import or_
+        query = query.filter(or_(
+            Conversation.needs_human_attention == True,
+            Conversation.cta_id.isnot(None)
+        ))
+        
     if attended_only:
         query = query.filter(Conversation.human_attention_resolved_at.isnot(None))\
                      .order_by(Conversation.human_attention_resolved_at.desc())
 
-    if not attended_only and needs_human_attention is None and mode is None:
+    if not attended_only and needs_human_attention is None and actionable is None and mode is None:
          # Default ordering if no specific filters
          query = query.order_by(Conversation.updated_at.desc())
         

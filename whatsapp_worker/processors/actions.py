@@ -41,6 +41,10 @@ def handle_pipeline_result(
     # Update conversation state from classification
     # ========================================
     
+    # ========================================
+    # 1. Collect all state updates
+    # ========================================
+    
     # Update stage if recommended and confidence is high enough
     if classification.confidence >= 0.6:
         current_stage = conversation.get("stage")
@@ -49,56 +53,24 @@ def handle_pipeline_result(
             logger.info(f"Stage transition: {current_stage} -> {recommended_stage}")
             updates["stage"] = recommended_stage
     
-    # ========================================
-    # Handle decision actions
-    # ========================================
-    
     # Reflect Intent & Sentiment
     if classification.intent_level:
         updates["intent_level"] = classification.intent_level.value
     if classification.user_sentiment:
         updates["user_sentiment"] = classification.user_sentiment.value
 
-    # ========================================
-    # INDEPENDENT: Check for human attention flag ALWAYS
-    # (Not mutually exclusive with sending messages)
-    # ========================================
+    # Check for human attention flag
     if result.should_escalate:
-        # Escalate to human
         logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
-        print(f"DEBUG: Entering should_escalate block for {conversation_id}") # DEBUG LOG
-        
-        # Flag persistent attention needed in DB
         updates["needs_human_attention"] = True
-        
-        try:
-            print("DEBUG: Calling emit_human_attention...") # DEBUG LOG
-            api_client.emit_human_attention(
-                conversation_id=conversation_id,
-                organization_id=UUID(conversation["organization_id"]),
-            )
-            print("DEBUG: emit_human_attention called successfully") # DEBUG LOG
-        except Exception as e:
-            logger.error(f"Failed to emit human attention event: {e}")
-            print(f"DEBUG: Exception in emit_human_attention: {e}") # DEBUG LOG
 
-    # ========================================
-    # Handle message sending and other actions
-    # ========================================
-    if result.should_send_message:
-        # We're sending a message
-        if result.response:
-            message_to_send = result.response.message_text
-            
-            # Note: State patching was removed from GenerateOutput in simplifications
-            # We rely on Classification for state updates now.
-             
-            # Verify stage from response matches classification (sanity check)
-            # In new flow, classification drives stage.
-            updates["stage"] = classification.new_stage.value
+    # Handle message sending
+    if result.should_send_message and result.response:
+        message_to_send = result.response.message_text
+        updates["stage"] = classification.new_stage.value
         
+    # Handle follow-up scheduling
     elif result.should_schedule_followup:
-        # Schedule a follow-up
         followup_minutes = classification.followup_in_minutes
         if followup_minutes > 0:
             schedule_followup(
@@ -107,12 +79,11 @@ def handle_pipeline_result(
                 classification.followup_reason
             )
     
+    # Handle CTA initiation
     elif result.should_initiate_cta or classification.selected_cta_id:
-        # Initiate CTA - notify frontend and persist
         selected_cta_id = classification.selected_cta_id
         cta_scheduled_at = classification.cta_scheduled_at
         
-        # If we have an override from Generator Stage, use it
         if result.response and result.response.selected_cta_id:
             selected_cta_id = result.response.selected_cta_id
             
@@ -120,11 +91,58 @@ def handle_pipeline_result(
             updates["cta_id"] = str(selected_cta_id)
             if cta_scheduled_at:
                 updates["cta_scheduled_at"] = cta_scheduled_at
+
+    # Update rolling summary
+    if result.summary and result.summary.updated_rolling_summary:
+        updates["rolling_summary"] = result.summary.updated_rolling_summary
+    
+    # ========================================
+    # 2. Persist state updates to DB first
+    # ========================================
+    if updates:
+        try:
+            api_client.update_conversation(conversation_id, **updates)
             
+            # Sync relevant fields to Lead model
+            lead_updates = {}
+            if "stage" in updates:
+                lead_updates["conversation_stage"] = updates["stage"]
+            if "intent_level" in updates:
+                lead_updates["intent_level"] = updates["intent_level"]
+            if "user_sentiment" in updates:
+                lead_updates["user_sentiment"] = updates["user_sentiment"]
+                
+            if lead_updates:
+                try:
+                    api_client.update_lead(lead_id, **lead_updates)
+                except Exception as e:
+                    logger.error(f"Failed to sync lead {lead_id}: {e}")
+        except Exception as e:
+            logger.error(f"Failed to persist conversation updates: {e}")
+            # Even if DB update fails, we might still want to try sending the message 
+            # if low latency is critical, but the prompt says persistence first.
+    
+    # ========================================
+    # 3. Emit WebSocket events (Enhancement)
+    # ========================================
+    
+    # Emit human attention if flagged
+    if updates.get("needs_human_attention"):
+        try:
+            api_client.emit_human_attention(
+                conversation_id=conversation_id,
+                organization_id=UUID(conversation["organization_id"]),
+            )
+        except Exception as e:
+            logger.error(f"Failed to emit human attention event: {e}")
+
+    # Emit CTA initiation if flagged
+    if "cta_id" in updates:
+        try:
             # Fetch CTA Name for the event
             cta_name = "CTA"
+            selected_cta_id = updates["cta_id"]
             try:
-                # We could optimize this by caching or passing CTA names in the context
                 raw_ctas = api_client.get_organization_ctas(UUID(conversation["organization_id"]))
                 for cta in raw_ctas:
                     if str(cta["id"]) == str(selected_cta_id):
@@ -133,50 +151,17 @@ def handle_pipeline_result(
             except Exception as e:
                 logger.error(f"Failed to fetch CTA name for event: {e}")
 
-            logger.info(f"🚀 CTA INITIATED: Conversation {conversation_id}, type={cta_name}, id={selected_cta_id}")
-            
-            try:
-                api_client.emit_cta_initiated(
-                    conversation_id=conversation_id,
-                    organization_id=UUID(conversation["organization_id"]),
-                    cta_type=cta_name, # Use Name as type per requirements
-                    cta_name=cta_name,
-                    scheduled_time=cta_scheduled_at or datetime.now(timezone.utc).isoformat(),
-                )
-            except Exception as e:
-                logger.error(f"Failed to emit CTA initiated event: {e}")
-    
-    # ========================================
-    # Always update rolling summary
-    # ========================================
-    if result.summary and result.summary.updated_rolling_summary:
-        updates["rolling_summary"] = result.summary.updated_rolling_summary
-    
-    # ========================================
-    # Apply conversation updates via API
-    # ========================================
-    if updates:
-        api_client.update_conversation(conversation_id, **updates)
-        
-        # Also sync relevant fields to Lead model
-        lead_updates = {}
-        if "stage" in updates:
-            lead_updates["conversation_stage"] = updates["stage"]
-        if "intent_level" in updates:
-            lead_updates["intent_level"] = updates["intent_level"]
-        if "user_sentiment" in updates:
-            lead_updates["user_sentiment"] = updates["user_sentiment"]
-            
-        if lead_updates:
-            try:
-                api_client.update_lead(lead_id, **lead_updates)
-                logger.info(f"Synced lead {lead_id} with updates: {lead_updates}")
-            except Exception as e:
-                logger.error(f"Failed to sync lead {lead_id}: {e}")
-    
-    # ========================================
+            api_client.emit_cta_initiated(
+                conversation_id=conversation_id,
+                organization_id=UUID(conversation["organization_id"]),
+                cta_type=cta_name,
+                cta_name=cta_name,
+                scheduled_time=updates.get("cta_scheduled_at") or datetime.now(timezone.utc).isoformat(),
+            )
+        except Exception as e:
+            logger.error(f"Failed to emit CTA initiated event: {e}")
+
     # Log pipeline event
-    # ========================================
     log_pipeline_event(conversation_id, result)
     
     return message_to_send
