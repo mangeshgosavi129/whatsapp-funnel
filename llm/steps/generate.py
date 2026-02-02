@@ -86,9 +86,11 @@ def run_generate(context: PipelineInput, classification: ClassifyOutput) -> Tupl
     
     # DYNAMIC SYSTEM PROMPT (The Fix)
     # Load instruction ONLY for the target stage determined by the Brain
+    # Enriched with business context (The Mouth)
     system_prompt = get_system_prompt(
         stage=classification.new_stage, # Use the NEW stage
         business_name=context.business_name,
+        business_description=context.business_description,
         flow_prompt=context.flow_prompt,
         max_words=context.max_words
     )

@@ -12,6 +12,11 @@ from server.enums import ConversationStage
 # ============================================================
 BASE_PERSONA = """
 You are {business_name}'s AI sales assistant.
+
+=== BUSINESS CONTEXT ===
+{business_description}
+
+=== YOUR GOAL ===
 Your goal is to be helpful, professional, and move the conversation forward.
 
 TONE & STYLE:
@@ -100,12 +105,16 @@ Send a gentle nudge to see if they are still interested.
 # Factory Function
 # ============================================================
 
-def get_system_prompt(stage: ConversationStage, business_name: str, flow_prompt: str = "", max_words: int = 80) -> str:
+def get_system_prompt(stage: ConversationStage, business_name: str, business_description: str = "", flow_prompt: str = "", max_words: int = 80) -> str:
     """
     Dynamically build the system prompt for the specific stage.
     """
     # Base instructions
-    base = BASE_PERSONA.format(business_name=business_name, max_words=max_words)
+    base = BASE_PERSONA.format(
+        business_name=business_name, 
+        business_description=business_description,
+        max_words=max_words
+    )
     
     # Stage instructions
     # Fallback to Qualification if stage missing
@@ -114,4 +123,35 @@ def get_system_prompt(stage: ConversationStage, business_name: str, flow_prompt:
     # Inject business-specific scripts into the template
     specific_instruction = instruction_template.format(flow_prompt=flow_prompt)
     
-    return f"{base}\n\n{specific_instruction}"
+
+# ============================================================
+# Classify Factory (The Brain)
+# ============================================================
+
+from llm.prompts import CLASSIFY_BASE_INSTRUCTIONS, CLASSIFY_STAGE_INSTRUCTIONS
+
+def get_classify_system_prompt(stage: ConversationStage, is_opening: bool = False) -> str:
+    """
+    Build the system prompt for Step 1 (Classify).
+    Enforces stage-based isolation to eliminate context pollution.
+    """
+    # 1. Base instructions (behavior rules)
+    base = CLASSIFY_BASE_INSTRUCTIONS
+    
+    # 2. Stage-specific rules (the router)
+    # If opening message, force GREETING instructions regardless of input stage
+    target_stage = ConversationStage.GREETING if is_opening else stage
+    
+    stage_rules = CLASSIFY_STAGE_INSTRUCTIONS.get(
+        target_stage, 
+        CLASSIFY_STAGE_INSTRUCTIONS[ConversationStage.QUALIFICATION]
+    )
+    
+    # 3. Combine
+    prompt = f"{base}\n\n{stage_rules}"
+    
+    # 4. Opening Message Exclusion
+    if is_opening:
+        prompt += "\nATTENTION: This is an OPENING message from a new lead. Do not reference any prior history."
+    
+    return prompt

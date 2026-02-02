@@ -10,7 +10,8 @@ from openai import OpenAI
 
 from llm.config import llm_config
 from llm.schemas import PipelineInput, ClassifyOutput, RiskFlags
-from llm.prompts import CLASSIFY_SYSTEM_PROMPT, CLASSIFY_USER_TEMPLATE
+from llm.prompts import CLASSIFY_USER_TEMPLATE, HISTORY_SECTION_TEMPLATE
+from llm.prompts_registry import get_classify_system_prompt
 from llm.utils import normalize_enum, get_classify_schema
 from llm.api_helpers import llm_call_with_retry
 from server.enums import (
@@ -32,13 +33,31 @@ def _format_messages(messages: list) -> str:
     return "\n".join(lines)
 
 
-def _build_user_prompt(context: PipelineInput) -> str:
+def _is_opening_message(context: PipelineInput) -> bool:
+    """
+    Check if this is an opening message (no relevant history).
+    History is considered empty if last_3_messages has 0 or 1 message.
+    """
+    # If the list is empty or only contains the current message (if already added)
+    # in some flows, the message is added to history before pipeline runs.
+    # We check if context.rolling_summary is empty as a strong signal.
+    return not context.last_3_messages or (len(context.last_3_messages) <= 1 and not context.rolling_summary)
+
+
+def _build_user_prompt(context: PipelineInput, is_opening: bool) -> str:
     """Build the user prompt with context."""
+    
+    # 1. Format History Section (Only for replies)
+    history_section = ""
+    if not is_opening:
+        history_section = HISTORY_SECTION_TEMPLATE.format(
+            rolling_summary=context.rolling_summary or "No summary yet",
+            last_3_messages=_format_messages(context.last_3_messages)
+        )
+    
+    # 2. Build Full Prompt (Note: Business context removed per Brain-Mouth logic separation)
     return CLASSIFY_USER_TEMPLATE.format(
-        business_name=context.business_name,
-        business_description=context.business_description,
-        rolling_summary=context.rolling_summary or "No summary yet",
-        last_3_messages=_format_messages(context.last_3_messages),
+        history_section=history_section,
         conversation_stage=context.conversation_stage.value,
         conversation_mode=context.conversation_mode,
         intent_level=context.intent_level.value,
@@ -105,7 +124,9 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
         base_url=llm_config.base_url,
     )
     
-    user_prompt = _build_user_prompt(context)
+    is_opening = _is_opening_message(context)
+    user_prompt = _build_user_prompt(context, is_opening)
+    system_prompt = get_classify_system_prompt(context.conversation_stage, is_opening)
     
     start_time = time.time()
     
@@ -113,7 +134,7 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
         return client.chat.completions.create(
             model=llm_config.model,
             messages=[
-                {"role": "system", "content": CLASSIFY_SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_schema", "json_schema": get_classify_schema()},
