@@ -3,11 +3,16 @@
 # Function to kill processes
 kill_processes() {
     echo "Killing existing processes..."
-    pkill -f "gunicorn server.main:app"
-    pkill -f "python3 -m whatsapp_worker.main"
-    pkill -f "celery -A whatsapp_worker.tasks.celery_app worker"
-    pkill -f "celery -A whatsapp_worker.tasks.celery_app beat"
-    # Note: We are not automatically killing redis-server as it might be a system service
+
+    # Kill anything bound to port 8000 (gunicorn/uvicorn)
+    sudo fuser -k 8000/tcp || true
+
+    # Kill background workers cleanly
+    pkill -f "whatsapp_worker" || true
+    pkill -f "celery" || true
+    pkill -f "gunicorn" || true
+    pkill -f "uvicorn" || true
+
     echo "Processes killed."
 }
 
@@ -46,7 +51,6 @@ nohup gunicorn server.main:app \
   --workers 4 \
   --worker-class uvicorn.workers.UvicornWorker \
   --bind 0.0.0.0:8000 \
-  --reload \
   > logs/server.log 2>&1 &
 SERVER_PID=$!
 
