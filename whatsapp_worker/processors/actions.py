@@ -29,11 +29,6 @@ def handle_pipeline_result(
     message_to_send = None
     updates = {}
     
-    # DEBUG: Trace should_escalate value
-    print(f"[actions.py] handle_pipeline_result called for {conversation_id}")
-    print(f"[actions.py] result.should_escalate = {result.should_escalate}")
-    print(f"[actions.py] classification.needs_human_attention = {result.classification.needs_human_attention}")
-    
     # Use the unified classification output
     classification = result.classification
     
@@ -59,17 +54,29 @@ def handle_pipeline_result(
     if classification.user_sentiment:
         updates["user_sentiment"] = classification.user_sentiment.value
 
-    # Check for human attention flag
+    # Check for human attention flag (INDEPENDENT - can happen with any action)
     if result.should_escalate:
         logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
         updates["needs_human_attention"] = True
+
+    # Collect CTA fields (INDEPENDENT - CTA can be triggered even when sending a message)
+    # e.g., "Let's book a call!" message + CTA initiation
+    selected_cta_id = classification.selected_cta_id
+    if result.response and result.response.selected_cta_id:
+        selected_cta_id = result.response.selected_cta_id
+        
+    if selected_cta_id:
+        updates["cta_id"] = str(selected_cta_id)
+        if classification.cta_scheduled_at:
+            updates["cta_scheduled_at"] = classification.cta_scheduled_at
+        logger.info(f"📋 CTA selected: {selected_cta_id} for conversation {conversation_id}")
 
     # Handle message sending
     if result.should_send_message and result.response:
         message_to_send = result.response.message_text
         updates["stage"] = classification.new_stage.value
         
-    # Handle follow-up scheduling
+    # Handle follow-up scheduling (only if NOT sending a message)
     elif result.should_schedule_followup:
         followup_minutes = classification.followup_in_minutes
         if followup_minutes > 0:
@@ -78,19 +85,6 @@ def handle_pipeline_result(
                 followup_minutes,
                 classification.followup_reason
             )
-    
-    # Handle CTA initiation
-    elif result.should_initiate_cta or classification.selected_cta_id:
-        selected_cta_id = classification.selected_cta_id
-        cta_scheduled_at = classification.cta_scheduled_at
-        
-        if result.response and result.response.selected_cta_id:
-            selected_cta_id = result.response.selected_cta_id
-            
-        if selected_cta_id:
-            updates["cta_id"] = str(selected_cta_id)
-            if cta_scheduled_at:
-                updates["cta_scheduled_at"] = cta_scheduled_at
 
     # Update rolling summary
     if result.summary and result.summary.updated_rolling_summary:
