@@ -22,6 +22,11 @@ if [ "$1" == "--kill" ]; then
     exit 0
 fi
 
+if [ "$1" == "--restart" ]; then
+    echo "There is no restart option, use --kill and then run the script again."
+    exit 0
+fi
+
 # Activate virtual environment
 if [ -f "./.venv/bin/activate" ]; then
     source ./.venv/bin/activate
