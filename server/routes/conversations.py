@@ -6,6 +6,7 @@ from server.schemas import ConversationOut, MessageOut, AuthContext
 from server.models import Conversation, Message
 from server.enums import ConversationMode
 from uuid import UUID
+from datetime import datetime
 
 router = APIRouter()
 
@@ -109,6 +110,9 @@ def takeover_conversation(
         raise HTTPException(status_code=404, detail="Conversation not found")
     
     db_conv.mode = ConversationMode.HUMAN
+    # Clear human attention flag since human is now handling it
+    db_conv.needs_human_attention = False
+    db_conv.human_attention_resolved_at = datetime.utcnow()
     db.commit()
     db.refresh(db_conv)
     return db_conv

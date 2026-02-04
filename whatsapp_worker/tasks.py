@@ -12,7 +12,7 @@ from whatsapp_worker.processors.api_client import api_client, InternalsAPIError
 from whatsapp_worker.processors.context import build_pipeline_context
 from whatsapp_worker.processors.actions import handle_pipeline_result, reset_daily_followup_counts
 from llm.pipeline import run_followup_pipeline
-from server.enums import MessageFrom, ConversationMode
+from server.enums import MessageFrom, ConversationMode, ConversationStage
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +88,18 @@ def process_realtime_followup(context: dict):
     followup_type = context["followup_type"]
     
     logger.info(f"Processing {followup_type} for conversation {conversation['id']}")
+
+    # Special handling for GHOSTED - no message, just update stage to close out
+    if followup_type == ConversationStage.GHOSTED or followup_type == "ghosted":
+        try:
+            api_client.update_conversation(
+                UUID(conversation["id"]),
+                stage=ConversationStage.GHOSTED
+            )
+            logger.info(f"Marked conversation {conversation['id']} as GHOSTED (no response after followups)")
+        except Exception as e:
+            logger.error(f"Failed to mark conversation as GHOSTED: {e}")
+        return
 
     # Override the stage for the prompt registry to pick the correct warmup
     # We don't save this stage change to DB yet, it's just for generation

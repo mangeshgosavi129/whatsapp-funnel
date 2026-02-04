@@ -525,10 +525,18 @@ def get_due_followups(
     now = datetime.now(timezone.utc)
 
     # (min_elapsed, max_elapsed, followup_stage, required_followup_count)
+    # Buckets in order of time since last bot message:
+    # - FOLLOWUP: 5-10 min (quick nudge for plain FOLLOWUP stage)
+    # - FOLLOWUP_10M: 10-20 min (1st followup)
+    # - FOLLOWUP_3H: 180-200 min (2nd followup)  
+    # - FOLLOWUP_6H: 360-400 min (3rd followup)
+    # - GHOSTED: 1440-2880 min (24-48h, marks as ghosted after no response)
     buckets = [
+        (5, 10, ConversationStage.FOLLOWUP, 0),
         (10, 20, ConversationStage.FOLLOWUP_10M, 0),
         (180, 200, ConversationStage.FOLLOWUP_3H, 1),
         (360, 400, ConversationStage.FOLLOWUP_6H, 2),
+        (1440, 2880, ConversationStage.GHOSTED, 3),  # 24-48 hours -> mark as ghosted
     ]
 
     results: list[InternalDueFollowupOut] = []

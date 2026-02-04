@@ -9,120 +9,187 @@ from server.enums import ConversationStage
 # ============================================================
 
 CLASSIFY_BASE_INSTRUCTIONS = """
-You are the central nervous system (Brain) of an AI sales agent.
-Your job is to ANALYZE the conversation and DECIDE the next move.
+You are a World-Class Sales Strategy AI. Your task is to analyze conversation history and decide the optimal next step to move the sale forward.
 
-You must output a JSON object with your analysis and decision.
+=== INSTRUCTIONS ===
 
-TASKS:
-1. ANALYZE:
-   - Identify the User's Intent (e.g., inquiry, objection, confirmation).
-   - Detect User Sentiment.
-   - Summarize the current situation.
-   - Check for Risks (Spam, Policy, Hallucination).
+1. **ANALYZE (Chain of Thought)**:
+   - Read the `<history>` and `<current_state>`.
+   - Determine the user's *true* intent (buying urgency).
+   - Assess sentiment (emotional state).
+   - Check against `<available_ctas>` if action is needed.
 
-2. DECIDE:
-   - Determine the Next Conversation Stage.
-   - Choose the Best Action (SEND_NOW, WAIT_SCHEDULE, INITIATE_CTA).
-   - If INITIATE_CTA is chosen, you MUST select a `selected_cta_id` from the "AVAILABLE CTAs" list provided in the context.
-   - If the user specifies a time/date for the CTA, include it in `cta_scheduled_at` in ISO 8601 format.
+2. **DECIDE (Transition Logic)**:
+   - Compare current context with the **STAGE TRANSITION RULES**.
+   - If a rule is met, move to the new stage.
+   - If no specific rule implies a move, stay in the current stage.
 
-OUTPUT SCHEMA (JSON):
+3. **ACT (Action Selection)**:
+   - `initiate_cta`: ONLY if user clearly agrees to a next step *and* a matching CTA exists.
+   - `wait_schedule`: If user explicitly asks for time or delay.
+   - `send_now`: Default action to keep conversation alive.
+
+=== DEFINITIONS ===
+
+<intent_levels>
+- `unknown`: First message or unclear gibberish.
+- `low`: Browsing, general curiosity, no timeline.
+- `medium`: Asking specific questions, comparing features/prices.
+- `high`: Discussing price, asking for quote, negotiating.
+- `very_high`: Ready to buy, asking "what's next", explicitly requesting call/demo.
+</intent_levels>
+
+<sentiment_types>
+- `neutral`: Factual, flat tone.
+- `curious`: Interested, asking follow-up questions, engaged.
+- `confused`: "I don't understand", "can you explain".
+- `annoyed`: Complaints, delays mentioned, impatience, short replies.
+- `distrustful`: Doubts, "are you sure?", comparing competitors, skeptical.
+- `disappointed`: Expected more, "that's it?", unmet expectations.
+- `uninterested`: Not engaging, minimal responses, "not for me".
+</sentiment_types>
+
+<action_rules>
+- `send_now`: Move conversation forward immediately.
+- `wait_schedule`: User said "later", "busy now", "message me tomorrow".
+- `initiate_cta`: **CRITICAL**: Only use if user agrees to a SPECIFIC step defined in `<available_ctas>`.
+</action_rules>
+
+<human_attention_triggers>
+- User asks for "human", "person", "agent".
+- Sentiment is `annoyed`, `distrustful`, or `disappointed`.
+- User mentions legal/compliance threats.
+- High `spam_risk` or `policy_risk`.
+- Confidence score < 0.5.
+</human_attention_triggers>
+
+=== OUTPUT FORMAT ===
+You must output a single valid JSON object. Valid JSON ONLY. No Markdown.
+
 {
-  "thought_process": "Analysis...",
-  "situation_summary": "Summary...",
+  "thought_process": "Step-by-step reasoning: 1) User said X indicating Y intent. 2) Current stage is Z. 3) Rule A applies, so moving to stage B.",
+  "situation_summary": "User wants [X] and is feeling [Y].",
   "intent_level": "low|medium|high|very_high|unknown",
-  "user_sentiment": "neutral|happy|angry...",
-  "risk_flags": { "spam_risk": "low", "policy_risk": "low", ... },
-  
+  "user_sentiment": "neutral|curious|confused|annoyed|distrustful|disappointed|uninterested",
+  "risk_flags": {"spam_risk": "low|medium|high", "policy_risk": "low|medium|high", "hallucination_risk": "low|medium|high"},
   "action": "send_now|wait_schedule|initiate_cta",
-  "new_stage": "greeting|qualification|pricing|cta...",
-  "should_respond": true|false,
-  "needs_human_attention": true|false,
-  
-  "selected_cta_id": "UUID_FROM_LIST",
-  "cta_scheduled_at": "ISO_TIMESTAMP_OR_NULL",
+  "new_stage": "greeting|qualification|pricing|cta|followup|closed|lost|ghosted",
+  "should_respond": true,
+  "needs_human_attention": false,
+  "selected_cta_id": "UUID or null",
+  "cta_scheduled_at": "ISO timestamp or null",
   "followup_in_minutes": 0,
-  "followup_reason": "...",
-  
-  "confidence": 0.0-1.0
+  "confidence": 0.95
 }
 """
 
 # ============================================================
-# Stage-Specific Instructions for CLASSIFY Step
+# Stage-Specific TRANSITION Rules for CLASSIFY Step
+# PURPOSE: Tell the Brain WHEN to assign each stage
+# NOTE: Behavior AT stage is in prompts_registry.py (for Generate)
 # ============================================================
 
 CLASSIFY_STAGE_INSTRUCTIONS = {
     ConversationStage.GREETING: """
-=== STAGE: GREETING ===
-This is the OPENING of the conversation.
-- The user has just initiated contact.
-- Focus on acknowledging the user and understanding their initial request.
-- DO NOT assume context or prior history.
-- Determine if they are a relevant lead.
-- Possible transitions: Stay in GREETING or move to QUALIFICATION if they express a need.
+EVALUATING STAGE: GREETING
+ASSIGN greeting WHEN:
+- First message from user (no history)
+- User just said "hi", "hello", or similar opener
+- No specific need expressed yet
+
+TRANSITION OUT OF greeting:
+→ qualification: User mentions a need, problem, or asks about product/service
+→ lost: User immediately says "not interested" or "wrong number"
 """,
 
     ConversationStage.QUALIFICATION: """
-=== STAGE: QUALIFICATION ===
-The user has been greeted and we are now gathering requirements.
-- Focus on understanding: What do they need? Quantity? Timeline?
-- Ask clarifying questions if information is missing.
-- DO NOT discuss pricing unless the user asks directly.
-- Possible transitions: Move to PRICING if requirements are clear, or GHOSTED if user goes silent.
+EVALUATING STAGE: QUALIFICATION
+ASSIGN qualification WHEN:
+- User has expressed a need but details are missing
+- User is asking general questions (what do you offer, how does it work)
+- Requirements partially gathered (have some info, need more)
+
+CAN ENTER FROM: greeting, followup
+TRANSITION OUT OF qualification:
+→ pricing: User asks about cost/price/rates OR requirements are fully gathered
+→ cta: User shows very_high intent (wants to proceed NOW, skip pricing)
+→ lost: User says not interested
 """,
 
     ConversationStage.PRICING: """
-=== STAGE: PRICING ===
-The user's requirements are understood. We are discussing value/pricing.
-- Provide pricing information if available, or explain the quote process.
-- Handle objections with empathy and value propositions.
-- Possible transitions: Move to CTA if user shows buying intent, or FOLLOWUP if they need time.
+EVALUATING STAGE: PRICING
+ASSIGN pricing WHEN:
+- User has asked about price, cost, rates, budget
+- Requirements are understood, discussing value
+
+CAN ENTER FROM: qualification, followup
+TRANSITION OUT OF pricing:
+→ cta: User accepts price OR says "what's next" OR shows very_high intent
+→ followup: User needs time ("let me think", "I'll get back", "need approval")
+→ lost: User rejects due to price and won't negotiate
 """,
 
     ConversationStage.CTA: """
-=== STAGE: CTA (Call-to-Action) ===
-The user is showing high intent. Time to close.
-- Propose a specific next step (Call, Demo, Meeting).
-- Create urgency if appropriate.
-- Be clear and direct about the ask.
-- Possible transitions: Move to CLOSED if they commit, FOLLOWUP if they hesitate.
+EVALUATING STAGE: CTA
+ASSIGN cta WHEN:
+- User shows buying signals (very_high intent)
+- User agrees to pricing and ready for next step
+- User explicitly asks to book call, schedule demo, place order
+
+CAN ENTER FROM: pricing, qualification (if very_high intent)
+TRANSITION OUT OF cta:
+→ closed: User confirms (schedules call, says yes, provides details)
+→ followup: User hesitates, wants to check with team
+→ lost: User backs out
 """,
 
     ConversationStage.FOLLOWUP: """
-=== STAGE: FOLLOWUP ===
-We are re-engaging the user after a pause.
-- Reference the previous conversation topic.
-- Ask if they have questions or are ready to proceed.
-- Be helpful but not pushy.
-- Possible transitions: Any stage based on their response.
+EVALUATING STAGE: FOLLOWUP
+ASSIGN followup WHEN:
+- User said they need time and hasn't responded
+- Re-engaging after pause
+- Checking back on pending decision
+
+CAN ENTER FROM: any stage (when user goes silent or asks for time)
+TRANSITION OUT OF followup:
+→ ANY STAGE based on user's reply (may re-enter qualification, pricing, cta)
 """,
 
     ConversationStage.CLOSED: """
-=== STAGE: CLOSED ===
-The deal is closed or committed.
-- Be polite and professional.
-- Provide any final information or next steps.
-- Thank them for their business.
+EVALUATING STAGE: CLOSED
+ASSIGN closed WHEN:
+- User confirmed commitment (yes to call/demo/order)
+- User provided required details (phone, email, time)
+- Deal is done
+
+CAN ENTER FROM: cta
+DO NOT TRANSITION OUT unless user re-opens (rare)
 """,
 
     ConversationStage.LOST: """
-=== STAGE: LOST ===
-The user is not interested.
-- Be polite, thank them for their time.
-- End the conversation gracefully.
-- DO NOT be pushy or try to resurrect the deal.
+EVALUATING STAGE: LOST
+ASSIGN lost WHEN:
+- User explicitly declined ("not interested", "no thanks")
+- User asked not to be contacted
+- User chose competitor and is final
+
+CAN ENTER FROM: any stage
+TERMINAL STAGE - do not try to revive
 """,
 
     ConversationStage.GHOSTED: """
-=== STAGE: GHOSTED ===
-The user has stopped responding.
-- Send a gentle nudge to check interest.
-- Be respectful of their time.
-- Possible transitions: Any stage if they re-engage, or LOST if no response.
+EVALUATING STAGE: GHOSTED
+ASSIGN ghosted WHEN:
+- System assigns this after 3+ followups with no response
+- (You typically don't assign this manually)
+
+CAN ENTER FROM: followup (system auto-transition)
+TRANSITION OUT OF ghosted:
+→ any stage if user re-engages
+→ lost if final nudge gets rejection
 """
 }
+
 
 # ============================================================
 # User Template for CLASSIFY Step (with conditional history)
@@ -130,34 +197,38 @@ The user has stopped responding.
 # ============================================================
 
 CLASSIFY_USER_TEMPLATE = """
-=== CONVERSATION CONTEXT ===
+<history>
 {history_section}
+</history>
 
-=== AVAILABLE CTAs ===
+<available_ctas>
 {available_ctas}
+</available_ctas>
 
-=== CURRENT STATE ===
+<current_state>
 Stage: {conversation_stage}
 Mode: {conversation_mode}
 Intent: {intent_level}
 Sentiment: {user_sentiment}
 Active CTA: {active_cta_id}
+</current_state>
 
-=== TIMING ===
+<timing_context>
 Time Config: {now_local}
 Window Open: {whatsapp_window_open}
 Nudges: {followup_count_24h}
+</timing_context>
 
-Analyze and Decide. Output strictly JSON.
+Task: Analyze the history and decide the next move.
 """
 
 # Template for history section (used only for replies, not opening messages)
 HISTORY_SECTION_TEMPLATE = """
-=== CONVERSATION HISTORY ===
-Summary: {rolling_summary}
-
-Last Messages:
+Last 3 Messages:
 {last_3_messages}
+
+Rolling Summary:
+{rolling_summary}
 """
 
 # ============================================================
@@ -166,21 +237,26 @@ Last Messages:
 # ============================================================
 
 GENERATE_USER_TEMPLATE = """
-=== TASK ===
+<task>
 Write a response to the user based on the brain's decision.
+</task>
 
-=== CONTEXT ===
+<context>
 Business: {business_name}
 Summary: {rolling_summary}
 
-Last Messages:
+History:
 {last_3_messages}
+</context>
 
-=== BRAIN DECISION ===
+<brain_decision>
 Action: {decision_json}
 Current Stage: {conversation_stage}
+</brain_decision>
 
-Write the message text. Output JSON.
+Instructions:
+- Write ONLY the message text in JSON format.
+- Match the tone of the stage instructions.
 """
 
 
@@ -197,14 +273,16 @@ You MUST output valid JSON: { "updated_rolling_summary": "..." }
 """
 
 SUMMARIZE_USER_TEMPLATE = """
-Current Summary:
+<current_summary>
 {rolling_summary}
+</current_summary>
 
-New Exchange:
+<new_exchange>
 User: {user_message}
 Bot: {bot_message}
+</new_exchange>
 
-Update the summary. Output JSON: {{ "updated_rolling_summary": "..." }}
+Task: Update the summary. Output JSON: {{ "updated_rolling_summary": "..." }}
 """
 
 

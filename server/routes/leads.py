@@ -6,6 +6,7 @@ from server.dependencies import get_auth_context
 from server.models import Lead
 from server.schemas import LeadOut, LeadCreate, LeadUpdate, AuthContext
 from uuid import UUID
+from server.models import Conversation, Message
 
 router = APIRouter()
 
@@ -68,8 +69,11 @@ def delete_lead(
     if not db_lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     
-    # Manually delete related conversations first to avoid FK constraint violation
-    from server.models import Conversation
+    # Delete in correct order to avoid FK constraint violations:
+    # 1. Messages (references conversations and leads)
+    # 2. Conversations (references leads)
+    # 3. Lead
+    db.query(Message).filter(Message.lead_id == lead_id).delete()
     db.query(Conversation).filter(Conversation.lead_id == lead_id).delete()
     
     db.delete(db_lead)
