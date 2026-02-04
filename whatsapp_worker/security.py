@@ -61,7 +61,7 @@ def validate_signature(raw_body: bytes, headers: Mapping[str, str]) -> bool:
         
         if phone_number_id:
             resp = requests.get(
-                f"http://{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-phone-number-id/{phone_number_id}",
+                f"{config.INTERNAL_API_BASE_URL}/internals/whatsapp/by-phone-number-id/{phone_number_id}",
                 headers={"X-Internal-Secret": config.INTERNAL_API_SECRET},
                 timeout=10,
             )
