@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime, timezone
 from typing import Mapping, Tuple, Optional
 
 import requests
@@ -208,8 +209,14 @@ async def _send_msg(
     db.add(db_message)
 
     # Update conversation last message fields
-    conv.last_message = content
-    conv.last_message_at = func.now()
+    now = datetime.now(timezone.utc)
+    conv.last_message = content[:500]
+    conv.last_message_at = now
+    if sender_type == MessageFrom.BOT:
+        conv.last_bot_message_at = now
+    elif sender_type == MessageFrom.HUMAN:
+        # For simplicity, we can also treat HUMAN replies as bot replies for follow-up purposes
+        conv.last_bot_message_at = now
 
     db.commit()
     db.refresh(db_message)

@@ -48,37 +48,29 @@ celery_app.conf.timezone = "UTC"
 @celery_app.task(name="whatsapp_worker.tasks.process_due_followups")
 def process_due_followups():
     """
-    Process all due scheduled follow-ups via API.
+    Process all due real-time follow-ups.
     
     This task runs every minute via Celery beat.
     """
     try:
-        # Get all pending follow-ups that are due
-        due_actions = api_client.get_due_actions(limit=50)
+        # Get all conversations currently in a followup window
+        due_followups = api_client.get_due_followups()
         
-        if not due_actions:
+        if not due_followups:
             return {"processed": 0}
         
-        logger.info(f"Processing {len(due_actions)} due follow-ups")
+        logger.info(f"Processing {len(due_followups)} due follow-ups")
         
         processed = 0
         errors = 0
         
-        for action in due_actions:
+        for context in due_followups:
             try:
-                process_single_followup(action)
+                process_realtime_followup(context)
                 processed += 1
             except Exception as e:
-                logger.error(f"Error processing followup {action['id']}: {e}", exc_info=True)
+                logger.error(f"Error processing realtime followup: {e}", exc_info=True)
                 errors += 1
-                # Mark as cancelled to prevent infinite retries
-                try:
-                    api_client.update_action_status(
-                        UUID(action["id"]),
-                        status="cancelled"
-                    )
-                except Exception:
-                    pass
         
         return {"processed": processed, "errors": errors}
         
@@ -87,51 +79,21 @@ def process_due_followups():
         return {"error": str(e)}
 
 
-def process_single_followup(action: dict):
+def process_realtime_followup(context: dict):
     """
-    Process a single scheduled follow-up action via API.
+    Process a single real-time follow-up via API.
     """
-    action_id = UUID(action["id"])
-    
-    try:
-        # Get full context for the followup
-        context = api_client.get_followup_context(action_id)
-    except Exception as e:
-        logger.warning(f"Could not get context for action {action_id}: {e}")
-        api_client.delete_scheduled_action(action_id)
-        return
-    
     conversation = context["conversation"]
     lead = context["lead"]
+    followup_type = context["followup_type"]
     
-    # Skip if conversation is no longer in bot mode
-    if conversation.get("mode") != ConversationMode.BOT.value:
-        logger.info(f"Skipping followup for {conversation['id']}: mode is {conversation.get('mode')}")
-        api_client.delete_scheduled_action(action_id)
-        return
+    logger.info(f"Processing {followup_type} for conversation {conversation['id']}")
+
+    # Override the stage for the prompt registry to pick the correct warmup
+    # We don't save this stage change to DB yet, it's just for generation
+    conversation["stage"] = followup_type
     
-    # --------------------------------------------------------
-    # RACE CONDITION PROTECTION
-    # --------------------------------------------------------
-    # If the user has replied since this followup was scheduled, 
-    # we should skip it. Cancellation usually handles this, 
-    # but this is a final safety net for concurrency.
-    last_user_at_str = conversation.get("last_user_message_at")
-    action_created_at_str = action.get("created_at")
-    
-    if last_user_at_str and action_created_at_str:
-        from datetime import datetime
-        # Parse ISO strings to UTC datetimes
-        last_user_at = datetime.fromisoformat(last_user_at_str.replace('Z', '+00:00'))
-        action_created_at = datetime.fromisoformat(action_created_at_str.replace('Z', '+00:00'))
-        
-        if last_user_at > action_created_at:
-            logger.info(f"Skipping stale followup for {conversation['id']}: User replied at {last_user_at}")
-            api_client.delete_scheduled_action(action_id)
-            return
-    # --------------------------------------------------------
-    
-    # Build org config dict from followup context
+    # Build org config dict from context
     org_config = {
         "organization_name": context["organization_name"],
         "business_name": context.get("business_name"),
@@ -147,7 +109,6 @@ def process_single_followup(action: dict):
     )
     
     # Run followup pipeline
-    logger.info(f"Running followup pipeline for conversation {conversation['id']}")
     pipeline_result = run_followup_pipeline(pipeline_context)
     
     # Handle result
@@ -167,16 +128,16 @@ def process_single_followup(action: dict):
                 version=context["version"],
                 to=lead["phone"],
             )
-            logger.info(f"Sent followup to {lead['phone']}")
+            # Update conversation tracking state
+            current_count = conversation.get("followup_count_24h", 0)
+            api_client.update_conversation(
+                UUID(conversation["id"]),
+                stage=followup_type,
+                followup_count_24h=current_count + 1
+            )
+            logger.info(f"Sent {followup_type} to {lead['phone']}")
         except Exception as e:
             logger.error(f"Failed to send followup message via API: {e}")
-    
-    # Mark action as executed
-    api_client.update_action_status(
-        action_id,
-        status="executed",
-        executed_at=datetime.now(timezone.utc)
-    )
 
 
 @celery_app.task(name="whatsapp_worker.tasks.reset_daily_counts")
@@ -193,34 +154,4 @@ def reset_daily_counts():
         
     except Exception as e:
         logger.error(f"reset_daily_counts error: {e}", exc_info=True)
-        return {"error": str(e)}
-
-
-@celery_app.task(name="whatsapp_worker.tasks.process_followup")
-def process_followup_task(action_id: str):
-    """
-    Process a specific follow-up action by ID via API.
-    
-    This can be used for immediate processing instead of waiting for beat.
-    """
-    try:
-        action_uuid = UUID(action_id)
-        
-        # Get the action
-        try:
-            action = api_client.get_scheduled_action(action_uuid)
-        except InternalsAPIError as e:
-            if e.status_code == 404:
-                return {"error": "Action not found"}
-            raise
-        
-        if action["status"] != "pending":
-            return {"error": f"Action status is {action['status']}"}
-        
-        process_single_followup(action)
-        
-        return {"status": "processed"}
-        
-    except Exception as e:
-        logger.error(f"process_followup_task error: {e}", exc_info=True)
         return {"error": str(e)}

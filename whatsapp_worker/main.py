@@ -217,10 +217,6 @@ def process_message(
         # Store User Message
         api_client.store_incoming_message(conversation_id, lead_id, message_text)
         
-        # Delete any existing pending follow-up actions now that the user replied
-        deleted = api_client.delete_pending_actions(conversation_id)
-        if deleted > 0:
-            logger.info(f"Deleted {deleted} pending actions for conversation {conversation_id}")
         
         # Refresh conversation (timestamps)
         conversation = api_client.get_conversation(conversation_id)
@@ -279,16 +275,6 @@ def process_message(
         # Update Conversation State (Stage, Intent, etc.)
         handle_pipeline_result(conversation, lead_id, pipeline_result)
         
-        # Refresh conversation state before scheduling static followups 
-        # to ensure we have the latest flags (e.g. needs_human_attention)
-        conversation = api_client.get_conversation(conversation_id)
-        
-        # Schedule the static followup sequence (10m, 3h, 6h) as a safety net
-        # whenever the user sends a message and we are in BOT mode.
-        if conversation.get("mode") == ConversationMode.BOT.value:
-            from whatsapp_worker.processors.actions import schedule_static_followups
-            schedule_static_followups(conversation)
-            
         # Background Summary (The Memory)
         if pipeline_result.needs_background_summary:
             from llm.steps.summarize import run_background_summary

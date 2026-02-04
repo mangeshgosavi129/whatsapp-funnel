@@ -6,6 +6,9 @@ class ConversationStage(str, Enum):
     PRICING = "pricing"
     CTA = "cta"
     FOLLOWUP = "followup"
+    FOLLOWUP_10M = "followup_10m"
+    FOLLOWUP_3H = "followup_3h"
+    FOLLOWUP_6H = "followup_6h"
     CLOSED = "closed"
     LOST = "lost"
     GHOSTED = "ghosted"
@@ -45,12 +48,6 @@ class PipelineStep(str, Enum):
     GENERATE = "generate"
     SUMMARIZE = "summarize"
 
-
-class ScheduledActionStatus(str, Enum):
-    """Status of scheduled follow-up actions."""
-    PENDING = "pending"
-    EXECUTED = "executed"
-    CANCELLED = "cancelled"
 
 class UserSentiment(str, Enum):
     ANNOYED = "annoyed"

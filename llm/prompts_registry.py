@@ -82,6 +82,24 @@ Your goal is to re-engage the user.
 2. Ask if they have any further questions or are ready to proceed.
 """,
     
+    ConversationStage.FOLLOWUP_10M: """
+=== CURRENT OBJECTIVE: 10-MINUTE FOLLOW-UP ===
+The user expressed interest but hasn't replied in 10 minutes.
+Send a brief, gentle nudge to see if they have any immediate questions about what you just discussed.
+""",
+
+    ConversationStage.FOLLOWUP_3H: """
+=== CURRENT OBJECTIVE: 3-HOUR FOLLOW-UP ===
+It's been 3 hours since the last interaction. 
+Follow up to see if they've had a chance to consider the next steps or if they need more details to make a decision.
+""",
+
+    ConversationStage.FOLLOWUP_6H: """
+=== CURRENT OBJECTIVE: 6-HOUR FOLLOW-UP ===
+It's been 6 hours since the user last spoke.
+Send a final professional check-in. Offer to schedule a quick call if that's easier for them than texting.
+""",
+    
     ConversationStage.CLOSED: """
 === CURRENT OBJECTIVE: CLOSED ===
 The deal is closed. Be polite and professional.

@@ -20,7 +20,6 @@ from server.enums import (
     UserSentiment,
     TemplateStatus,
     MessageFrom,
-    ScheduledActionStatus,
 )
 from server.database import Base
 
@@ -102,7 +101,6 @@ class Conversation(Base):
     lead = relationship("Lead", back_populates="conversations")
     cta = relationship("CTA", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
-    scheduled_actions = relationship("ScheduledAction", back_populates="conversation", cascade="all, delete-orphan")
 
 class Message(Base):
     __tablename__ = "messages"
@@ -261,26 +259,6 @@ class AuditLog(Base):
 # HTL Pipeline
 # --------------------
 
-class ScheduledAction(Base):
-    """
-    Scheduled follow-up actions processed by Celery beat.
-    Created when pipeline decides WAIT_SCHEDULE.
-    """
-    __tablename__ = "scheduled_actions"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    conversation_id = Column(UUID(as_uuid=True), ForeignKey("conversations.id"), nullable=False)
-    organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
-    
-    scheduled_at = Column(DateTime(timezone=True), nullable=False)
-    status = Column(SQLEnum(ScheduledActionStatus), default=ScheduledActionStatus.PENDING)
-    action_type = Column(String(50), default="followup")  # For future extensibility
-    action_context = Column(Text, nullable=True)  # JSON context if needed
-    
-    executed_at = Column(DateTime(timezone=True), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    conversation = relationship("Conversation", back_populates="scheduled_actions")
 
 
 class ConversationEvent(Base):

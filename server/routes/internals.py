@@ -5,7 +5,7 @@ This module provides the single authorized layer for database access
 from the whatsapp_worker module. All database operations should go
 through these endpoints.
 """
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from uuid import UUID
 from server.services.websocket_events import emit_conversation_updated
@@ -16,7 +16,7 @@ from server.dependencies import require_internal_secret, get_db
 import logging
 from server.models import (
     Conversation, ConversationEvent, Lead, Message, Organization,
-    ScheduledAction, WhatsAppIntegration, CTA
+     WhatsAppIntegration, CTA
 )
 from server.enums import (
     ConversationMode, ConversationStage, IntentLevel, MessageFrom,
@@ -438,10 +438,11 @@ async def store_incoming_message(
     )
     db.add(message)
 
-    # Update conversation timestamps
+    # Update conversation timestamps and reset followup count
     conv.last_message = payload.content[:500]
     conv.last_message_at = now
     conv.last_user_message_at = now
+    conv.followup_count_24h = 0
 
     db.commit()
     db.refresh(message)
@@ -508,245 +509,76 @@ async def store_outgoing_message(
 
 
 # ========================================
-# Scheduled Action Endpoints
+# Followup Evaluation Endpoints
 # ========================================
 
-def _action_to_schema(action: ScheduledAction) -> InternalScheduledActionOut:
-    return InternalScheduledActionOut(
-        id=action.id,
-        conversation_id=action.conversation_id,
-        organization_id=action.organization_id,
-        scheduled_at=action.scheduled_at,
-        status=action.status.value,
-        action_type=action.action_type,
-        action_context=action.action_context,
-        executed_at=action.executed_at,
-        created_at=action.created_at,
-    )
-
-
-@router.get("/scheduled-actions/due", response_model=List[InternalScheduledActionOut])
-def get_due_actions(
-    limit: int = Query(default=50, le=100),
-    _: None = Depends(require_internal_secret),
+@router.get("/conversations/due-followups", response_model=List[InternalDueFollowupOut])
+def get_due_followups(
     db: Session = Depends(get_db),
+    _: None = Depends(require_internal_secret),
 ):
-    """Get pending scheduled actions that are due for execution."""
+    """
+    Fetch conversations due for follow-ups based on real-time evaluation.
+    Buckets: 10m, 180m (3h), 360m (6h).
+    """
     now = datetime.now(timezone.utc)
-    actions = (
-        db.query(ScheduledAction)
-        .filter(
-            ScheduledAction.status == ScheduledActionStatus.PENDING,
-            ScheduledAction.scheduled_at <= now
-        )
-        .limit(limit)
-        .all()
-    )
-    return [_action_to_schema(a) for a in actions]
-
-
-@router.post("/scheduled-actions", response_model=InternalScheduledActionOut, status_code=201)
-def create_scheduled_action(
-    payload: InternalScheduledActionCreate,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Create a new scheduled action."""
-    action = ScheduledAction(
-        conversation_id=payload.conversation_id,
-        organization_id=payload.organization_id,
-        scheduled_at=payload.scheduled_at,
-        status=ScheduledActionStatus.PENDING,
-        action_type=payload.action_type,
-        action_context=payload.action_context,
-    )
-    db.add(action)
-
-    # Update conversation scheduled_followup_at
-    conv = db.query(Conversation).filter(Conversation.id == payload.conversation_id).first()
-    if conv:
-        conv.scheduled_followup_at = payload.scheduled_at
-        conv.total_nudges = (conv.total_nudges or 0) + 1
-        conv.followup_count_24h = (conv.followup_count_24h or 0) + 1
-
-    db.commit()
-    db.refresh(action)
-    return _action_to_schema(action)
-
-
-@router.get("/scheduled-actions/{action_id}", response_model=InternalScheduledActionOut)
-def get_scheduled_action(
-    action_id: UUID,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Get scheduled action by ID."""
-    action = db.query(ScheduledAction).filter(ScheduledAction.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Scheduled action not found")
-    return _action_to_schema(action)
-
-
-@router.patch("/scheduled-actions/{action_id}", response_model=InternalScheduledActionOut)
-def update_scheduled_action(
-    action_id: UUID,
-    payload: InternalScheduledActionUpdate,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Update status or execution time of a scheduled action."""
-    action = db.query(ScheduledAction).filter(ScheduledAction.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Scheduled action not found")
-
-    # Convert string status to enum
-    try:
-        action.status = ScheduledActionStatus(payload.status)
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid status: {payload.status}")
-
-    if payload.executed_at:
-        action.executed_at = payload.executed_at
-
-    db.commit()
-    db.refresh(action)
-    return _action_to_schema(action)
-
-
-@router.delete("/scheduled-actions/{action_id}")
-def delete_scheduled_action(
-    action_id: UUID,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Delete a specific scheduled action."""
-    action = db.query(ScheduledAction).filter(ScheduledAction.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Scheduled action not found")
     
-    db.delete(action)
-    db.commit()
-    return {"status": "deleted"}
-
-
-@router.patch("/scheduled-actions/{action_id}", response_model=InternalScheduledActionOut)
-def update_scheduled_action(
-    action_id: UUID,
-    payload: InternalScheduledActionUpdate,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Update scheduled action status."""
-    action = db.query(ScheduledAction).filter(ScheduledAction.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Scheduled action not found")
-
-    # Convert string status to enum
-    try:
-        action.status = ScheduledActionStatus(payload.status)
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f"Invalid status: {payload.status}")
-
-    if payload.executed_at:
-        action.executed_at = payload.executed_at
-
-    db.commit()
-    db.refresh(action)
-    return _action_to_schema(action)
-
-
-@router.post("/scheduled-actions/cancel-pending")
-def cancel_pending_actions(
-    conversation_id: UUID,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Cancel all pending scheduled actions for a conversation."""
-    result = (
-        db.query(ScheduledAction)
-        .filter(
-            ScheduledAction.conversation_id == conversation_id,
-            ScheduledAction.status == ScheduledActionStatus.PENDING
+    # Define buckets (minutes elapsed since last user message, required count)
+    buckets = [
+        (10, 12, ConversationStage.FOLLOWUP_10M, 0),
+        (180, 182, ConversationStage.FOLLOWUP_3H, 1),
+        (360, 362, ConversationStage.FOLLOWUP_6H, 2)
+    ]
+    
+    results = []
+    
+    for min_m, max_m, stage, required_count in buckets:
+        start_time = now - timedelta(minutes=max_m)
+        end_time = now - timedelta(minutes=min_m)
+        
+        # Query conversations in this window
+        due_convs = (
+            db.query(Conversation, Lead, Organization, WhatsAppIntegration)
+            .join(Lead, Conversation.lead_id == Lead.id)
+            .join(Organization, Conversation.organization_id == Organization.id)
+            .join(WhatsAppIntegration, Organization.id == WhatsAppIntegration.organization_id)
+            .filter(
+                Conversation.last_user_message_at >= start_time,
+                Conversation.last_user_message_at < end_time,
+                # Sequence logic: must have sent fewer followups than this bucket requires
+                # Example: for the 180m bucket (3h), we expect 1 followup already sent (10m)
+                # If they missed the 10m one, count is 0, which is also < 2.
+                Conversation.followup_count_24h <= required_count,
+                # Safety: Only if bot hasn't replied to the LATEST user message yet
+                (Conversation.last_bot_message_at == None) | (Conversation.last_bot_message_at < Conversation.last_user_message_at),
+                Conversation.mode == ConversationMode.BOT,
+                Conversation.needs_human_attention == False,
+                Conversation.stage.notin_([
+                    ConversationStage.CLOSED, 
+                    ConversationStage.LOST, 
+                    ConversationStage.GHOSTED
+                ]),
+                WhatsAppIntegration.is_connected == True
+            )
+            .all()
         )
-        .update({"status": ScheduledActionStatus.CANCELLED})
-    )
-    db.commit()
-    return {"cancelled": result}
-
-
-@router.post("/scheduled-actions/delete-pending")
-def delete_pending_actions(
-    conversation_id: UUID,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Delete all pending scheduled actions for a conversation."""
-    result = (
-        db.query(ScheduledAction)
-        .filter(
-            ScheduledAction.conversation_id == conversation_id,
-            ScheduledAction.status == ScheduledActionStatus.PENDING
-        )
-        .delete()
-    )
-    db.commit()
-    return {"deleted": result}
-
-
-# ========================================
-# Followup Processing Endpoints
-# ========================================
-
-@router.get(
-    "/scheduled-actions/{action_id}/context",
-    response_model=InternalFollowupContext
-)
-def get_followup_context(
-    action_id: UUID,
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Get full context needed to process a scheduled followup."""
-    action = db.query(ScheduledAction).filter(ScheduledAction.id == action_id).first()
-    if not action:
-        raise HTTPException(status_code=404, detail="Scheduled action not found")
-
-    conv = db.query(Conversation).filter(Conversation.id == action.conversation_id).first()
-    if not conv:
-        raise HTTPException(status_code=404, detail="Conversation not found")
-
-    lead = db.query(Lead).filter(Lead.id == conv.lead_id).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
-
-    org = db.query(Organization).filter(Organization.id == conv.organization_id).first()
-    if not org:
-        raise HTTPException(status_code=404, detail="Organization not found")
-
-    integration = (
-        db.query(WhatsAppIntegration)
-        .filter(
-            WhatsAppIntegration.organization_id == org.id,
-            WhatsAppIntegration.is_connected == True
-        )
-        .first()
-    )
-    if not integration:
-        raise HTTPException(status_code=404, detail="WhatsApp integration not found")
-
-    return InternalFollowupContext(
-        action=_action_to_schema(action),
-        conversation=_conversation_to_schema(conv),
-        lead=_lead_to_schema(lead),
-        organization_id=org.id,
-        organization_name=org.name,
-        access_token=integration.access_token,
-        phone_number_id=integration.phone_number_id,
-        version=integration.version,
-        business_name=org.business_name,
-        business_description=org.business_description,
-        flow_prompt=org.flow_prompt,
-    )
+        
+        for conv, lead, org, integration in due_convs:
+            results.append(InternalDueFollowupOut(
+                followup_type=stage,
+                conversation=_conversation_to_schema(conv),
+                lead=_lead_to_schema(lead),
+                organization_id=org.id,
+                organization_name=org.name,
+                access_token=integration.access_token,
+                phone_number_id=integration.phone_number_id,
+                version=integration.version,
+                business_name=org.business_name,
+                business_description=org.business_description,
+                flow_prompt=org.flow_prompt,
+            ))
+            
+    return results
 
 
 # ========================================

@@ -333,85 +333,9 @@ class InternalsAPIClient:
     # Scheduled Action Methods
     # ========================================
     
-    def get_due_actions(self, limit: int = 50) -> List[Dict]:
-        """Get pending scheduled actions that are due."""
-        response = self.client.get(
-            "/internals/scheduled-actions/due",
-            params={"limit": limit}
-        )
-        return self._handle_response(response)
-    
-    def create_scheduled_action(
-        self,
-        conversation_id: UUID,
-        organization_id: UUID,
-        scheduled_at: datetime,
-        action_type: str = "followup",
-        action_context: Optional[str] = None
-    ) -> Dict:
-        """Create a new scheduled action."""
-        response = self.client.post(
-            "/internals/scheduled-actions",
-            json={
-                "conversation_id": str(conversation_id),
-                "organization_id": str(organization_id),
-                "scheduled_at": scheduled_at.isoformat(),
-                "action_type": action_type,
-                "action_context": action_context,
-            }
-        )
-        return self._handle_response(response)
-    
-    def get_scheduled_action(self, action_id: UUID) -> Dict:
-        """Get scheduled action by ID."""
-        response = self.client.get(f"/internals/scheduled-actions/{action_id}")
-        return self._handle_response(response)
-    
-    def update_action_status(
-        self,
-        action_id: UUID,
-        status: str,
-        executed_at: Optional[datetime] = None
-    ) -> Dict:
-        """Update scheduled action status."""
-        payload = {"status": status}
-        if executed_at:
-            payload["executed_at"] = executed_at.isoformat()
-        
-        response = self.client.patch(
-            f"/internals/scheduled-actions/{action_id}",
-            json=payload
-        )
-        return self._handle_response(response)
-    
-    def delete_scheduled_action(self, action_id: UUID) -> Dict:
-        """Delete a specific scheduled action."""
-        response = self.client.delete(f"/internals/scheduled-actions/{action_id}")
-        return self._handle_response(response)
-    
-    def cancel_pending_actions(self, conversation_id: UUID) -> int:
-        """Cancel all pending scheduled actions for a conversation."""
-        response = self.client.post(
-            "/internals/scheduled-actions/cancel-pending",
-            params={"conversation_id": str(conversation_id)}
-        )
-        result = self._handle_response(response)
-        return result.get("cancelled", 0)
-    
-    def delete_pending_actions(self, conversation_id: UUID) -> int:
-        """Delete all pending scheduled actions for a conversation."""
-        response = self.client.post(
-            "/internals/scheduled-actions/delete-pending",
-            params={"conversation_id": str(conversation_id)}
-        )
-        result = self._handle_response(response)
-        return result.get("deleted", 0)
-    
-    def get_followup_context(self, action_id: UUID) -> Dict:
-        """Get full context needed to process a scheduled followup."""
-        response = self.client.get(
-            f"/internals/scheduled-actions/{action_id}/context"
-        )
+    def get_due_followups(self) -> List[Dict]:
+        """Fetch conversations due for follow-ups from the real-time endpoint."""
+        response = self.client.get("/internals/conversations/due-followups")
         return self._handle_response(response)
     
     # ========================================

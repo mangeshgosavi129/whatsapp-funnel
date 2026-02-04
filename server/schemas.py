@@ -532,32 +532,20 @@ class InternalMessageOut(BaseModel):
     created_at: datetime
 
 
-class InternalScheduledActionCreate(BaseModel):
-    """Create a scheduled action."""
-    conversation_id: UUID
+class InternalDueFollowupOut(BaseModel):
+    """Details for a conversation that is due for a followup."""
+    followup_type: ConversationStage  # FOLLOWUP_10M, FOLLOWUP_3H, or FOLLOWUP_6H
+    conversation: InternalConversationOut
+    lead: InternalLeadOut
     organization_id: UUID
-    scheduled_at: datetime
-    action_type: str = "followup"
-    action_context: Optional[str] = None
-
-
-class InternalScheduledActionOut(BaseModel):
-    """Scheduled action data."""
-    id: UUID
-    conversation_id: UUID
-    organization_id: UUID
-    scheduled_at: datetime
-    status: str
-    action_type: str
-    action_context: Optional[str]
-    executed_at: Optional[datetime]
-    created_at: datetime
-
-
-class InternalScheduledActionUpdate(BaseModel):
-    """Update scheduled action status."""
-    status: str
-    executed_at: Optional[datetime] = None
+    organization_name: str
+    access_token: str
+    phone_number_id: str
+    version: str
+    # Business configuration
+    business_name: Optional[str] = None
+    business_description: Optional[str] = None
+    flow_prompt: Optional[str] = None
 
 
 class InternalPipelineEventCreate(BaseModel):
@@ -582,19 +570,3 @@ class InternalPipelineEventOut(BaseModel):
     latency_ms: Optional[int]
     tokens_used: Optional[int]
     created_at: datetime
-
-
-class InternalFollowupContext(BaseModel):
-    """Full context needed for processing a followup."""
-    action: InternalScheduledActionOut
-    conversation: InternalConversationOut
-    lead: InternalLeadOut
-    organization_id: UUID
-    organization_name: str
-    access_token: str
-    phone_number_id: str
-    version: str
-    # Business configuration
-    business_name: Optional[str] = None
-    business_description: Optional[str] = None
-    flow_prompt: Optional[str] = None

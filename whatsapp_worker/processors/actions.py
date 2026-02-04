@@ -76,12 +76,6 @@ def handle_pipeline_result(
         message_to_send = result.response.message_text
         updates["stage"] = classification.new_stage.value
         
-    # Handle follow-up scheduling (trigger static followups on user message)
-    elif result.should_schedule_followup:
-        # Note: Static followups are now handled in the main worker loop (main.py)
-        # to ensure they are only triggered by user messages, not by other followups.
-        pass
-
     # Update rolling summary
     if result.summary and result.summary.updated_rolling_summary:
         updates["rolling_summary"] = result.summary.updated_rolling_summary
@@ -109,8 +103,6 @@ def handle_pipeline_result(
                     logger.error(f"Failed to sync lead {lead_id}: {e}")
         except Exception as e:
             logger.error(f"Failed to persist conversation updates: {e}")
-            # Even if DB update fails, we might still want to try sending the message 
-            # if low latency is critical, but the prompt says persistence first.
     
     # ========================================
     # 3. Emit WebSocket events (Enhancement)
@@ -155,72 +147,6 @@ def handle_pipeline_result(
     log_pipeline_event(conversation_id, result)
     
     return message_to_send
-
-
-def schedule_followup(
-    conversation: Dict,
-    delay_minutes: int,
-    reason: str = "",
-) -> Dict:
-    """
-    Schedule a single follow-up action for later execution via API.
-    """
-    conversation_id = UUID(conversation["id"])
-    organization_id = UUID(conversation["organization_id"])
-    
-    # Create new scheduled action
-    scheduled_at = datetime.now(timezone.utc) + timedelta(minutes=delay_minutes)
-    
-    action = api_client.create_scheduled_action(
-        conversation_id=conversation_id,
-        organization_id=organization_id,
-        scheduled_at=scheduled_at,
-        action_type="followup",
-        action_context=reason,
-    )
-    
-    logger.info(f"Scheduled followup for conversation {conversation_id} at {scheduled_at}")
-    
-    return action
-
-
-def schedule_static_followups(conversation: Dict) -> None:
-    """
-    Schedule the static sequence of follow-ups: 10 mins, 3 hours, and 6 hours.
-    
-    Safety Suppression:
-    - Never schedule if needs_human_attention is True.
-    - Never schedule if stage is CLOSED, LOST, or GHOSTED.
-    """
-    from server.enums import ConversationStage
-    
-    conversation_id = conversation.get("id")
-    
-    # 1. Suppression Checks
-    if conversation.get("needs_human_attention"):
-        logger.info(f"Skipping static followup for {conversation_id}: Human attention required")
-        return
-        
-    terminal_stages = [
-        ConversationStage.CLOSED.value,
-        ConversationStage.LOST.value,
-        ConversationStage.GHOSTED.value
-    ]
-    if conversation.get("stage") in terminal_stages:
-        logger.info(f"Skipping static followup for {conversation_id}: Stage is {conversation.get('stage')}")
-        return
-
-    # 2. Schedule Intervals
-    intervals = [10, 180, 360]  # 10m, 3h (180m), 6h (360m)
-    
-    for minutes in intervals:
-        schedule_followup(
-            conversation,
-            minutes,
-            f"Static followup: {minutes}m"
-        )
-    
-    logger.info(f"Scheduled static followup sequence (10m, 3h, 6h) for conversation {conversation_id}")
 
 
 def log_pipeline_event(
