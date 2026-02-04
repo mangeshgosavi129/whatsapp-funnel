@@ -10,7 +10,7 @@ from typing import List, Optional
 from uuid import UUID
 from server.services.websocket_events import emit_conversation_updated
 from server.schemas import ConversationOut
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from server.dependencies import require_internal_secret, get_db
 import logging
@@ -19,15 +19,13 @@ from server.models import (
      WhatsAppIntegration, CTA
 )
 from server.enums import (
-    ConversationMode, ConversationStage, IntentLevel, MessageFrom,
-    ScheduledActionStatus, UserSentiment
+    ConversationMode, ConversationStage, IntentLevel, MessageFrom, UserSentiment
 )
 from server.schemas import (
     InternalConversationCreate, InternalConversationOut, InternalConversationUpdate,
-    InternalFollowupContext, InternalIncomingMessageCreate, InternalIntegrationWithOrgOut,
+    InternalIncomingMessageCreate, InternalIntegrationWithOrgOut,
     InternalLeadCreate, InternalLeadOut, InternalMessageContext, InternalMessageOut,
-    InternalOutgoingMessageCreate, InternalPipelineEventCreate, InternalPipelineEventOut,
-    InternalScheduledActionCreate, InternalScheduledActionOut, InternalScheduledActionUpdate, 
+    InternalOutgoingMessageCreate, InternalPipelineEventCreate, InternalPipelineEventOut, 
     CTAOut
 )
 
