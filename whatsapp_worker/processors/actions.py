@@ -3,12 +3,10 @@ Actions Handler for HTL Pipeline Results.
 Processes pipeline results and executes the appropriate actions via API.
 """
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Dict, Optional
 from uuid import UUID
-
 from llm.schemas import PipelineResult
-from server.enums import ConversationMode, MessageFrom
 from whatsapp_worker.processors.api_client import api_client
 
 logger = logging.getLogger(__name__)
@@ -166,15 +164,3 @@ def log_pipeline_event(
         tokens_used=result.total_tokens_used,
     )
 
-
-def reset_daily_followup_counts() -> int:
-    """
-    Reset followup_count_24h for all conversations via API.
-    Should be called daily by Celery beat.
-    
-    Returns:
-        Number of conversations reset
-    """
-    result = api_client.reset_followup_counts()
-    logger.info(f"Reset daily followup counts for {result} conversations")
-    return result

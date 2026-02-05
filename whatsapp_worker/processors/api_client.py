@@ -368,16 +368,6 @@ class InternalsAPIClient:
         return self._handle_response(response)
     
     # ========================================
-    # Utility Methods
-    # ========================================
-    
-    def reset_followup_counts(self) -> int:
-        """Reset daily followup counts for all conversations."""
-        response = self.client.post("/internals/conversations/reset-followup-counts")
-        result = self._handle_response(response)
-        return result.get("reset", 0)
-    
-    # ========================================
     # WebSocket Event Methods
     # ========================================
     

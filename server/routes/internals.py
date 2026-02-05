@@ -30,6 +30,7 @@ from server.schemas import (
 )
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 # ========================================
 # WhatsApp Integration Endpoints
@@ -313,8 +314,7 @@ async def create_conversation(
         conv_out = ConversationOut.model_validate(conv, from_attributes=True)
         await emit_conversation_updated(conv.organization_id, conv_out)
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning(f"Failed to emit websocket for new conversation: {e}")
+        logger.warning(f"Failed to emit websocket for new conversation: {e}")
 
     return _conversation_to_schema(conv)
 
@@ -357,7 +357,7 @@ async def update_conversation(
         conv_out = ConversationOut.model_validate(conv, from_attributes=True)
         await emit_conversation_updated(conv.organization_id, conv_out)
     except Exception as e:
-        logging.getLogger(__name__).warning(f"Failed to emit websocket for updated conversation: {e}")
+        logger.warning(f"Failed to emit websocket for updated conversation: {e}")
 
     return _conversation_to_schema(conv)
 
@@ -454,8 +454,7 @@ async def store_incoming_message(
         msg_out = MessageOut.model_validate(message, from_attributes=True)
         await emit_conversation_updated(conv.organization_id, conv_out, msg_out)
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning(f"Failed to emit websocket for incoming message: {e}")
+        logger.warning(f"Failed to emit websocket for incoming message: {e}")
 
     return _message_to_schema(message)
 
@@ -500,8 +499,7 @@ async def store_outgoing_message(
         msg_out = MessageOut.model_validate(message, from_attributes=True)
         await emit_conversation_updated(conv.organization_id, conv_out, msg_out)
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning(f"Failed to emit websocket for outgoing message: {e}")
+        logger.warning(f"Failed to emit websocket for outgoing message: {e}")
 
     return _message_to_schema(message)
 
@@ -525,23 +523,21 @@ def get_due_followups(
     now = datetime.now(timezone.utc)
 
     # (min_elapsed, max_elapsed, followup_stage, required_followup_count)
-    # Buckets in order of time since last bot message:
-    # - FOLLOWUP: 5-10 min (quick nudge for plain FOLLOWUP stage)
-    # - FOLLOWUP_10M: 10-20 min (1st followup)
-    # - FOLLOWUP_3H: 180-200 min (2nd followup)  
-    # - FOLLOWUP_6H: 360-400 min (3rd followup)
-    # - GHOSTED: 1440-2880 min (24-48h, marks as ghosted after no response)
+    # Buckets based on time since LEAD's LAST MESSAGE (not bot's):
+    # - FOLLOWUP_10M: 10 min ± 2 min tolerance (1st followup)
+    # - FOLLOWUP_3H: 180 min ± 10 min tolerance (2nd followup)
+    # - FOLLOWUP_6H: 360 min ± 20 min tolerance (3rd followup)
+    # - GHOSTED: 1440-2880 min / 24-48h (marks as ghosted after no response)
     buckets = [
-        (5, 10, ConversationStage.FOLLOWUP, 0),
-        (10, 20, ConversationStage.FOLLOWUP_10M, 0),
-        (180, 200, ConversationStage.FOLLOWUP_3H, 1),
-        (360, 400, ConversationStage.FOLLOWUP_6H, 2),
-        (1440, 2880, ConversationStage.GHOSTED, 3),  # 24-48 hours -> mark as ghosted
+        (8, 12, ConversationStage.FOLLOWUP_10M),     # 10m ± 2m
+        (170, 190, ConversationStage.FOLLOWUP_3H),   # 180m ± 10m
+        (340, 380, ConversationStage.FOLLOWUP_6H),   # 360m ± 20m
+        (1440, 2880, ConversationStage.GHOSTED),     # 24-48 hours -> mark as ghosted
     ]
 
     results: list[InternalDueFollowupOut] = []
 
-    for min_m, max_m, stage, required_count in buckets:
+    for min_m, max_m, stage in buckets:
         start_time = now - timedelta(minutes=max_m)
         end_time = now - timedelta(minutes=min_m)
 
@@ -554,14 +550,11 @@ def get_due_followups(
                 Organization.id == WhatsAppIntegration.organization_id,
             )
             .filter(
-                # Time window anchored to last bot message
-                Conversation.last_bot_message_at >= start_time,
-                Conversation.last_bot_message_at < end_time,
+                # Time window anchored to LEAD's last message
+                Conversation.last_user_message_at >= start_time,
+                Conversation.last_user_message_at < end_time,
 
-                # Sequential follow-up enforcement
-                Conversation.followup_count_24h <= required_count,
-
-                # User has not replied after last bot message
+                # Bot has already responded after lead's last message
                 Conversation.last_user_message_at < Conversation.last_bot_message_at,
 
                 # Bot-only, active conversations
@@ -597,7 +590,7 @@ def get_due_followups(
                     flow_prompt=org.flow_prompt,
                 )
             )
-
+    logger.info(f"Found {results} due follow-ups")
     return results
 
 # ========================================
@@ -635,25 +628,6 @@ def create_pipeline_event(
         tokens_used=event.tokens_used,
         created_at=event.created_at,
     )
-
-
-# ========================================
-# Utility Endpoints
-# ========================================
-
-@router.post("/conversations/reset-followup-counts")
-def reset_followup_counts(
-    _: None = Depends(require_internal_secret),
-    db: Session = Depends(get_db),
-):
-    """Reset followup_count_24h for all conversations. Called daily."""
-    result = (
-        db.query(Conversation)
-        .filter(Conversation.followup_count_24h > 0)
-        .update({"followup_count_24h": 0})
-    )
-    db.commit()
-    return {"reset": result}
 
 
 # ========================================

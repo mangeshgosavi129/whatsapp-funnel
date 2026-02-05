@@ -24,4 +24,7 @@ class WhatsAppSendConfig:
         self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL")
         self.INTERNAL_API_SECRET = os.getenv("INTERNAL_API_SECRET")
 
+        self.CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+        self.CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND") 
+
 config = WhatsAppSendConfig()
