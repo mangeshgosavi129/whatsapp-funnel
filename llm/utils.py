@@ -110,6 +110,21 @@ def normalize_enum(
 
 
 # ============================================================
+# Prompt Formatting Utilities
+# ============================================================
+
+def format_ctas(ctas: list) -> str:
+    """Format available CTAs for prompt."""
+    if not ctas:
+        return "No CTAs defined in dashboard."
+    
+    lines = []
+    for cta in ctas:
+        lines.append(f"- ID: {cta.get('id')} | Name: {cta.get('name')}")
+    return "\n".join(lines)
+
+
+# ============================================================
 # JSON Schema Definitions for Groq Structured Output
 # ============================================================
 

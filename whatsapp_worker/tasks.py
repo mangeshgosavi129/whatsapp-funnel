@@ -3,24 +3,24 @@ Celery Tasks for HTL Pipeline.
 Handles scheduled follow-ups and periodic maintenance via API calls.
 """
 import logging
-from datetime import datetime, timezone
 from uuid import UUID
-
 from celery import Celery
-
-from whatsapp_worker.processors.api_client import api_client, InternalsAPIError
+from whatsapp_worker.processors.api_client import api_client
 from whatsapp_worker.processors.context import build_pipeline_context
-from whatsapp_worker.processors.actions import handle_pipeline_result, reset_daily_followup_counts
+from whatsapp_worker.processors.actions import handle_pipeline_result
 from llm.pipeline import run_followup_pipeline
-from server.enums import MessageFrom, ConversationMode, ConversationStage
+from server.enums import ConversationStage
+from whatsapp_worker.config import config
+from logging_config import setup_logging
+
+# Configure logging
+setup_logging()
 
 logger = logging.getLogger(__name__)
 
-# Celery app configuration
-# The broker URL should come from environment in production
-import os
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
+
+CELERY_BROKER_URL = config.CELERY_BROKER_URL
+CELERY_RESULT_BACKEND = config.CELERY_RESULT_BACKEND
 
 celery_app = Celery(
     "htl_tasks",
@@ -30,15 +30,9 @@ celery_app = Celery(
 
 # Celery Beat Schedule
 celery_app.conf.beat_schedule = {
-    # Check for due follow-ups every minute
     "process-due-followups": {
         "task": "whatsapp_worker.tasks.process_due_followups",
         "schedule": 60.0,  # Every 60 seconds
-    },
-    # Reset daily followup counts at midnight
-    "reset-daily-counts": {
-        "task": "whatsapp_worker.tasks.reset_daily_counts",
-        "schedule": 86400.0,  # Every 24 hours
     },
 }
 
@@ -55,11 +49,9 @@ def process_due_followups():
     try:
         # Get all conversations currently in a followup window
         due_followups = api_client.get_due_followups()
-        
+        logger.info(f"Found {due_followups} due follow-ups")
         if not due_followups:
             return {"processed": 0}
-        
-        logger.info(f"Processing {len(due_followups)} due follow-ups")
         
         processed = 0
         errors = 0
@@ -150,20 +142,3 @@ def process_realtime_followup(context: dict):
             logger.info(f"Sent {followup_type} to {lead['phone']}")
         except Exception as e:
             logger.error(f"Failed to send followup message via API: {e}")
-
-
-@celery_app.task(name="whatsapp_worker.tasks.reset_daily_counts")
-def reset_daily_counts():
-    """
-    Reset daily followup counts for all conversations via API.
-    
-    This task runs once per day via Celery beat.
-    """
-    try:
-        count = reset_daily_followup_counts()
-        logger.info(f"Reset daily followup counts for {count} conversations")
-        return {"reset": count}
-        
-    except Exception as e:
-        logger.error(f"reset_daily_counts error: {e}", exc_info=True)
-        return {"error": str(e)}

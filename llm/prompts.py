@@ -289,7 +289,7 @@ You MUST return the following JSON structure:
 {{
     "message_text": "Your natural language response here",
     "message_language": "en",
-    "selected_cta_id": id of the CTA to be selected
+    "selected_cta_id": "UUID string of the CTA to be selected or null"
 }}
 """
 
@@ -429,6 +429,10 @@ Summary: {rolling_summary}
 
 Last Messages:
 {last_messages}
+
+<available_ctas>
+{available_ctas}
+</available_ctas>
 
 === BRAIN DECISION ===
 Action: {decision_json}

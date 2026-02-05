@@ -4,11 +4,12 @@ Step 2: MOUTH - Write the response.
 import json
 import logging
 import time
-from typing import Tuple, Optional
+from uuid import UUID
 from llm.schemas import PipelineInput, ClassifyOutput, GenerateOutput
 from llm.prompts import MOUTH_USER_TEMPLATE
 from llm.prompts_registry import get_mouth_system_prompt
 from llm.api_helpers import make_api_call
+from llm.utils import format_ctas
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ def _build_user_prompt(context: PipelineInput, classification: ClassifyOutput) -
         business_name=context.business_name,
         rolling_summary=context.rolling_summary or "No summary yet",
         last_messages=_format_messages(context.last_messages),
+        available_ctas=format_ctas(context.available_ctas),
         decision_json=json.dumps(decision_compact),
         conversation_stage=context.conversation_stage.value,
     )
@@ -46,11 +48,22 @@ def _build_user_prompt(context: PipelineInput, classification: ClassifyOutput) -
 
 def _validate_and_build_output(data: dict, context: PipelineInput) -> GenerateOutput:
     """Validate and build typed output from raw JSON."""
+    # Defensive parsing for selected_cta_id
+    raw_cta_id = data.get("selected_cta_id")
+    final_cta_id = None
     
+    if raw_cta_id:
+        try:
+            # Handle if LLM returns it as string UUID or something else
+            final_cta_id = UUID(str(raw_cta_id))
+        except (ValueError, TypeError):
+            logger.warning(f"Mouth returned invalid UUID for selected_cta_id: {raw_cta_id}. Ignoring.")
+            final_cta_id = None
+
     return GenerateOutput(
         message_text=data.get("message_text", ""),
         message_language=data.get("message_language", context.language_pref),
-        selected_cta_id=data.get("selected_cta_id"),
+        selected_cta_id=final_cta_id,
         next_followup_in_minutes=max(0, data.get("next_followup_in_minutes", 0)),
         self_check_passed=True, # Pro-forma for now
         violations=[]

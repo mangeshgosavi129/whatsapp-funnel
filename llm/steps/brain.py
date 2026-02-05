@@ -8,7 +8,7 @@ from llm.api_helpers import make_api_call
 from llm.schemas import PipelineInput, ClassifyOutput, RiskFlags
 from llm.prompts import BRAIN_USER_TEMPLATE, BRAIN_USER_HISTORY_TEMPLATE
 from llm.prompts_registry import get_brain_system_prompt
-from llm.utils import normalize_enum, get_classify_schema
+from llm.utils import normalize_enum, get_classify_schema, format_ctas
 from server.enums import (
     ConversationStage, DecisionAction, IntentLevel, 
     UserSentiment, RiskLevel
@@ -28,15 +28,6 @@ def _format_messages(messages: list) -> str:
     return "\n".join(lines)
 
 
-def _format_ctas(ctas: list) -> str:
-    """Format available CTAs for prompt."""
-    if not ctas:
-        return "No CTAs defined in dashboard."
-    
-    lines = []
-    for cta in ctas:
-        lines.append(f"- ID: {cta.get('id')} | Name: {cta.get('name')}")
-    return "\n".join(lines)
 
 
 def _is_opening_message(context: PipelineInput) -> bool:
@@ -61,7 +52,7 @@ def _build_user_prompt(context: PipelineInput, is_opening: bool) -> str:
     # 2. Build Full Prompt
     return BRAIN_USER_TEMPLATE.format(
         history_section=history_section,
-        available_ctas=_format_ctas(context.available_ctas),
+        available_ctas=format_ctas(context.available_ctas),
         conversation_stage=context.conversation_stage.value,
         conversation_mode=context.conversation_mode,
         intent_level=context.intent_level.value,

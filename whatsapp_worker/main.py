@@ -10,23 +10,20 @@ from typing import Mapping, Tuple, Optional
 from collections import defaultdict
 from threading import Lock
 from uuid import UUID
-
 import boto3
-
 from whatsapp_worker.config import config
 from whatsapp_worker.processors.context import build_pipeline_context
 from whatsapp_worker.processors.actions import handle_pipeline_result
 from whatsapp_worker.processors.api_client import api_client
 from whatsapp_worker.security import validate_signature
 from llm.pipeline import run_pipeline
-from server.enums import ConversationMode, MessageFrom
+from server.enums import ConversationMode
+from logging_config import setup_logging
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+setup_logging()
 logger = logging.getLogger(__name__)
+
 
 # --- SQS Client Initialization ---
 sqs = boto3.client(
@@ -156,14 +153,6 @@ def handle_webhook(body: Mapping) -> Tuple[Mapping, int]:
         text_body = None
         if msg.get("type") == "text":
             text_body = msg["text"]["body"]
-        elif msg.get("type") == "button":
-            text_body = msg["button"]["text"]
-        elif msg.get("type") == "interactive":
-            interactive = msg.get("interactive", {})
-            if interactive.get("type") == "button_reply":
-                text_body = interactive["button_reply"]["title"]
-            elif interactive.get("type") == "list_reply":
-                text_body = interactive["list_reply"]["title"]
         
         if not text_body:
             logger.info(f"Non-text message from {sender_phone}, type: {msg.get('type')}")
