@@ -319,6 +319,96 @@ async def create_conversation(
     return _conversation_to_schema(conv)
 
 
+# ========================================
+# Followup Evaluation Endpoints
+# ========================================
+
+@router.get("/conversations/due-followups", response_model=List[InternalDueFollowupOut])
+def get_due_followups(
+    db: Session = Depends(get_db),
+    _: None = Depends(require_internal_secret),
+):
+    """
+    Fetch conversations due for follow-ups based on real-time evaluation.
+    Buckets:
+    - 10 minutes (1st follow-up)
+    - 180 minutes / 3 hours (2nd follow-up)
+    - 360 minutes / 6 hours (3rd follow-up)
+    """
+    now = datetime.now(timezone.utc)
+
+    # (min_elapsed, max_elapsed, followup_stage, required_followup_count)
+    # Buckets based on time since LEAD's LAST MESSAGE (not bot's):
+    # - FOLLOWUP_10M: 10 min ± 2 min tolerance (1st followup)
+    # - FOLLOWUP_3H: 180 min ± 10 min tolerance (2nd followup)
+    # - FOLLOWUP_6H: 360 min ± 20 min tolerance (3rd followup)
+    # - GHOSTED: 1440-2880 min / 24-48h (marks as ghosted after no response)
+    buckets = [
+        (8, 12, ConversationStage.FOLLOWUP_10M),     # 10m ± 2m
+        (170, 190, ConversationStage.FOLLOWUP_3H),   # 180m ± 10m
+        (340, 380, ConversationStage.FOLLOWUP_6H),   # 360m ± 20m
+        (1440, 2880, ConversationStage.GHOSTED),     # 24-48 hours -> mark as ghosted
+    ]
+
+    results: list[InternalDueFollowupOut] = []
+
+    for min_m, max_m, stage in buckets:
+        start_time = now - timedelta(minutes=max_m)
+        end_time = now - timedelta(minutes=min_m)
+
+        due_convs = (
+            db.query(Conversation, Lead, Organization, WhatsAppIntegration)
+            .join(Lead, Conversation.lead_id == Lead.id)
+            .join(Organization, Conversation.organization_id == Organization.id)
+            .join(
+                WhatsAppIntegration,
+                Organization.id == WhatsAppIntegration.organization_id,
+            )
+            .filter(
+                # Time window anchored to LEAD's last message
+                Conversation.last_user_message_at >= start_time,
+                Conversation.last_user_message_at < end_time,
+
+                # Bot has already responded after lead's last message
+                Conversation.last_user_message_at < Conversation.last_bot_message_at,
+
+                # Bot-only, active conversations
+                Conversation.mode == ConversationMode.BOT,
+                Conversation.needs_human_attention.is_(False),
+
+                # Exclude terminal states
+                Conversation.stage.notin_([
+                    ConversationStage.CLOSED,
+                    ConversationStage.LOST,
+                    ConversationStage.GHOSTED,
+                ]),
+
+                # WhatsApp must be connected
+                WhatsAppIntegration.is_connected.is_(True),
+            )
+            .all()
+        )
+
+        for conv, lead, org, integration in due_convs:
+            results.append(
+                InternalDueFollowupOut(
+                    followup_type=stage,
+                    conversation=_conversation_to_schema(conv),
+                    lead=_lead_to_schema(lead),
+                    organization_id=org.id,
+                    organization_name=org.name,
+                    access_token=integration.access_token,
+                    phone_number_id=integration.phone_number_id,
+                    version=integration.version,
+                    business_name=org.business_name,
+                    business_description=org.business_description,
+                    flow_prompt=org.flow_prompt,
+                )
+            )
+    logger.info(f"Found {results} due follow-ups")
+    return results
+
+
 @router.get("/conversations/{conversation_id}", response_model=InternalConversationOut)
 def get_conversation(
     conversation_id: UUID,
@@ -503,95 +593,6 @@ async def store_outgoing_message(
 
     return _message_to_schema(message)
 
-
-# ========================================
-# Followup Evaluation Endpoints
-# ========================================
-
-@router.get("/conversations/due-followups", response_model=List[InternalDueFollowupOut])
-def get_due_followups(
-    db: Session = Depends(get_db),
-    _: None = Depends(require_internal_secret),
-):
-    """
-    Fetch conversations due for follow-ups based on real-time evaluation.
-    Buckets:
-    - 10 minutes (1st follow-up)
-    - 180 minutes / 3 hours (2nd follow-up)
-    - 360 minutes / 6 hours (3rd follow-up)
-    """
-    now = datetime.now(timezone.utc)
-
-    # (min_elapsed, max_elapsed, followup_stage, required_followup_count)
-    # Buckets based on time since LEAD's LAST MESSAGE (not bot's):
-    # - FOLLOWUP_10M: 10 min ± 2 min tolerance (1st followup)
-    # - FOLLOWUP_3H: 180 min ± 10 min tolerance (2nd followup)
-    # - FOLLOWUP_6H: 360 min ± 20 min tolerance (3rd followup)
-    # - GHOSTED: 1440-2880 min / 24-48h (marks as ghosted after no response)
-    buckets = [
-        (8, 12, ConversationStage.FOLLOWUP_10M),     # 10m ± 2m
-        (170, 190, ConversationStage.FOLLOWUP_3H),   # 180m ± 10m
-        (340, 380, ConversationStage.FOLLOWUP_6H),   # 360m ± 20m
-        (1440, 2880, ConversationStage.GHOSTED),     # 24-48 hours -> mark as ghosted
-    ]
-
-    results: list[InternalDueFollowupOut] = []
-
-    for min_m, max_m, stage in buckets:
-        start_time = now - timedelta(minutes=max_m)
-        end_time = now - timedelta(minutes=min_m)
-
-        due_convs = (
-            db.query(Conversation, Lead, Organization, WhatsAppIntegration)
-            .join(Lead, Conversation.lead_id == Lead.id)
-            .join(Organization, Conversation.organization_id == Organization.id)
-            .join(
-                WhatsAppIntegration,
-                Organization.id == WhatsAppIntegration.organization_id,
-            )
-            .filter(
-                # Time window anchored to LEAD's last message
-                Conversation.last_user_message_at >= start_time,
-                Conversation.last_user_message_at < end_time,
-
-                # Bot has already responded after lead's last message
-                Conversation.last_user_message_at < Conversation.last_bot_message_at,
-
-                # Bot-only, active conversations
-                Conversation.mode == ConversationMode.BOT,
-                Conversation.needs_human_attention.is_(False),
-
-                # Exclude terminal states
-                Conversation.stage.notin_([
-                    ConversationStage.CLOSED,
-                    ConversationStage.LOST,
-                    ConversationStage.GHOSTED,
-                ]),
-
-                # WhatsApp must be connected
-                WhatsAppIntegration.is_connected.is_(True),
-            )
-            .all()
-        )
-
-        for conv, lead, org, integration in due_convs:
-            results.append(
-                InternalDueFollowupOut(
-                    followup_type=stage,
-                    conversation=_conversation_to_schema(conv),
-                    lead=_lead_to_schema(lead),
-                    organization_id=org.id,
-                    organization_name=org.name,
-                    access_token=integration.access_token,
-                    phone_number_id=integration.phone_number_id,
-                    version=integration.version,
-                    business_name=org.business_name,
-                    business_description=org.business_description,
-                    flow_prompt=org.flow_prompt,
-                )
-            )
-    logger.info(f"Found {results} due follow-ups")
-    return results
 
 # ========================================
 # Pipeline Event Endpoints
