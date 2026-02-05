@@ -1,13 +1,13 @@
 """
-Step 2: GENERATE (The Mouth) - Write the response.
+Step 2: MOUTH - Write the response.
 """
 import json
 import logging
 import time
 from typing import Tuple, Optional
 from llm.schemas import PipelineInput, ClassifyOutput, GenerateOutput
-from llm.prompts import GENERATE_USER_TEMPLATE
-from llm.prompts_registry import get_system_prompt
+from llm.prompts import MOUTH_USER_TEMPLATE
+from llm.prompts_registry import get_mouth_system_prompt
 from llm.api_helpers import make_api_call
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ def _build_user_prompt(context: PipelineInput, classification: ClassifyOutput) -
         "cta_scheduled_at": classification.cta_scheduled_at
     }
     
-    return GENERATE_USER_TEMPLATE.format(
+    return MOUTH_USER_TEMPLATE.format(
         business_name=context.business_name,
         rolling_summary=context.rolling_summary or "No summary yet",
         last_messages=_format_messages(context.last_3_messages),
@@ -55,18 +55,15 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> GenerateOu
         violations=[]
     )
 
-def run_generate(context: PipelineInput, classification: ClassifyOutput) -> Tuple[Optional[GenerateOutput], int, int]:
+def run_mouth(context: PipelineInput, classification: ClassifyOutput) -> Tuple[Optional[GenerateOutput], int, int]:
     """
-    Run the Generate step.
+    Run the Mouth step.
     Only runs if classification.should_respond is True.
     """
     if not classification.should_respond:
         return None, 0, 0
     
-    # DYNAMIC SYSTEM PROMPT (The Fix)
-    # Load instruction ONLY for the target stage determined by the Brain
-    # Enriched with business context (The Mouth)
-    system_prompt = get_system_prompt(
+    system_prompt = get_mouth_system_prompt(
         stage=classification.new_stage, # Use the NEW stage
         business_name=context.business_name,
         business_description=context.business_description,
@@ -85,17 +82,17 @@ def run_generate(context: PipelineInput, classification: ClassifyOutput) -> Tupl
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
-            step_name="Generate"
+            step_name="Mouth"
         )
         
         latency_ms = int((time.time() - start_time) * 1000)
         output = _validate_and_build_output(data, context)
         
-        logger.info(f"Generate: {len(output.message_text)} chars")
+        logger.info(f"Mouth: {len(output.message_text)} chars")
         return output, latency_ms, 0
         
     except Exception as e:
-        logger.error(f"Generate failed: {e}")
+        logger.error(f"Mouth failed: {e}")
         # SIMPLE FALLBACK: Maintain continuity without crashing
         fallback_output = GenerateOutput(
             message_text="I'm sorry, I'm having a bit of trouble connecting. Could you please try again in a moment?",

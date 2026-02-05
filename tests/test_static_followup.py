@@ -100,7 +100,7 @@ def test_no_scheduling_on_message():
         with patch('whatsapp_worker.main.run_pipeline') as mock_pipeline, \
              patch('whatsapp_worker.main.build_pipeline_context'), \
              patch('whatsapp_worker.main.handle_pipeline_result'), \
-             patch('llm.steps.summarize.run_background_summary'):
+             patch('llm.steps.memory.run_memory'):
             
             mock_pipeline.return_value = MagicMock()
             

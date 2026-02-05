@@ -1,44 +1,44 @@
 import logging
 from llm.schemas import PipelineInput, PipelineResult, ClassifyOutput
-from llm.steps.classify import run_classify
-from llm.steps.generate import run_generate
+from llm.steps.brain import run_brain
+from llm.steps.mouth import run_mouth
 from server.enums import DecisionAction
 
 logger = logging.getLogger(__name__)
 
 def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
     """
-    Run the Router-Agent pipeline.
+    Run the Brain-Mouth-Memory pipeline.
     
     Steps:
-    1. CLASSIFY (The Brain): Analyze & Decide
-    2. GENERATE (The Mouth): Write Message (if Brain says so)
-    3. Return Result (with needs_background_summary=True)
+    1. BRAIN: Analyze & Decide
+    2. MOUTH: Write Message (if Brain says so)
+    3. Return Result (Memory is backgrounded)
     """
     total_latency_ms = 0
     total_tokens = 0
     
     try:
         # ========================================
-        # Step 1: CLASSIFY (The Brain)
+        # Step 1: BRAIN
         # ========================================
-        logger.info("Running Step 1: Classify (Brain)")
-        classification, latency, tokens = run_classify(context)
+        logger.info("Running Step 1: Brain")
+        classification, latency, tokens = run_brain(context)
         total_latency_ms += latency
         total_tokens += tokens
         
         # ========================================
-        # Step 2: GENERATE (The Mouth)
+        # Step 2: MOUTH
         # ========================================
         response_output = None
         
         if classification.should_respond:
-            logger.info(f"Running Step 2: Generate (Mouth) - Action: {classification.action.value}")
-            response_output, latency, tokens = run_generate(context, classification)
+            logger.info(f"Running Step 2: Mouth - Action: {classification.action.value}")
+            response_output, latency, tokens = run_mouth(context, classification)
             total_latency_ms += latency
             total_tokens += tokens
         else:
-            logger.info("Skipping Generate (Brain decided not to respond)")
+            logger.info("Skipping Mouth (Brain decided not to respond)")
 
         # ========================================
         # Build Result

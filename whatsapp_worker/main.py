@@ -277,10 +277,10 @@ def process_message(
         
         # Background Summary (The Memory)
         if pipeline_result.needs_background_summary:
-            from llm.steps.summarize import run_background_summary
+            from llm.steps.memory import run_memory
             
             # Run summary generation
-            new_summary = run_background_summary(
+            new_summary = run_memory(
                 pipeline_context, 
                 user_message=message_text,
                 bot_message=response_text or "",

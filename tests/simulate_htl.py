@@ -64,34 +64,34 @@ from whatsapp_worker import main as worker_main
 from whatsapp_worker.processors.api_client import api_client
 from llm.schemas import ClassifyOutput, GenerateOutput
 from llm import pipeline  # Direct import
-from llm.steps import classify, generate # Direct import
+from llm.steps import brain, mouth # Direct import
 
 # Need to import prompt components for reconstruction
-from llm.prompts import CLASSIFY_SYSTEM_PROMPT
-from llm.steps.classify import _build_user_prompt as build_classify_user_prompt
-from llm.prompts_registry import get_system_prompt
-from llm.steps.generate import _build_user_prompt as build_generate_user_prompt
+from llm.prompts import BRAIN_SYSTEM_PROMPT
+from llm.steps.brain import _build_user_prompt as build_brain_user_prompt
+from llm.prompts_registry import get_mouth_system_prompt
+from llm.steps.mouth import _build_user_prompt as build_mouth_user_prompt
 
 # ==========================================
 # 🕵️ MONKEY PATCHING FOR TRACING
 # ==========================================
 
-original_run_classify = classify.run_classify
-original_run_generate = generate.run_generate
+original_run_brain = brain.run_brain
+original_run_mouth = mouth.run_mouth
 
-def traced_run_classify(context):
+def traced_run_brain(context):
     start = time.time()
     
     # Reconstruct Prompt for Logs
     print(f"\n🧠 [THE BRAIN] (INPUT TOKENS)")
-    print(f"   ► SYSTEM PROMPT:\n{'-'*20}\n{CLASSIFY_SYSTEM_PROMPT[:300]}...\n(truncated)\n{'-'*20}")
+    print(f"   ► SYSTEM PROMPT:\n{'-'*20}\n{BRAIN_SYSTEM_PROMPT[:300]}...\n(truncated)\n{'-'*20}")
     try:
-        user_p = build_classify_user_prompt(context)
+        user_p = build_brain_user_prompt(context, is_opening=False) # Simplified for logs
         print(f"   ► USER PROMPT:\n{'-'*20}\n{user_p}\n{'-'*20}")
     except Exception as e:
         print(f"   [Error reconstructing prompt: {e}]")
         
-    result, lat, tokens = original_run_classify(context)
+    result, lat, tokens = original_run_brain(context)
     duration = (time.time() - start) * 1000
     
     # Pretty Print Brain Output
@@ -100,18 +100,18 @@ def traced_run_classify(context):
     print(f"   ├─ Situation: {result.situation_summary}")
     print(f"   ├─ Intent: {result.intent_level.value} | Sentiment: {result.user_sentiment.value}")
     print(f"   ├─ Risks: Spam={result.risk_flags.spam_risk.value} | Policy={result.risk_flags.policy_risk.value}")
-    print(f"   ├─ CTA: {getattr(result.recommended_cta, 'value', 'None')} | Followup: {result.followup_in_minutes}m")
-    print(f"   └─ Decision: Stage -> {result.new_stage.value.upper()} | Action -> {result.action.value}")
+    print(f"   ├─ Action: {result.action.value} | Followup: {result.followup_in_minutes}m")
+    print(f"   └─ Decision: Stage -> {result.new_stage.value.upper()}")
     
     return result, lat, tokens
 
-def traced_run_generate(context, classification):
+def traced_run_mouth(context, classification):
     start = time.time()
     
     # Reconstruct Prompts for Logs
     print(f"\n🗣️ [THE MOUTH] (INPUT TOKENS)")
     try:
-        sys_p = get_system_prompt(
+        sys_p = get_mouth_system_prompt(
             stage=classification.new_stage,
             business_name=context.business_name,
             flow_prompt=context.flow_prompt,
@@ -119,12 +119,12 @@ def traced_run_generate(context, classification):
         )
         print(f"   ► SYSTEM PROMPT (Stage: {classification.new_stage.value}):\n{'-'*20}\n{sys_p}\n{'-'*20}")
         
-        user_p = build_generate_user_prompt(context, classification)
+        user_p = build_mouth_user_prompt(context, classification)
         print(f"   ► USER PROMPT:\n{'-'*20}\n{user_p}\n{'-'*20}")
     except Exception as e:
         print(f"   [Error reconstructing prompt: {e}]")
     
-    result, lat, tokens = original_run_generate(context, classification)
+    result, lat, tokens = original_run_mouth(context, classification)
     duration = (time.time() - start) * 1000
     
     # Pretty Print Mouth Output
@@ -140,8 +140,8 @@ def traced_run_generate(context, classification):
     return result, lat, tokens
 
 # Apply patches
-pipeline.run_classify = traced_run_classify
-pipeline.run_generate = traced_run_generate
+pipeline.run_brain = traced_run_brain
+pipeline.run_mouth = traced_run_mouth
 
 # ==========================================
 # MOCK / PATCH SETTINGS

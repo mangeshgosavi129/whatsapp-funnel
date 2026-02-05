@@ -4,17 +4,17 @@ This module provides factory functions to assemble prompts from constants in llm
 """
 from server.enums import ConversationStage
 from llm.prompts import (
-    BASE_PERSONA,
-    GENERATE_STAGE_INSTRUCTIONS,
-    CLASSIFY_BASE_INSTRUCTIONS,
-    CLASSIFY_STAGE_RULES
+    MOUTH_SYSTEM_PROMPT,
+    MOUTH_SYSTEM_STAGE_RULES,
+    BRAIN_SYSTEM_PROMPT,
+    BRAIN_SYSTEM_STAGE_RULES
 )
 
 # ============================================================
 # Factory Functions
 # ============================================================
 
-def get_system_prompt(
+def get_mouth_system_prompt(
     stage: ConversationStage, 
     business_name: str, 
     business_description: str = "", 
@@ -22,11 +22,11 @@ def get_system_prompt(
     max_words: int = 80
 ) -> str:
     """
-    Dynamically build the system prompt for Step 2 (Generate).
+    Dynamically build the system prompt for Step 2 (Mouth).
     Enriched with business context (The Mouth).
     """
     # 1. Base instructions (Identity & Persona)
-    base = BASE_PERSONA.format(
+    base = MOUTH_SYSTEM_PROMPT.format(
         business_name=business_name, 
         business_description=business_description,
         flow_prompt=flow_prompt,
@@ -35,33 +35,33 @@ def get_system_prompt(
     
     # 2. Stage-specific instructions (The Mouth)
     # Fallback to Qualification if stage missing
-    instruction_template = GENERATE_STAGE_INSTRUCTIONS.get(
+    instruction_template = MOUTH_SYSTEM_STAGE_RULES.get(
         stage, 
-        GENERATE_STAGE_INSTRUCTIONS[ConversationStage.QUALIFICATION]
+        MOUTH_SYSTEM_STAGE_RULES[ConversationStage.QUALIFICATION]
     )
     
     return f"{base}\n\n{instruction_template}"
 
 
-def get_classify_system_prompt(
+def get_brain_system_prompt(
     stage: ConversationStage, 
     is_opening: bool = False, 
     flow_prompt: str = ""
 ) -> str:
     """
-    Build the system prompt for Step 1 (Classify).
+    Build the system prompt for Step 1 (Brain).
     Enforces stage-based isolation to eliminate context pollution (The Brain).
     """
     # 1. Base instructions (Strategy Rules)
-    base = CLASSIFY_BASE_INSTRUCTIONS.format(flow_prompt=flow_prompt)
+    base = BRAIN_SYSTEM_PROMPT.format(flow_prompt=flow_prompt)
     
     # 2. Stage-specific rules (The Router)
     # If opening message, force GREETING instructions regardless of input stage
     target_stage = ConversationStage.GREETING if is_opening else stage
     
-    stage_rules = CLASSIFY_STAGE_RULES.get(
+    stage_rules = BRAIN_SYSTEM_STAGE_RULES.get(
         target_stage, 
-        CLASSIFY_STAGE_RULES[ConversationStage.QUALIFICATION]
+        BRAIN_SYSTEM_STAGE_RULES[ConversationStage.QUALIFICATION]
     )
     
     # 3. Combine

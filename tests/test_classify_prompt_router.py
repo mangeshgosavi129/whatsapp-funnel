@@ -1,8 +1,9 @@
 
 import pytest
 from llm.schemas import PipelineInput, MessageContext, TimingContext, NudgeContext
-from llm.steps.classify import _is_opening_message, _build_user_prompt
-from llm.prompts_registry import get_classify_system_prompt
+from llm.schemas import PipelineInput, MessageContext, TimingContext, NudgeContext
+from llm.steps.brain import _is_opening_message, _build_user_prompt
+from llm.prompts_registry import get_brain_system_prompt
 from server.enums import ConversationStage, IntentLevel, UserSentiment
 
 @pytest.fixture
@@ -46,9 +47,8 @@ def test_opening_path_excludes_history(base_context):
     
     prompt = _build_user_prompt(base_context, is_opening=True)
     
-    assert "CONVERSATION HISTORY" not in prompt
-    assert "rolling_summary" not in prompt
-    assert "Last Messages" not in prompt
+    assert "<history>\n\n</history>" in prompt
+    assert "Last 3 Messages:" not in prompt
     # Business context should also be excluded
     assert base_context.business_name not in prompt
     assert base_context.business_description not in prompt
@@ -62,27 +62,27 @@ def test_reply_path_includes_history(base_context):
     
     prompt = _build_user_prompt(base_context, is_opening=False)
     
-    assert "CONVERSATION HISTORY" in prompt
+    assert "<history>" in prompt
     assert "The user is interested in testing." in prompt
     assert "[lead] Hi" in prompt
     assert "[bot] Hello!" in prompt
 
-def test_classify_system_prompt_isolation():
+def test_brain_system_prompt_isolation():
     # Greeting Stage
-    greeting_prompt = get_classify_system_prompt(ConversationStage.GREETING, is_opening=False)
-    assert "=== STAGE: GREETING ===" in greeting_prompt
-    assert "=== STAGE: QUALIFICATION ===" not in greeting_prompt
-    assert "=== STAGE: PRICING ===" not in greeting_prompt
+    greeting_prompt = get_brain_system_prompt(ConversationStage.GREETING, is_opening=False)
+    assert "EVALUATING STAGE: GREETING" in greeting_prompt
+    assert "EVALUATING STAGE: QUALIFICATION" not in greeting_prompt
+    assert "EVALUATING STAGE: PRICING" not in greeting_prompt
 
     # Pricing Stage
-    pricing_prompt = get_classify_system_prompt(ConversationStage.PRICING, is_opening=False)
-    assert "=== STAGE: PRICING ===" in pricing_prompt
-    assert "=== STAGE: GREETING ===" not in pricing_prompt
-    assert "=== STAGE: QUALIFICATION ===" not in pricing_prompt
+    pricing_prompt = get_brain_system_prompt(ConversationStage.PRICING, is_opening=False)
+    assert "EVALUATING STAGE: PRICING" in pricing_prompt
+    assert "EVALUATING STAGE: GREETING" not in pricing_prompt
+    assert "EVALUATING STAGE: QUALIFICATION" not in pricing_prompt
 
 def test_opening_message_forces_greeting_prompt():
     # Even if context says PRICING, an opening message should use GREETING prompt
-    prompt = get_classify_system_prompt(ConversationStage.PRICING, is_opening=True)
-    assert "=== STAGE: GREETING ===" in prompt
+    prompt = get_brain_system_prompt(ConversationStage.PRICING, is_opening=True)
+    assert "EVALUATING STAGE: GREETING" in prompt
     assert "OPENING message from a new lead" in prompt
-    assert "=== STAGE: PRICING ===" not in prompt
+    assert "EVALUATING STAGE: PRICING" not in prompt
