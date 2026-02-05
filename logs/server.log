@@ -1391,3 +1391,21 @@
 2026-02-06 03:04:38,717 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.006s
 2026-02-06 03:04:38,727 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.011s
 2026-02-06 03:04:38,745 - server - INFO - GET /leads - Status: 200 - Time: 0.030s
+2026-02-06 03:08:24,326 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-06 03:08:25,710 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-06 03:08:25,723 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-06 03:08:37,852 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-06 03:08:39,714 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-06 03:08:39,724 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-06 03:09:11,894 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.131s
+2026-02-06 03:09:11,898 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.003s
+2026-02-06 03:09:11,903 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.004s
+2026-02-06 03:09:11,912 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.009s
+2026-02-06 03:09:11,914 - server - INFO - GET /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7 - Status: 200 - Time: 0.001s
+2026-02-06 03:09:11,919 - server - INFO - GET /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7/messages - Status: 200 - Time: 0.004s
+2026-02-06 03:09:11,922 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.003s
+2026-02-06 03:09:12,230 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-06 03:09:13,854 - server - INFO - PATCH /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7 - Status: 200 - Time: 0.004s
+2026-02-06 03:09:13,860 - server - INFO - PATCH /internals/leads/3c0729a8-0fad-442b-a983-939f780c01d7 - Status: 200 - Time: 0.003s
+2026-02-06 03:09:13,866 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.006s
+2026-02-06 03:09:13,869 - server - INFO - GET /leads - Status: 200 - Time: 0.003s

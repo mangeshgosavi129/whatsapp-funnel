@@ -56,7 +56,7 @@ def handle_pipeline_result(
 
     # Check for human attention flag (INDEPENDENT - can happen with any action)
     if result.should_escalate:
-        logger.info(f"🚩 ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
+        logger.info(f"ACTION REQUIRED: Conversation {conversation_id} flagged for human attention")
         updates["needs_human_attention"] = True
 
     # Collect CTA fields (INDEPENDENT - CTA can be triggered even when sending a message)

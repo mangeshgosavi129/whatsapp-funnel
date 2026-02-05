@@ -3709,3 +3709,11 @@
 2026-02-06 03:04:38,700 - llm.steps.mouth - INFO - Mouth: 0 chars
 2026-02-06 03:04:38,700 - llm.pipeline - INFO - Pipeline Complete: 2690ms. Response: True
 2026-02-06 03:04:39,593 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 03:09:11,922 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 03:09:12,780 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 03:09:12,780 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 03:09:13,415 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.8)
+2026-02-06 03:09:13,415 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 03:09:13,850 - llm.steps.mouth - INFO - Mouth: 0 chars
+2026-02-06 03:09:13,850 - llm.pipeline - INFO - Pipeline Complete: 1926ms. Response: True
+2026-02-06 03:09:14,615 - llm.steps.memory - INFO - Memory: 0 chars

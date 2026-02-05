@@ -129,7 +129,7 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
         
         logger.info(f"Brain: {output.action.value} -> {output.new_stage.value} (Conf: {output.confidence})")
         if output.needs_human_attention:
-            logger.info(f"🚨 Human attention flagged")
+            logger.info(f"Human attention flagged")
         
         return output, latency_ms, 0
         
