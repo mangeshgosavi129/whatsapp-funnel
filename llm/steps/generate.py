@@ -44,7 +44,7 @@ def _build_user_prompt(context: PipelineInput, classification: ClassifyOutput) -
     return GENERATE_USER_TEMPLATE.format(
         business_name=context.business_name,
         rolling_summary=context.rolling_summary or "No summary yet",
-        last_3_messages=_format_messages(context.last_3_messages),
+        last_messages=_format_messages(context.last_3_messages),
         decision_json=json.dumps(decision_compact),
         conversation_stage=context.conversation_stage.value,
     )
