@@ -337,22 +337,35 @@ def get_due_followups(
     """
     now = datetime.now(timezone.utc)
 
-    # (min_elapsed, max_elapsed, followup_stage, required_followup_count)
+    # (min_elapsed, max_elapsed, target_stage, eligible_stages)
     # Buckets based on time since LEAD's LAST MESSAGE (not bot's):
     # - FOLLOWUP_10M: 10 min ± 2 min tolerance (1st followup)
     # - FOLLOWUP_3H: 180 min ± 10 min tolerance (2nd followup)
     # - FOLLOWUP_6H: 360 min ± 20 min tolerance (3rd followup)
     # - GHOSTED: 1440-2880 min / 24-48h (marks as ghosted after no response)
+    # eligible_stages: stages that are allowed to transition to the target_stage
     buckets = [
-        (8, 12, ConversationStage.FOLLOWUP_10M),     # 10m ± 2m
-        (170, 190, ConversationStage.FOLLOWUP_3H),   # 180m ± 10m
-        (340, 380, ConversationStage.FOLLOWUP_6H),   # 360m ± 20m
-        (1440, 2880, ConversationStage.GHOSTED),     # 24-48 hours -> mark as ghosted
+        (8, 12, ConversationStage.FOLLOWUP_10M, [
+            ConversationStage.GREETING,
+            ConversationStage.QUALIFICATION,
+            ConversationStage.PRICING 
+            ConversationStage.CTA 
+            ConversationStage.FOLLOWUP 
+        ]),
+        (170, 190, ConversationStage.FOLLOWUP_3H, [
+            ConversationStage.FOLLOWUP_10M,
+        ]),
+        (340, 380, ConversationStage.FOLLOWUP_6H, [
+            ConversationStage.FOLLOWUP_3H,
+        ]),
+        (1440, 2880, ConversationStage.GHOSTED, [
+            ConversationStage.FOLLOWUP_6H,
+        ]),
     ]
 
     results: list[InternalDueFollowupOut] = []
 
-    for min_m, max_m, stage in buckets:
+    for min_m, max_m, target_stage, eligible_stages in buckets:
         start_time = now - timedelta(minutes=max_m)
         end_time = now - timedelta(minutes=min_m)
 
@@ -376,12 +389,8 @@ def get_due_followups(
                 Conversation.mode == ConversationMode.BOT,
                 Conversation.needs_human_attention.is_(False),
 
-                # Exclude terminal states
-                Conversation.stage.notin_([
-                    ConversationStage.CLOSED,
-                    ConversationStage.LOST,
-                    ConversationStage.GHOSTED,
-                ]),
+                # Only pick up conversations in eligible stages (prevents duplicates)
+                Conversation.stage.in_(eligible_stages),
 
                 # WhatsApp must be connected
                 WhatsAppIntegration.is_connected.is_(True),
@@ -392,7 +401,7 @@ def get_due_followups(
         for conv, lead, org, integration in due_convs:
             results.append(
                 InternalDueFollowupOut(
-                    followup_type=stage,
+                    followup_type=target_stage,
                     conversation=_conversation_to_schema(conv),
                     lead=_lead_to_schema(lead),
                     organization_id=org.id,
