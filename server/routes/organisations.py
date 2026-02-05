@@ -28,8 +28,6 @@ def update_organisation(
     auth: AuthContext = Depends(get_auth_context)
 ):
     """Update organization settings including business configuration."""
-    print(f"DEBUG: Updating organization {auth.organization_id} with payload: {payload.model_dump(exclude_unset=True)}")
-    
     org = db.query(Organization).filter(Organization.id == auth.organization_id).first()
     if not org:
         raise HTTPException(status_code=404, detail="Organisation not found")
@@ -49,10 +47,8 @@ def update_organisation(
     try:
         db.commit()
         db.refresh(org)
-        print(f"DEBUG: Organization {org.id} updated successfully. Business Name: {org.business_name}")
     except Exception as e:
         db.rollback()
-        print(f"ERROR: Failed to update organization: {e}")
         raise HTTPException(status_code=500, detail="Database update failed")
         
     return org
