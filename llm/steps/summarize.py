@@ -30,10 +30,7 @@ def run_background_summary(
         
     except Exception as e:
         logger.error(f"Background Summary failed: {e}")
-        # QUEUE FALLBACK
-        # Since we can't save to DB here easily without ID, we return the "dirty" append string
-        # and let the worker save that as the "summary".
-        return _queue_for_next_summary(context, user_message, bot_message)
+        return context.rolling_summary or "No summary available"
 
 
 def _run_summary_llm(
@@ -70,20 +67,3 @@ def _run_summary_llm(
     )
     
     return output, int((time.time() - start_time) * 1000), 0
-
-
-def _queue_for_next_summary(context: PipelineInput, user_msg: str, bot_msg: str):
-    """
-    Fallback: Don't lose data. Append to summary so next run sees it.
-    """
-    # In a perfect world, we push to a `pending_messages` table.
-    # "Dumb Append" strategy as requested in Plan:
-    
-    current = context.rolling_summary or ""
-    append = f"\n[PENDING] User: {user_msg} | Bot: {bot_msg}"
-    
-    # We need to save this "dirty" summary back to DB.
-    # But we don't have ID. 
-    # See note in `run_background_summary`.
-    logger.warning("Queuing logic triggered - Implementation limitation: Caller must handle ID.")
-    return current + append

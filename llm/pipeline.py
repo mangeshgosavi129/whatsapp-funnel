@@ -1,28 +1,10 @@
-"""
-Router-Agent Pipeline Orchestrator.
-Orchestrates the Classify (Brain) -> Generate (Mouth) flow.
-Summarization is now flagged for background execution.
-"""
 import logging
-from typing import Optional
-
-from llm.schemas import (
-    PipelineInput, PipelineResult, ClassifyOutput
-)
+from llm.schemas import PipelineInput, PipelineResult, ClassifyOutput
 from llm.steps.classify import run_classify
 from llm.steps.generate import run_generate
-# Actually, per plan, Summarize is moved out of here or run at end? 
-# "Use classify -> generate -> output"
-# "Summarize moved to background worker"
-# So here we just mark it? 
-# Wait, the worker needs to call run_summarize. 
-# Let's import it here for the worker to assume responsibility? 
-# Or just keep it imported so it's available.
-
 from server.enums import DecisionAction
 
 logger = logging.getLogger(__name__)
-
 
 def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
     """

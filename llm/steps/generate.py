@@ -95,41 +95,10 @@ def run_generate(context: PipelineInput, classification: ClassifyOutput) -> Tupl
         return output, latency_ms, 0
         
     except Exception as e:
-        logger.error(f"Generate failed: {e}. Attempting Fallback.")
-        # FALLBACK RETRY (Simple Prompt)
-        return _run_emergency_fallback(context)
-
-
-def _run_emergency_fallback(context: PipelineInput) -> Tuple[Optional[GenerateOutput], int, int]:
-    """
-    Emergency Retry: Strip all complexity, just ask for a polite response.
-    """
-    start_time = time.time()
-    try:
-        messages_text = _format_messages(context.last_3_messages)
-        
-        fallback_prompt = f"""
-        You are a helpful assistant for {context.business_name}.
-        The user said:
-        {messages_text}
-        
-        Write a polite, professional 1-sentence response.
-        Output strictly JSON: {{"message_text": "..."}}
-        """
-        
-        data = make_api_call(
-            messages=[{"role": "user", "content": fallback_prompt}],
-            response_format={"type": "json_object"},
-            step_name="Generate Fallback"
-        )
-        
-        output = GenerateOutput(
-            message_text=data.get("message_text", "I'm sorry, I'm having trouble connecting right now."),
+        logger.error(f"Generate failed: {e}")
+        # SIMPLE FALLBACK: Maintain continuity without crashing
+        fallback_output = GenerateOutput(
+            message_text="I'm sorry, I'm having a bit of trouble connecting. Could you please try again in a moment?",
             message_language="en"
         )
-        
-        return output, int((time.time() - start_time) * 1000), 0
-        
-    except Exception as e:
-        logger.error(f"Generate Fallback failed: {e}")
-        return None, 0, 0 # Give up, say nothing
+        return fallback_output, int((time.time() - start_time) * 1000), 0

@@ -130,7 +130,11 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
     """
     is_opening = _is_opening_message(context)
     user_prompt = _build_user_prompt(context, is_opening)
-    system_prompt = get_classify_system_prompt(context.conversation_stage, is_opening)
+    system_prompt = get_classify_system_prompt(
+        context.conversation_stage, 
+        is_opening, 
+        flow_prompt=context.flow_prompt
+    )
     
     start_time = time.time()
     
@@ -156,26 +160,16 @@ def run_classify(context: PipelineInput) -> Tuple[ClassifyOutput, int, int]:
         return output, latency_ms, 0 
         
     except Exception as e:
-        logger.error(f"Classify failed: {e}", exc_info=True)
-        return _get_fallback_output(context), int((time.time() - start_time) * 1000), 0
-
-
-def _get_fallback_output(context: PipelineInput) -> ClassifyOutput:
-    """
-    Safe Fallback: 
-    - Maintain current stage
-    - Wait (don't send)
-    """
-    return ClassifyOutput(
-        thought_process="Fallback due to error",
-        situation_summary="System error during classification",
-        intent_level=IntentLevel.UNKNOWN,
-        user_sentiment=UserSentiment.NEUTRAL,
-        risk_flags=RiskFlags(),
-        
-        action=DecisionAction.WAIT_SCHEDULE,
-        new_stage=context.conversation_stage, # STICKY FALLBACK
-        should_respond=False,
-        
-        confidence=0.0
-    )
+        logger.error(f"Classify failed: {e}")
+        fallback_output = ClassifyOutput(
+            thought_process="System error during classification. Falling back to safe state.",
+            situation_summary="Error",
+            intent_level=IntentLevel.UNKNOWN,
+            user_sentiment=UserSentiment.NEUTRAL,
+            risk_flags=RiskFlags(),
+            action=DecisionAction.WAIT_SCHEDULE,
+            new_stage=context.conversation_stage,
+            should_respond=False,
+            confidence=0.0
+        )
+        return fallback_output, int((time.time() - start_time) * 1000), 0
