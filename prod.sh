@@ -27,6 +27,31 @@ if [ "$1" == "--restart" ]; then
     exit 0
 fi
 
+if [ "$1" = "--reset-db-remotely" ]; then
+    echo "Resetting database remotely..."
+
+    ssh -i wabot.pem ubuntu@13.203.213.109 << 'EOF'
+        set -e
+
+        cd whatsapp-funnel
+
+        ./prod.sh --kill
+
+        psql "postgresql://wabot_user:aidukviuociwn@localhost:5432/wabot" << 'SQL'
+        BEGIN;
+        DELETE FROM messages;
+        DELETE FROM conversation_events;
+        DELETE FROM conversations;
+        DELETE FROM leads;
+        COMMIT;
+SQL
+
+        ./prod.sh
+EOF
+
+    exit 0
+fi
+
 # Activate virtual environment
 if [ -f "./.venv/bin/activate" ]; then
     source ./.venv/bin/activate
@@ -63,20 +88,14 @@ echo "Starting WhatsApp Worker (logs in logs/worker.log)..."
 nohup python3 -m whatsapp_worker.main > logs/worker.log 2>&1 &
 WORKER_PID=$!
 
-# Check if celery is installed
-if command -v celery >/dev/null 2>&1; then
-    echo "Starting Celery Worker (logs in logs/celery_worker.log)..."
-    nohup celery -A whatsapp_worker.tasks.celery_app worker --loglevel=info > logs/celery_worker.log 2>&1 &
-    CELERY_WORKER_PID=$!
+# Start Celery Worker and Beat using Python module
+echo "Starting Celery Worker (logs in logs/celery_worker.log)..."
+nohup python3 -m celery -A whatsapp_worker.tasks.celery_app worker --loglevel=info > logs/celery_worker.log 2>&1 &
+CELERY_WORKER_PID=$!
 
-    echo "Starting Celery Beat (logs in logs/celery_beat.log)..."
-    nohup celery -A whatsapp_worker.tasks.celery_app beat --loglevel=info > logs/celery_beat.log 2>&1 &
-    CELERY_BEAT_PID=$!
-else
-    echo "WARNING: Celery command not found. Skipping Celery Worker and Beat."
-    CELERY_WORKER_PID="N/A"
-    CELERY_BEAT_PID="N/A"
-fi
+echo "Starting Celery Beat (logs in logs/celery_beat.log)..."
+nohup python3 -m celery -A whatsapp_worker.tasks.celery_app beat --loglevel=info > logs/celery_beat.log 2>&1 &
+CELERY_BEAT_PID=$!
 
 echo "------------------------------------------"
 echo "Processes started in background."
