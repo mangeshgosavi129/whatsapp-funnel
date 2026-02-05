@@ -4,6 +4,7 @@ Step 2: MOUTH - Write the response.
 import json
 import logging
 import time
+from typing import Tuple, Optional
 from uuid import UUID
 from llm.schemas import PipelineInput, ClassifyOutput, GenerateOutput
 from llm.prompts import MOUTH_USER_TEMPLATE
