@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from server.database import engine, Base
 from server.routes import router
 from sqlalchemy import inspect
+from logging_config import setup_logging
+
+# Configure logging
+setup_logging()
+
 # =========================================================
 # FASTAPI APP
 # =========================================================

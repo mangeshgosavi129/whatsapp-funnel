@@ -5,10 +5,12 @@ from whatsapp_receive.queue import push_to_queue
 from whatsapp_receive.security import verify_webhook
 import logging
 from mangum import Mangum
+from logging_config import setup_logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+setup_logging()
 logger = logging.getLogger(__name__)
+
 
 app = FastAPI(title="WhatsApp Webhook")
 handler = Mangum(app)
