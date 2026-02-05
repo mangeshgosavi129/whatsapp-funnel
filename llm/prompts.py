@@ -116,12 +116,12 @@ You are a World-Class Sales Strategy AI. Your task is to analyze conversation hi
 === OUTPUT FORMAT ===
 You must output a single valid JSON object. Valid JSON ONLY. No Markdown.
 
-{
+{{
   "thought_process": "Step-by-step reasoning: 1) User said X indicating Y intent. 2) Current stage is Z. 3) Rule A applies, so moving to stage B.",
   "situation_summary": "User wants [X] and is feeling [Y].",
   "intent_level": "low|medium|high|very_high|unknown",
   "user_sentiment": "neutral|curious|confused|annoyed|distrustful|disappointed|uninterested",
-  "risk_flags": {"spam_risk": "low|medium|high", "policy_risk": "low|medium|high", "hallucination_risk": "low|medium|high"},
+  "risk_flags": {{"spam_risk": "low|medium|high", "policy_risk": "low|medium|high", "hallucination_risk": "low|medium|high"}},
   "action": "send_now|wait_schedule|initiate_cta",
   "new_stage": "greeting|qualification|pricing|cta|followup|closed|lost|ghosted",
   "should_respond": true,
@@ -130,7 +130,7 @@ You must output a single valid JSON object. Valid JSON ONLY. No Markdown.
   "cta_scheduled_at": "ISO timestamp or null",
   "followup_in_minutes": 0,
   "confidence": 0.95
-}
+}}
 """
 
 CLASSIFY_STAGE_RULES = {
