@@ -115,7 +115,7 @@ class BrainOutput(BaseModel):
     Makes decisions based on Eyes observation.
     """
     # Implementation plan for Mouth (THE KEY HANDOFF)
-    implementation_plan: str = Field(..., max_length=500)
+    implementation_plan: str = Field(..., max_length=1500)
     
     # Decision
     action: DecisionAction
