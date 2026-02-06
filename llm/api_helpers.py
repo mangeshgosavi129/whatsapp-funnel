@@ -3,7 +3,7 @@ import re
 import logging
 from typing import Dict, Any, Optional, List
 
-from openai import OpenAI
+from openai import OpenAI, BadRequestError
 from llm.config import llm_config
 
 logger = logging.getLogger(__name__)
@@ -63,8 +63,6 @@ def make_api_call(
     Returns:
         Parsed JSON response dict
     """
-    llm_logger = logging.getLogger("llm")
-
     # Set to True to see full prompts in terminal
     DEBUG_PROMPTS = True
 
@@ -112,6 +110,37 @@ def make_api_call(
                 return extracted
             raise ValueError(f"{step_name}: Could not parse JSON from response: {content[:100]}...")
             
+    except BadRequestError as e:
+        # Check if this is a JSON validation failure with a partial result
+        try:
+            error_data = e.response.json()
+            error_details = error_data.get("error", {})
+            if error_details.get("code") == "json_validate_failed":
+                failed_gen = error_details.get("failed_generation")
+                if failed_gen:
+                    print(f"[LLM ERROR] {step_name}: JSON validation failed, using failed_generation")
+                    logger.error(f"{step_name} JSON validation failed: {error_details.get('message')}")
+                    
+                    # failed_gen is expected to be a JSON string, but if it's already a dict, return it
+                    if isinstance(failed_gen, dict):
+                        return failed_gen
+                    
+                    try:
+                        parsed = json.loads(failed_gen)
+                        return parsed
+                    except json.JSONDecodeError:
+                        # If it's not valid JSON, try our extractor
+                        extracted = extract_json_from_text(failed_gen)
+                        if extracted:
+                            return extracted
+                        # If all fails, re-raise original error
+                        raise e
+        except Exception as inner_e:
+            logger.error(f"Error while parsing BadRequestError: {inner_e}")
+            
+        print(f"[LLM ERROR] {step_name}: {e}")
+        logger.error(f"{step_name} API call failed: {e}")
+        raise
     except Exception as e:
         print(f"[LLM ERROR] {step_name}: {e}")
         logger.error(f"{step_name} API call failed: {e}")
