@@ -12,3 +12,5 @@ whatsapp_receive_pkg/
 lambda_build/
 wabot.pem
 ngrok.exe
+logs/
+celerybeat-schedule
