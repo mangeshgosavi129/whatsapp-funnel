@@ -82,6 +82,8 @@ def _build_user_prompt(context: PipelineInput) -> str:
         conversation_stage=context.conversation_stage.value,
         intent_level=context.intent_level.value,
         user_sentiment=context.user_sentiment.value,
+        business_description=context.business_description,
+        flow_prompt=context.flow_prompt,
         now_local=context.timing.now_local,
         whatsapp_window_open=context.timing.whatsapp_window_open,
         last_messages=_format_messages(context.last_messages),

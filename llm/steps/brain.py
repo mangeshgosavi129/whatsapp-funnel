@@ -72,6 +72,8 @@ def _build_user_prompt(context: PipelineInput, eyes_output: EyesOutput) -> str:
         available_ctas=format_ctas(context.available_ctas),
         followup_count_24h=context.nudges.followup_count_24h,
         total_nudges=context.nudges.total_nudges,
+        business_description=context.business_description,
+        flow_prompt=context.flow_prompt,
         now_local=context.timing.now_local,
         whatsapp_window_open=context.timing.whatsapp_window_open,
     )
