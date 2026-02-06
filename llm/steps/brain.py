@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 # JSON Schema for Brain output (inline)
-BRAIN_SCHEMA = {
+BRAIN_SCHEMA_NOT_USED = {
     "name": "brain_output",
     "strict": True,
     "schema": {
@@ -121,7 +121,7 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
                 {"role": "system", "content": BRAIN_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_schema", "json_schema": BRAIN_SCHEMA},
+            response_format={"type": "json_schema", "json_schema": BrainOutput.model_json_schema()},
             temperature=0.3,
             step_name="Brain"
         )

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 # JSON Schema for Memory output (inline)
-MEMORY_SCHEMA = {
+MEMORY_SCHEMA_NOT_USED = {
     "name": "memory_output",
     "strict": True,
     "schema": {

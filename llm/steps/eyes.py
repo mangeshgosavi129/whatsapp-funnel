@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 # JSON Schema for Eyes output (inline, no get_schema function)
-EYES_SCHEMA = {
+EYES_SCHEMA_NOT_USED = {
     "name": "eyes_output",
     "strict": True,
     "schema": {
@@ -125,7 +125,7 @@ def run_eyes(context: PipelineInput) -> Tuple[EyesOutput, int, int]:
                 {"role": "system", "content": EYES_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_schema", "json_schema": EYES_SCHEMA},
+            response_format={"type": "json_schema", "json_schema": EyesOutput.model_json_schema()},
             temperature=0.3,
             step_name="Eyes"
         )
