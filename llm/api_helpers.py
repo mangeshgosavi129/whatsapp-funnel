@@ -63,20 +63,7 @@ def make_api_call(
     Returns:
         Parsed JSON response dict
     """
-    # Set to True to see full prompts in terminal
-    DEBUG_PROMPTS = True
-
     try:
-        # Print full request for debugging
-        if DEBUG_PROMPTS:
-            print(f"\n{'='*60}")
-            print(f"[{step_name}] REQUEST")
-            print(f"{'='*60}")
-            for msg in messages:
-                print(f"--- {msg['role'].upper()} ---")
-                print(msg['content'])
-            print(f"{'='*60}\n")
-
         kwargs = {
             "model": llm_config.model,
             "messages": messages,
@@ -89,14 +76,6 @@ def make_api_call(
 
         response = client.chat.completions.create(**kwargs)
         content = response.choices[0].message.content
-
-        # Print full response for debugging
-        if DEBUG_PROMPTS:
-            print(f"\n{'='*60}")
-            print(f"[{step_name}] RESPONSE")
-            print(f"{'='*60}")
-            print(content)
-            print(f"{'='*60}\n")
 
         # Try direct JSON parse
         try:

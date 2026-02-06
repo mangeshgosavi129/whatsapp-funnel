@@ -82,11 +82,11 @@ def _build_user_prompt(context: PipelineInput, eyes_output: EyesOutput) -> str:
 def _validate_and_build_output(data: dict, context: PipelineInput) -> BrainOutput:
     """Validate and build typed output from raw JSON."""
     # Stage transition logic
-    llm_stage = normalize_enum(data.get("new_stage"), ConversationStage, context.conversation_stage)
+    llm_stage = normalize_enum(data.get("new_stage"), ConversationStage, default=ConversationStage.QUALIFICATION)
     confidence = float(data.get("confidence", 0.5))
     
     # Prevent low-confidence stage jumps
-    if confidence < 0.4 and llm_stage != context.conversation_stage:
+    if confidence < 0.4 and llm_stage != context.conversation_stage :
         logger.warning(f"Low confidence stage jump blocked: {context.conversation_stage} -> {llm_stage}")
         llm_stage = context.conversation_stage
     
@@ -121,14 +121,14 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
                 {"role": "system", "content": BRAIN_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_schema", "json_schema": BrainOutput.model_json_schema()},
+            response_format={"type": "json_object",'json_schema':BrainOutput.model_json_schema()},
             temperature=0.3,
             step_name="Brain"
         )
-        
+        logger.info(f"Brain: {data}")
         latency_ms = int((time.time() - start_time) * 1000)
         output = _validate_and_build_output(data, context)
-        
+        logger.info(f"Brain: {output}")
         logger.info(f"Brain: {output.action.value} -> {output.new_stage.value} (Conf: {output.confidence})")
         if output.needs_human_attention:
             logger.info(f"Human attention flagged")
