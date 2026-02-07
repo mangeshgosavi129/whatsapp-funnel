@@ -3717,3 +3717,621 @@
 2026-02-06 03:09:13,850 - llm.steps.mouth - INFO - Mouth: 0 chars
 2026-02-06 03:09:13,850 - llm.pipeline - INFO - Pipeline Complete: 1926ms. Response: True
 2026-02-06 03:09:14,615 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 14:02:57,462 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:02:58,385 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:02:58,385 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:02:58,873 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.9)
+2026-02-06 14:02:58,873 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:02:59,390 - llm.steps.mouth - INFO - Mouth: 0 chars
+2026-02-06 14:02:59,390 - llm.pipeline - INFO - Pipeline Complete: 1926ms. Response: True
+2026-02-06 14:03:00,054 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 14:03:00,075 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:03:00,998 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:03:00,998 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:03:01,745 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.9)
+2026-02-06 14:03:01,745 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:03:02,174 - llm.steps.mouth - INFO - Mouth: 0 chars
+2026-02-06 14:03:02,175 - llm.pipeline - INFO - Pipeline Complete: 2098ms. Response: True
+2026-02-06 14:03:02,695 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 14:03:02,715 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:03:03,515 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:03:03,515 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:03:04,193 - llm.steps.brain - INFO - Brain: wait_schedule -> followup (Conf: 0.9)
+2026-02-06 14:03:04,193 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:03:04,193 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:03:05,005 - llm.steps.mouth - INFO - Mouth: 0 chars
+2026-02-06 14:03:05,005 - llm.pipeline - INFO - Pipeline Complete: 2288ms. Response: True
+2026-02-06 14:03:06,174 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 14:03:06,194 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:03:06,806 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:03:06,808 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:03:07,340 - llm.steps.brain - INFO - Brain: wait_schedule -> cta (Conf: 0.9)
+2026-02-06 14:03:07,340 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:03:07,340 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:03:07,844 - llm.steps.mouth - INFO - Mouth: 0 chars
+2026-02-06 14:03:07,845 - llm.pipeline - INFO - Pipeline Complete: 1646ms. Response: True
+2026-02-06 14:03:08,386 - llm.steps.memory - INFO - Memory: 0 chars
+2026-02-06 14:05:12,422 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:05:13,247 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:05:13,247 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:05:13,807 - llm.steps.brain - INFO - Brain: wait_schedule -> cta (Conf: 0.9)
+2026-02-06 14:05:13,807 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:05:13,807 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:05:14,205 - llm.steps.mouth - INFO - Mouth: 137 chars
+2026-02-06 14:05:14,205 - llm.pipeline - INFO - Pipeline Complete: 1782ms. Response: True
+2026-02-06 14:05:14,577 - llm.steps.memory - INFO - Memory: 434 chars
+2026-02-06 14:05:14,599 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:05:15,288 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:05:15,288 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:05:15,705 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:05:15,705 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:05:16,387 - llm.steps.mouth - INFO - Mouth: 287 chars
+2026-02-06 14:05:16,387 - llm.pipeline - INFO - Pipeline Complete: 1786ms. Response: True
+2026-02-06 14:05:17,557 - llm.steps.memory - INFO - Memory: 546 chars
+2026-02-06 14:05:17,578 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:05:18,202 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:05:18,203 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:05:18,669 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:05:18,669 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:05:18,669 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:05:19,388 - llm.steps.mouth - INFO - Mouth: 175 chars
+2026-02-06 14:05:19,388 - llm.pipeline - INFO - Pipeline Complete: 1808ms. Response: True
+2026-02-06 14:05:20,257 - llm.steps.memory - INFO - Memory: 735 chars
+2026-02-06 14:05:20,279 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:05:21,086 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:05:21,086 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:05:21,678 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.8)
+2026-02-06 14:05:21,678 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:05:22,489 - llm.steps.mouth - INFO - Mouth: 412 chars
+2026-02-06 14:05:22,489 - llm.pipeline - INFO - Pipeline Complete: 2208ms. Response: True
+2026-02-06 14:05:23,362 - llm.steps.memory - INFO - Memory: 1042 chars
+2026-02-06 14:10:12,540 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:10:13,593 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:10:13,593 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:10:14,121 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.8)
+2026-02-06 14:10:14,121 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:10:14,778 - llm.steps.mouth - INFO - Mouth: 294 chars
+2026-02-06 14:10:14,778 - llm.pipeline - INFO - Pipeline Complete: 2236ms. Response: True
+2026-02-06 14:10:15,394 - llm.steps.memory - INFO - Memory: 738 chars
+2026-02-06 14:10:15,415 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:10:16,209 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:10:16,209 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:10:16,757 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:10:16,757 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:10:17,799 - llm.steps.mouth - INFO - Mouth: 442 chars
+2026-02-06 14:10:17,799 - llm.pipeline - INFO - Pipeline Complete: 2381ms. Response: True
+2026-02-06 14:10:18,288 - llm.steps.memory - INFO - Memory: 1048 chars
+2026-02-06 14:10:18,308 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:10:18,927 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:10:18,927 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:10:19,524 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:10:19,524 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:10:20,174 - llm.steps.mouth - INFO - Mouth: 203 chars
+2026-02-06 14:10:20,174 - llm.pipeline - INFO - Pipeline Complete: 1864ms. Response: True
+2026-02-06 14:10:20,701 - llm.steps.memory - INFO - Memory: 1306 chars
+2026-02-06 14:10:20,729 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:10:21,450 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:10:21,450 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:10:22,429 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.85)
+2026-02-06 14:10:22,429 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:10:22,429 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:10:23,290 - llm.steps.mouth - INFO - Mouth: 278 chars
+2026-02-06 14:10:23,290 - llm.pipeline - INFO - Pipeline Complete: 2560ms. Response: True
+2026-02-06 14:10:24,122 - llm.steps.memory - INFO - Memory: 605 chars
+2026-02-06 14:14:00,071 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:14:01,267 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:14:01,267 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:14:01,743 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.8)
+2026-02-06 14:14:01,743 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:14:02,419 - llm.steps.mouth - INFO - Mouth: 311 chars
+2026-02-06 14:14:02,419 - llm.pipeline - INFO - Pipeline Complete: 2346ms. Response: True
+2026-02-06 14:14:02,999 - llm.steps.memory - INFO - Memory: 819 chars
+2026-02-06 14:14:03,023 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:14:03,678 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:14:03,678 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:14:04,303 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:14:04,303 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:14:04,987 - llm.steps.mouth - INFO - Mouth: 158 chars
+2026-02-06 14:14:04,987 - llm.pipeline - INFO - Pipeline Complete: 1962ms. Response: True
+2026-02-06 14:14:05,510 - llm.steps.memory - INFO - Memory: 709 chars
+2026-02-06 14:14:05,531 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:14:06,134 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:14:06,134 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:14:06,751 - llm.steps.brain - INFO - Brain: wait_schedule -> qualification (Conf: 0.9)
+2026-02-06 14:14:06,752 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:14:06,752 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:14:07,736 - llm.steps.mouth - INFO - Mouth: 220 chars
+2026-02-06 14:14:07,736 - llm.pipeline - INFO - Pipeline Complete: 2202ms. Response: True
+2026-02-06 14:14:08,658 - llm.steps.memory - INFO - Memory: 749 chars
+2026-02-06 14:14:08,679 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:14:09,444 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:14:09,444 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:14:10,212 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-06 14:14:10,212 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:14:10,212 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:14:10,757 - llm.steps.mouth - INFO - Mouth: 150 chars
+2026-02-06 14:14:10,758 - llm.pipeline - INFO - Pipeline Complete: 2077ms. Response: True
+2026-02-06 14:14:11,752 - llm.steps.memory - INFO - Memory: 849 chars
+2026-02-06 14:17:20,590 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:17:21,757 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:17:21,757 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:17:22,584 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-06 14:17:22,585 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:17:22,585 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:17:23,119 - llm.steps.mouth - INFO - Mouth: 146 chars
+2026-02-06 14:17:23,119 - llm.pipeline - INFO - Pipeline Complete: 2526ms. Response: True
+2026-02-06 14:17:23,788 - llm.steps.memory - INFO - Memory: 589 chars
+2026-02-06 14:17:23,812 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:17:24,506 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:17:24,506 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:17:25,388 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.7)
+2026-02-06 14:17:25,388 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:17:26,077 - llm.steps.mouth - INFO - Mouth: 197 chars
+2026-02-06 14:17:26,077 - llm.pipeline - INFO - Pipeline Complete: 2261ms. Response: True
+2026-02-06 14:17:26,552 - llm.steps.memory - INFO - Memory: 722 chars
+2026-02-06 14:17:26,582 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:17:27,174 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:17:27,174 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:17:27,773 - llm.steps.brain - INFO - Brain: wait_schedule -> followup (Conf: 0.9)
+2026-02-06 14:17:27,773 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:17:27,773 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:17:28,616 - llm.steps.mouth - INFO - Mouth: 185 chars
+2026-02-06 14:17:28,616 - llm.pipeline - INFO - Pipeline Complete: 2033ms. Response: True
+2026-02-06 14:17:29,669 - llm.steps.memory - INFO - Memory: 654 chars
+2026-02-06 14:17:29,694 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:17:30,252 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:17:30,252 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:17:31,174 - llm.steps.brain - ERROR - Brain failed: Error code: 400 - {'error': {'message': 'Generated JSON does not match the expected schema. Please adjust your prompt. See \'failed_generation\' for more details. Error: jsonschema: \'/action\' does not validate with /properties/action/enum: value must be one of "send_now", "wait_schedule", "initiate_cta"', 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': '{"implementation_plan":"I understand your concerns and appreciate your honesty. I’m escalating this to a senior team member who will reach out to you shortly to address your questions and provide the support you need.","action":"flag_attention","new_stage":"followup","should_respond":true,"selected_cta_id":null,"cta_scheduled_at":null,"followup_in_minutes":0,"followup_reason":"User is refusing to provide contact details and is demanding free money, expressing distrust of the service.","confidence":0.92,"needs_human_attention":true}'}}
+2026-02-06 14:17:31,174 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 14:17:31,174 - llm.pipeline - INFO - Pipeline Complete: 1479ms. Response: False
+2026-02-06 14:17:31,601 - llm.steps.memory - INFO - Memory: 794 chars
+2026-02-06 14:19:43,791 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:19:44,511 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-06 14:19:44,511 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:19:44,916 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.9)
+2026-02-06 14:19:44,916 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:19:45,247 - llm.steps.mouth - INFO - Mouth: 84 chars
+2026-02-06 14:19:45,248 - llm.pipeline - INFO - Pipeline Complete: 1455ms. Response: True
+2026-02-06 14:19:45,800 - llm.steps.memory - INFO - Memory: 200 chars
+2026-02-06 14:24:34,006 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:24:34,749 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-06 14:24:34,749 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:24:35,125 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-06 14:24:35,125 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:24:35,499 - llm.steps.mouth - INFO - Mouth: 35 chars
+2026-02-06 14:24:35,499 - llm.pipeline - INFO - Pipeline Complete: 1491ms. Response: True
+2026-02-06 14:24:35,889 - llm.steps.memory - INFO - Memory: 165 chars
+2026-02-06 14:25:10,997 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:25:11,653 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-06 14:25:11,653 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:25:12,309 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:25:12,309 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:25:13,132 - llm.steps.mouth - INFO - Mouth: 280 chars
+2026-02-06 14:25:13,132 - llm.pipeline - INFO - Pipeline Complete: 2134ms. Response: True
+2026-02-06 14:25:13,558 - llm.steps.memory - INFO - Memory: 507 chars
+2026-02-06 14:30:32,522 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:30:33,610 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-06 14:30:33,610 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:30:33,610 - llm.pipeline - ERROR - Pipeline Critical Error: 'business_description'
+Traceback (most recent call last):
+  File "C:\Users\admin\Desktop\whatsapp-funnel\llm\pipeline.py", line 41, in run_pipeline
+    brain_output, latency, tokens = run_brain(context, eyes_output)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\whatsapp-funnel\tests\simulate_htl.py", line 155, in traced_run_brain
+    result, lat, tokens = original_run_brain(context, eyes_output)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\whatsapp-funnel\llm\steps\brain.py", line 112, in run_brain
+    user_prompt = _build_user_prompt(context, eyes_output)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\admin\Desktop\whatsapp-funnel\llm\steps\brain.py", line 70, in _build_user_prompt
+    return BRAIN_USER_TEMPLATE.format(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'business_description'
+2026-02-06 14:43:57,210 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:43:58,527 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:43:58,527 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:43:59,208 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.9)
+2026-02-06 14:43:59,208 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:43:59,721 - llm.steps.mouth - INFO - Mouth: 247 chars
+2026-02-06 14:43:59,721 - llm.pipeline - INFO - Pipeline Complete: 2509ms. Response: True
+2026-02-06 14:44:00,927 - llm.steps.memory - ERROR - Memory failed: Error code: 400 - {'error': {'message': "Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}
+2026-02-06 14:44:00,952 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:44:01,831 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:44:01,831 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:44:02,515 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:44:02,515 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:44:03,235 - llm.steps.mouth - INFO - Mouth: 205 chars
+2026-02-06 14:44:03,235 - llm.pipeline - INFO - Pipeline Complete: 2281ms. Response: True
+2026-02-06 14:44:03,677 - llm.steps.memory - INFO - Memory: 667 chars
+2026-02-06 14:44:03,706 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:44:05,123 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:44:05,124 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:44:05,850 - llm.steps.brain - INFO - Brain: send_now -> followup (Conf: 0.8)
+2026-02-06 14:44:05,850 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:44:06,462 - llm.steps.mouth - INFO - Mouth: 311 chars
+2026-02-06 14:44:06,462 - llm.pipeline - INFO - Pipeline Complete: 2753ms. Response: True
+2026-02-06 14:44:07,660 - llm.steps.memory - ERROR - Memory failed: Error code: 400 - {'error': {'message': "Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': 'max completion tokens reached before generating a valid document'}}
+2026-02-06 14:44:07,688 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:44:08,650 - llm.steps.eyes - ERROR - Eyes failed: Error code: 400 - {'error': {'message': "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'user_sentiment'", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': '{"confidence":0.9,"intent_level":"high","observation":"The user continues to express distrust, calling the service a scam and demanding free money while repeatedly asking to speak with a human agent. They have not supplied a phone number or a convenient callback time, so the conversation remains stuck in the follow‑up stage awaiting contact details. The bot’s responses are repetitive, reiterating SEBI regulation and pricing transparency, but not advancing the user’s request for a human agent. The user’s tone suggests frustration or deep skepticism, and no policy, hallucination, or spam risks are evident.","risk_flags":{"hallucination_risk":"low","policy_risk":"low","spam_risk":"low"},"situation_summary":"User is skeptical, demands free money, wants human agent, no contact details provided; bot stuck in follow‑up.","thought_process":"User repeats same statements, no new info; bot repeats same replies. Conversation stalled. No policy violations. User likely frustrated or distrustful. No risk flags."}'}}
+2026-02-06 14:44:08,650 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:44:09,447 - llm.steps.brain - INFO - Brain: wait_schedule -> greeting (Conf: 0.9)
+2026-02-06 14:44:09,447 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 14:44:09,447 - llm.pipeline - INFO - Pipeline Complete: 1757ms. Response: False
+2026-02-06 14:44:10,443 - llm.steps.memory - INFO - Memory: 715 chars
+2026-02-06 14:46:28,456 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:46:29,466 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-06 14:46:29,466 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:46:29,964 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-06 14:46:29,964 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:46:30,324 - llm.steps.mouth - INFO - Mouth: 66 chars
+2026-02-06 14:46:30,324 - llm.pipeline - INFO - Pipeline Complete: 1867ms. Response: True
+2026-02-06 14:46:31,514 - llm.steps.memory - ERROR - Memory failed: Error code: 400 - {'error': {'message': "Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}
+2026-02-06 14:49:03,222 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:49:04,853 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:49:04,853 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:49:05,648 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.85)
+2026-02-06 14:49:05,648 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:49:06,238 - llm.steps.mouth - INFO - Mouth: 203 chars
+2026-02-06 14:49:06,238 - llm.pipeline - INFO - Pipeline Complete: 3014ms. Response: True
+2026-02-06 14:49:07,439 - llm.steps.memory - ERROR - Memory failed: Error code: 400 - {'error': {'message': "Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': 'max completion tokens reached before generating a valid document'}}
+2026-02-06 14:49:07,465 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:49:08,938 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:49:08,938 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:49:09,628 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 14:49:09,628 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:49:10,227 - llm.steps.mouth - INFO - Mouth: 205 chars
+2026-02-06 14:49:10,227 - llm.pipeline - INFO - Pipeline Complete: 2758ms. Response: True
+2026-02-06 14:49:10,853 - llm.steps.memory - INFO - Memory: 908 chars
+2026-02-06 14:49:10,884 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:49:11,821 - llm.steps.eyes - ERROR - Eyes failed: Error code: 400 - {'error': {'message': "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'user_sentiment'", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': '{"confidence":0.9,"intent_level":"high","observation":"The user remains highly skeptical, repeatedly calling the service a scam and demanding free money. They keep insisting on speaking to a human agent but have not supplied a phone number or time for a callback. The bot has reiterated that JustStock is SEBI‑regulated, offers no free money, and has asked for contact details to send a price breakdown. The conversation is currently in the follow‑up stage, awaiting the user’s phone number and preferred callback time. No policy, spam, or hallucination risks are evident.","risk_flags":{"hallucination_risk":"low","policy_risk":"low","spam_risk":"low"},"situation_summary":"User is distrustful, demanding free money, wants a human agent, but has not provided contact info; bot is stuck asking for phone/time. Conversation remains in follow‑up stage.","thought_process":"User’s repeated statements indicate frustration and skepticism. They have not complied with the bot’s request for phone number/time, so the bot cannot move to the next stage. The user’s sentiment is distrustful, intent is high (seeking human agent). No policy violations or spam detected. The bot’s responses are consistent with the flow, but the user’s refusal to provide contact info is a blocker. The conversation should remain in follow‑up awaiting user’s phone/time."}'}}
+2026-02-06 14:49:11,821 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:49:13,112 - llm.steps.brain - INFO - Brain: wait_schedule -> ghosted (Conf: 0.9)
+2026-02-06 14:49:13,112 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 14:49:13,112 - llm.pipeline - INFO - Pipeline Complete: 2228ms. Response: False
+2026-02-06 14:49:13,852 - llm.steps.memory - INFO - Memory: 930 chars
+2026-02-06 14:49:13,878 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:49:14,757 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:49:14,757 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:49:16,099 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.95)
+2026-02-06 14:49:16,099 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:49:16,099 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:49:16,710 - llm.steps.mouth - INFO - Mouth: 214 chars
+2026-02-06 14:49:16,712 - llm.pipeline - INFO - Pipeline Complete: 2831ms. Response: True
+2026-02-06 14:49:17,613 - llm.steps.memory - INFO - Memory: 1248 chars
+2026-02-06 14:53:14,576 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:53:15,814 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:53:15,814 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:53:17,004 - llm.steps.brain - ERROR - Brain failed: Error code: 400 - {'error': {'message': 'Generated JSON does not match the expected schema. Please adjust your prompt. See \'failed_generation\' for more details. Error: jsonschema: \'/action\' does not validate with /properties/action/enum: value must be one of "send_now", "wait_schedule", "initiate_cta"', 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': '{"implementation_plan":"Acknowledge the user’s frustration and assure them that a human support agent will reach out promptly to address their concerns.","action":"flag_attention","new_stage":"lost","should_respond":false,"selected_cta_id":null,"cta_scheduled_at":null,"followup_in_minutes":0,"followup_reason":"User is angry, skeptical, and has repeatedly requested a human agent.","confidence":0.9,"needs_human_attention":true}'}}
+2026-02-06 14:53:17,004 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 14:53:17,004 - llm.pipeline - INFO - Pipeline Complete: 2427ms. Response: False
+2026-02-06 14:53:18,183 - llm.steps.memory - INFO - Memory: 1299 chars
+2026-02-06 14:53:18,214 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:53:19,320 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:53:19,320 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:53:20,297 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.95)
+2026-02-06 14:53:20,297 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:53:20,297 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:53:20,824 - llm.steps.mouth - INFO - Mouth: 255 chars
+2026-02-06 14:53:20,825 - llm.pipeline - INFO - Pipeline Complete: 2607ms. Response: True
+2026-02-06 14:53:22,271 - llm.steps.memory - INFO - Memory: 742 chars
+2026-02-06 14:53:22,305 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:53:23,372 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 14:53:23,372 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:53:24,276 - llm.steps.brain - ERROR - Brain failed: Error code: 400 - {'error': {'message': 'Generated JSON does not match the expected schema. Please adjust your prompt. See \'failed_generation\' for more details. Error: jsonschema: \'/action\' does not validate with /properties/action/enum: value must be one of "send_now", "wait_schedule", "initiate_cta"', 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': '{"implementation_plan":"Acknowledge the user’s frustration and distrust, apologize for the inconvenience, and assure them that a support agent will reach out immediately. Offer to connect via WhatsApp and ask for the best time or method if needed, but do not request phone number or schedule a call. Keep the tone calm, empathetic, and reassuring.","action":"flag_attention","new_stage":"lost","should_respond":true,"selected_cta_id":null,"cta_scheduled_at":null,"followup_in_minutes":0,"followup_reason":"","confidence":0.9,"needs_human_attention":true}'}}
+2026-02-06 14:53:24,276 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 14:53:24,276 - llm.pipeline - INFO - Pipeline Complete: 1970ms. Response: False
+2026-02-06 14:53:25,344 - llm.steps.memory - INFO - Memory: 722 chars
+2026-02-06 14:53:25,376 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:53:26,312 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:53:26,312 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:53:27,707 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-06 14:53:27,708 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:53:27,708 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:53:28,201 - llm.steps.mouth - INFO - Mouth: 142 chars
+2026-02-06 14:53:28,201 - llm.pipeline - INFO - Pipeline Complete: 2822ms. Response: True
+2026-02-06 14:53:28,629 - llm.steps.memory - INFO - Memory: 700 chars
+2026-02-06 14:59:04,168 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:59:05,861 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=annoyed
+2026-02-06 14:59:05,861 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:59:06,725 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.85)
+2026-02-06 14:59:06,725 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 14:59:07,075 - llm.steps.mouth - INFO - Mouth: 214 chars
+2026-02-06 14:59:07,075 - llm.pipeline - INFO - Pipeline Complete: 2906ms. Response: True
+2026-02-06 14:59:07,575 - llm.steps.memory - INFO - Memory: 893 chars
+2026-02-06 14:59:07,626 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:59:08,619 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=annoyed
+2026-02-06 14:59:08,619 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:59:09,584 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-06 14:59:09,584 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:59:09,584 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 14:59:10,198 - llm.steps.mouth - INFO - Mouth: 163 chars
+2026-02-06 14:59:10,198 - llm.pipeline - INFO - Pipeline Complete: 2571ms. Response: True
+2026-02-06 14:59:10,842 - llm.steps.memory - INFO - Memory: 811 chars
+2026-02-06 14:59:10,870 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:59:11,617 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=annoyed
+2026-02-06 14:59:11,618 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:59:12,406 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-06 14:59:12,406 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:59:12,407 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-06 14:59:12,966 - llm.steps.mouth - INFO - Mouth: 155 chars
+2026-02-06 14:59:12,966 - llm.pipeline - INFO - Pipeline Complete: 2093ms. Response: True
+2026-02-06 14:59:14,112 - llm.steps.memory - INFO - Memory: 903 chars
+2026-02-06 14:59:14,139 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 14:59:14,901 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 14:59:14,901 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 14:59:15,708 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.92)
+2026-02-06 14:59:15,708 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 14:59:15,708 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-06 14:59:16,074 - llm.steps.mouth - INFO - Mouth: 103 chars
+2026-02-06 14:59:16,074 - llm.pipeline - INFO - Pipeline Complete: 1932ms. Response: True
+2026-02-06 14:59:17,279 - llm.steps.memory - INFO - Memory: 655 chars
+2026-02-06 15:05:08,143 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:05:09,397 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 15:05:09,397 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:05:10,543 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-06 15:05:10,543 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 15:05:10,544 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-06 15:05:10,977 - llm.steps.mouth - INFO - Mouth: 101 chars
+2026-02-06 15:05:10,977 - llm.pipeline - INFO - Pipeline Complete: 2831ms. Response: True
+2026-02-06 15:05:11,721 - llm.steps.memory - INFO - Memory: 621 chars
+2026-02-06 15:05:11,751 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:05:12,664 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=neutral
+2026-02-06 15:05:12,664 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:05:13,395 - llm.steps.brain - INFO - Brain: send_now -> pricing (Conf: 0.85)
+2026-02-06 15:05:13,395 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:05:14,365 - llm.steps.mouth - INFO - Mouth: 291 chars
+2026-02-06 15:05:14,365 - llm.pipeline - INFO - Pipeline Complete: 2612ms. Response: True
+2026-02-06 15:05:15,697 - llm.steps.memory - INFO - Memory: 783 chars
+2026-02-06 15:05:15,723 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:05:16,810 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 15:05:16,811 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:05:18,059 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-06 15:05:18,060 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 15:05:18,060 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-06 15:05:18,622 - llm.steps.mouth - INFO - Mouth: 97 chars
+2026-02-06 15:05:18,622 - llm.pipeline - INFO - Pipeline Complete: 2896ms. Response: True
+2026-02-06 15:05:19,919 - llm.steps.memory - INFO - Memory: 781 chars
+2026-02-06 15:05:19,952 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:05:20,940 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-06 15:05:20,941 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:05:21,735 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.92)
+2026-02-06 15:05:21,735 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 15:05:21,735 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-06 15:05:21,735 - llm.pipeline - INFO - Pipeline Complete: 1780ms. Response: False
+2026-02-06 15:05:22,459 - llm.steps.memory - INFO - Memory: 886 chars
+2026-02-06 15:05:29,817 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:05:30,719 - llm.steps.eyes - INFO - Eyes: intent=low, sentiment=neutral
+2026-02-06 15:05:30,719 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:05:31,222 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-06 15:05:31,223 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:05:31,515 - llm.steps.mouth - INFO - Mouth: 113 chars
+2026-02-06 15:05:31,515 - llm.pipeline - INFO - Pipeline Complete: 1696ms. Response: True
+2026-02-06 15:05:32,060 - llm.steps.memory - INFO - Memory: 774 chars
+2026-02-06 15:06:01,148 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:06:01,846 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-06 15:06:01,846 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:06:02,502 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-06 15:06:02,502 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:06:03,083 - llm.steps.mouth - INFO - Mouth: 62 chars
+2026-02-06 15:06:03,083 - llm.pipeline - INFO - Pipeline Complete: 1934ms. Response: True
+2026-02-06 15:06:03,612 - llm.steps.memory - INFO - Memory: 587 chars
+2026-02-06 15:06:49,828 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:06:50,806 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-06 15:06:50,807 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:06:51,289 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-06 15:06:51,289 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:06:51,603 - llm.steps.mouth - INFO - Mouth: 51 chars
+2026-02-06 15:06:51,603 - llm.pipeline - INFO - Pipeline Complete: 1773ms. Response: True
+2026-02-06 15:06:52,310 - llm.steps.memory - INFO - Memory: 532 chars
+2026-02-06 15:10:31,583 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:10:32,327 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-06 15:10:32,327 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:10:32,975 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.92)
+2026-02-06 15:10:32,975 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:10:33,801 - llm.steps.mouth - INFO - Mouth: 154 chars
+2026-02-06 15:10:33,802 - llm.pipeline - INFO - Pipeline Complete: 2216ms. Response: True
+2026-02-06 15:10:34,938 - llm.steps.memory - INFO - Memory: 642 chars
+2026-02-06 15:10:56,137 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:10:56,945 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-06 15:10:56,945 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:10:57,450 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 15:10:57,450 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:10:58,369 - llm.steps.mouth - INFO - Mouth: 199 chars
+2026-02-06 15:10:58,369 - llm.pipeline - INFO - Pipeline Complete: 2231ms. Response: True
+2026-02-06 15:10:59,413 - llm.steps.memory - INFO - Memory: 583 chars
+2026-02-06 15:11:19,430 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:11:20,362 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=confused
+2026-02-06 15:11:20,362 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:11:21,119 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 15:11:21,119 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:11:21,987 - llm.steps.mouth - INFO - Mouth: 343 chars
+2026-02-06 15:11:21,988 - llm.pipeline - INFO - Pipeline Complete: 2554ms. Response: True
+2026-02-06 15:11:22,534 - llm.steps.memory - INFO - Memory: 785 chars
+2026-02-06 15:12:07,588 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:12:08,637 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=confused
+2026-02-06 15:12:08,637 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:12:09,348 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-06 15:12:09,348 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:12:09,945 - llm.steps.mouth - INFO - Mouth: 280 chars
+2026-02-06 15:12:09,945 - llm.pipeline - INFO - Pipeline Complete: 2355ms. Response: True
+2026-02-06 15:12:10,482 - llm.steps.memory - INFO - Memory: 834 chars
+2026-02-06 15:20:18,184 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:20:19,183 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=confused
+2026-02-06 15:20:19,183 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:20:20,168 - llm.steps.brain - INFO - Brain: wait_schedule -> qualification (Conf: 0.9)
+2026-02-06 15:20:20,168 - llm.steps.brain - INFO - Human attention flagged
+2026-02-06 15:20:20,168 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-06 15:20:20,768 - llm.steps.mouth - INFO - Mouth: 173 chars
+2026-02-06 15:20:20,768 - llm.pipeline - INFO - Pipeline Complete: 2583ms. Response: True
+2026-02-06 15:20:21,483 - llm.steps.memory - INFO - Memory: 1030 chars
+2026-02-06 15:24:43,281 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-06 15:24:44,241 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=confused
+2026-02-06 15:24:44,241 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-06 15:24:45,147 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.95)
+2026-02-06 15:24:45,148 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-06 15:24:47,016 - llm.steps.mouth - INFO - Mouth: 411 chars
+2026-02-06 15:24:47,017 - llm.pipeline - INFO - Pipeline Complete: 3733ms. Response: True
+2026-02-06 15:24:48,046 - llm.steps.memory - INFO - Memory: 701 chars
+2026-02-07 12:01:33,896 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:01:35,155 - llm.steps.eyes - INFO - Eyes: intent=low, sentiment=neutral
+2026-02-07 12:01:35,155 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:01:35,721 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-07 12:01:35,721 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-07 12:01:36,247 - llm.steps.mouth - INFO - Mouth: 73 chars
+2026-02-07 12:01:36,247 - llm.pipeline - INFO - Pipeline Complete: 2350ms. Response: True
+2026-02-07 12:01:37,905 - llm.steps.memory - INFO - Memory: 688 chars
+2026-02-07 12:02:01,496 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:02:02,543 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=annoyed
+2026-02-07 12:02:02,543 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:02:03,523 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.95)
+2026-02-07 12:02:03,523 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 12:02:03,523 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 12:02:03,942 - llm.steps.mouth - INFO - Mouth: 124 chars
+2026-02-07 12:02:03,942 - llm.pipeline - INFO - Pipeline Complete: 2445ms. Response: True
+2026-02-07 12:02:05,042 - llm.steps.memory - INFO - Memory: 617 chars
+2026-02-07 12:14:29,914 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:14:30,965 - llm.steps.eyes - INFO - Eyes: intent=unknown, sentiment=neutral
+2026-02-07 12:14:30,965 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:14:31,488 - llm.steps.brain - INFO - Brain: send_now -> greeting (Conf: 0.95)
+2026-02-07 12:14:31,488 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-07 12:14:31,937 - llm.steps.mouth - INFO - Mouth: 44 chars
+2026-02-07 12:14:31,937 - llm.pipeline - INFO - Pipeline Complete: 2022ms. Response: True
+2026-02-07 12:14:33,270 - llm.steps.memory - INFO - Memory: 768 chars
+2026-02-07 12:15:41,797 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:15:42,463 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-07 12:15:42,463 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:15:43,117 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-07 12:15:43,118 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-07 12:15:43,850 - llm.steps.mouth - INFO - Mouth: 151 chars
+2026-02-07 12:15:43,850 - llm.pipeline - INFO - Pipeline Complete: 2049ms. Response: True
+2026-02-07 12:15:44,323 - llm.steps.memory - INFO - Memory: 643 chars
+2026-02-07 12:16:09,058 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:16:09,891 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-07 12:16:09,891 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:16:10,552 - llm.steps.brain - INFO - Brain: send_now -> qualification (Conf: 0.9)
+2026-02-07 12:16:10,552 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-07 12:16:11,235 - llm.steps.mouth - INFO - Mouth: 250 chars
+2026-02-07 12:16:11,235 - llm.pipeline - INFO - Pipeline Complete: 2174ms. Response: True
+2026-02-07 12:16:13,209 - llm.steps.memory - INFO - Memory: 718 chars
+2026-02-07 12:21:01,303 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:21:02,221 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=curious
+2026-02-07 12:21:02,221 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:21:02,865 - llm.steps.brain - INFO - Brain: send_now -> pricing (Conf: 0.95)
+2026-02-07 12:21:02,865 - llm.pipeline - INFO - Running Step 3: Mouth - Action: send_now
+2026-02-07 12:21:03,773 - llm.steps.mouth - INFO - Mouth: 508 chars
+2026-02-07 12:21:03,773 - llm.pipeline - INFO - Pipeline Complete: 2468ms. Response: True
+2026-02-07 12:21:04,689 - llm.steps.memory - INFO - Memory: 821 chars
+2026-02-07 12:22:15,443 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 12:22:16,344 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=disappointed
+2026-02-07 12:22:16,344 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 12:22:17,159 - llm.steps.brain - ERROR - Brain failed: '>' not supported between instances of 'NoneType' and 'int'
+2026-02-07 12:22:17,159 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-07 12:22:17,159 - llm.pipeline - INFO - Pipeline Complete: 1714ms. Response: False
+2026-02-07 12:22:18,397 - llm.steps.memory - INFO - Memory: 815 chars
+2026-02-07 13:34:25,591 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 13:34:26,750 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 13:34:26,750 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 13:34:27,802 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.92)
+2026-02-07 13:34:27,802 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 13:34:27,802 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 13:34:28,476 - llm.steps.mouth - INFO - Mouth: 99 chars
+2026-02-07 13:34:28,476 - llm.pipeline - INFO - Pipeline Complete: 2884ms. Response: True
+2026-02-07 13:34:29,084 - llm.steps.memory - INFO - Memory: 1070 chars
+2026-02-07 13:34:29,113 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 13:34:30,042 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 13:34:30,042 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 13:34:31,002 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.9)
+2026-02-07 13:34:31,002 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 13:34:31,002 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-07 13:34:31,379 - llm.steps.mouth - INFO - Mouth: 99 chars
+2026-02-07 13:34:31,379 - llm.pipeline - INFO - Pipeline Complete: 2264ms. Response: True
+2026-02-07 13:34:31,804 - llm.steps.memory - INFO - Memory: 705 chars
+2026-02-07 13:34:31,825 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 13:34:32,558 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 13:34:32,558 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 13:34:33,388 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-07 13:34:33,388 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 13:34:33,388 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 13:34:33,848 - llm.steps.mouth - INFO - Mouth: 132 chars
+2026-02-07 13:34:33,848 - llm.pipeline - INFO - Pipeline Complete: 2021ms. Response: True
+2026-02-07 13:34:34,318 - llm.steps.memory - INFO - Memory: 759 chars
+2026-02-07 13:34:34,342 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 13:34:35,380 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 13:34:35,380 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 13:34:36,418 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.9)
+2026-02-07 13:34:36,418 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 13:34:36,418 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-07 13:34:36,833 - llm.steps.mouth - INFO - Mouth: 103 chars
+2026-02-07 13:34:36,833 - llm.pipeline - INFO - Pipeline Complete: 2489ms. Response: True
+2026-02-07 13:34:37,206 - llm.steps.memory - INFO - Memory: 777 chars
+2026-02-07 15:09:40,975 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:09:41,958 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:09:41,958 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:09:42,830 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.9)
+2026-02-07 15:09:42,830 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:09:42,830 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 15:09:43,329 - llm.steps.mouth - INFO - Mouth: 127 chars
+2026-02-07 15:09:43,329 - llm.pipeline - INFO - Pipeline Complete: 2352ms. Response: True
+2026-02-07 15:09:44,005 - llm.steps.memory - INFO - Memory: 777 chars
+2026-02-07 15:09:44,033 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:09:44,933 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:09:44,933 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:09:45,948 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.9)
+2026-02-07 15:09:45,948 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:09:45,948 - llm.pipeline - INFO - Skipping Mouth (Brain decided not to respond)
+2026-02-07 15:09:45,948 - llm.pipeline - INFO - Pipeline Complete: 1913ms. Response: False
+2026-02-07 15:09:46,494 - llm.steps.memory - INFO - Memory: 876 chars
+2026-02-07 15:09:46,523 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:09:47,551 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:09:47,551 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:09:48,715 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.92)
+2026-02-07 15:09:48,715 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:09:48,715 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 15:09:49,246 - llm.steps.mouth - INFO - Mouth: 131 chars
+2026-02-07 15:09:49,246 - llm.pipeline - INFO - Pipeline Complete: 2722ms. Response: True
+2026-02-07 15:09:49,705 - llm.steps.memory - INFO - Memory: 766 chars
+2026-02-07 15:09:49,733 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:09:50,787 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:09:50,788 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:09:51,666 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.95)
+2026-02-07 15:09:51,666 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:09:51,666 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 15:09:52,204 - llm.steps.mouth - INFO - Mouth: 104 chars
+2026-02-07 15:09:52,204 - llm.pipeline - INFO - Pipeline Complete: 2469ms. Response: True
+2026-02-07 15:09:53,135 - llm.steps.memory - INFO - Memory: 706 chars
+2026-02-07 15:11:04,718 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:11:05,832 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:11:05,832 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:11:06,932 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.95)
+2026-02-07 15:11:06,934 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:11:06,934 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 15:11:07,356 - llm.steps.mouth - INFO - Mouth: 103 chars
+2026-02-07 15:11:07,356 - llm.pipeline - INFO - Pipeline Complete: 2635ms. Response: True
+2026-02-07 15:11:08,414 - llm.steps.memory - INFO - Memory: 698 chars
+2026-02-07 15:11:08,439 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:11:09,667 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:11:09,667 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:11:10,932 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-07 15:11:10,932 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:11:10,932 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-07 15:11:11,651 - llm.steps.mouth - INFO - Mouth: 145 chars
+2026-02-07 15:11:11,651 - llm.pipeline - INFO - Pipeline Complete: 3210ms. Response: True
+2026-02-07 15:11:12,122 - llm.steps.memory - INFO - Memory: 738 chars
+2026-02-07 15:11:12,147 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:11:12,807 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:11:12,807 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:11:13,516 - llm.steps.brain - INFO - Brain: wait_schedule -> lost (Conf: 0.92)
+2026-02-07 15:11:13,516 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:11:13,516 - llm.pipeline - INFO - Running Step 3: Mouth - Action: wait_schedule
+2026-02-07 15:11:13,893 - llm.steps.mouth - INFO - Mouth: 103 chars
+2026-02-07 15:11:13,893 - llm.pipeline - INFO - Pipeline Complete: 1742ms. Response: True
+2026-02-07 15:11:15,534 - llm.steps.memory - INFO - Memory: 786 chars
+2026-02-07 15:11:15,558 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 15:11:16,468 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 15:11:16,468 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 15:11:17,292 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-07 15:11:17,292 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 15:11:17,292 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-07 15:11:17,723 - llm.steps.mouth - INFO - Mouth: 103 chars
+2026-02-07 15:11:17,723 - llm.pipeline - INFO - Pipeline Complete: 2163ms. Response: True
+2026-02-07 15:11:18,827 - llm.steps.memory - INFO - Memory: 737 chars

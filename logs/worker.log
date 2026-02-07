@@ -87,3 +87,54 @@
 2026-02-06 02:49:06,442 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> followup
 2026-02-06 02:49:13,639 - whatsapp_worker.processors.actions - INFO - Stage transition: followup -> cta
 2026-02-06 02:49:35,651 - whatsapp_worker.processors.actions - INFO - Stage transition: cta -> followup
+2026-02-06 14:03:05,005 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:03:07,845 - whatsapp_worker.processors.actions - INFO - Stage transition: followup -> cta
+2026-02-06 14:03:07,845 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:05:14,213 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:05:16,395 - whatsapp_worker.processors.actions - INFO - Stage transition: cta -> qualification
+2026-02-06 14:05:19,397 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:10:23,299 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:14:07,744 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:14:10,767 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> lost
+2026-02-06 14:14:10,767 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:17:23,129 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:17:26,086 - whatsapp_worker.processors.actions - INFO - Stage transition: lost -> followup
+2026-02-06 14:17:28,626 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:25:13,140 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
+2026-02-06 14:44:03,246 - whatsapp_worker.processors.actions - INFO - Stage transition: followup -> qualification
+2026-02-06 14:44:06,472 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> followup
+2026-02-06 14:44:09,447 - whatsapp_worker.processors.actions - INFO - Stage transition: followup -> greeting
+2026-02-06 14:49:10,242 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
+2026-02-06 14:49:13,112 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> ghosted
+2026-02-06 14:49:16,720 - whatsapp_worker.processors.actions - INFO - Stage transition: ghosted -> lost
+2026-02-06 14:49:16,720 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:53:20,843 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:53:28,210 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:59:07,084 - whatsapp_worker.processors.actions - INFO - Stage transition: lost -> qualification
+2026-02-06 14:59:10,207 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> lost
+2026-02-06 14:59:10,207 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:59:12,975 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 14:59:16,082 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 15:05:10,985 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 15:05:14,375 - whatsapp_worker.processors.actions - INFO - Stage transition: lost -> pricing
+2026-02-06 15:05:18,631 - whatsapp_worker.processors.actions - INFO - Stage transition: pricing -> lost
+2026-02-06 15:05:18,631 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 15:05:21,735 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-06 15:10:33,810 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
+2026-02-06 15:20:20,776 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation 8bd3c160-b7aa-4153-ab48-606d932d7865 flagged for human attention
+2026-02-07 12:02:03,951 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> lost
+2026-02-07 12:02:03,951 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation b8219111-6a5e-4bbc-b3f9-c8153874ddaf flagged for human attention
+2026-02-07 12:15:43,859 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
+2026-02-07 12:21:03,783 - whatsapp_worker.processors.actions - INFO - Stage transition: qualification -> pricing
+2026-02-07 13:34:28,485 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 13:34:31,388 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 13:34:33,856 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 13:34:36,840 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:09:43,338 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:09:45,948 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:09:49,255 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:09:52,213 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:11:07,366 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:11:11,659 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:11:13,901 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
+2026-02-07 15:11:17,731 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention

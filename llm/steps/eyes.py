@@ -8,6 +8,7 @@ from typing import Tuple
 from llm.api_helpers import make_api_call
 from llm.schemas import PipelineInput, EyesOutput, RiskFlags
 from llm.prompts import EYES_SYSTEM_PROMPT, EYES_USER_TEMPLATE
+from llm.utils import normalize_enum
 from server.enums import IntentLevel, UserSentiment, RiskLevel
 
 logger = logging.getLogger(__name__)
@@ -92,21 +93,25 @@ def _build_user_prompt(context: PipelineInput) -> str:
 
 def _validate_and_build_output(data: dict) -> EyesOutput:
     """Validate and build typed output from raw JSON."""
+    
+    # Safe Enum Conversion
+    from llm.utils import normalize_enum
+    
     rf = data.get("risk_flags", {})
     risk_flags = RiskFlags(
-        spam_risk=RiskLevel(rf.get("spam_risk", "low")),
-        policy_risk=RiskLevel(rf.get("policy_risk", "low")),
-        hallucination_risk=RiskLevel(rf.get("hallucination_risk", "low")),
+        spam_risk=normalize_enum(rf.get("spam_risk"), RiskLevel, RiskLevel.LOW),
+        policy_risk=normalize_enum(rf.get("policy_risk"), RiskLevel, RiskLevel.LOW),
+        hallucination_risk=normalize_enum(rf.get("hallucination_risk"), RiskLevel, RiskLevel.LOW),
     )
     
     return EyesOutput(
-        observation=data.get("observation", ""),
-        thought_process=data.get("thought_process", ""),
-        situation_summary=data.get("situation_summary", ""),
-        intent_level=IntentLevel(data.get("intent_level", "unknown")),
-        user_sentiment=UserSentiment(data.get("user_sentiment", "neutral")),
+        observation=data.get("observation", "") or "",
+        thought_process=data.get("thought_process", "") or "",
+        situation_summary=data.get("situation_summary", "") or "",
+        intent_level=normalize_enum(data.get("intent_level"), IntentLevel, IntentLevel.UNKNOWN),
+        user_sentiment=normalize_enum(data.get("user_sentiment"), UserSentiment, UserSentiment.NEUTRAL),
         risk_flags=risk_flags,
-        confidence=float(data.get("confidence", 0.5)),
+        confidence=float(data.get("confidence") or 0.5),
     )
 
 

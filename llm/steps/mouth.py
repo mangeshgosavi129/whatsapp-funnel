@@ -76,10 +76,10 @@ def _build_user_prompt(context: PipelineInput, brain_output: BrainOutput) -> str
 def _validate_and_build_output(data: dict, context: PipelineInput) -> MouthOutput:
     """Validate and build typed output from raw JSON."""
     return MouthOutput(
-        message_text=data.get("message_text", ""),
-        message_language=data.get("message_language", context.language_pref),
-        self_check_passed=data.get("self_check_passed", True),
-        violations=data.get("violations", []),
+        message_text=data.get("message_text") or "",
+        message_language=data.get("message_language") or context.language_pref,
+        self_check_passed=bool(data.get("self_check_passed", True)),
+        violations=data.get("violations") or [],
     )
 
 

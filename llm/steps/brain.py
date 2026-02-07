@@ -83,7 +83,7 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> BrainOutpu
     """Validate and build typed output from raw JSON."""
     # Stage transition logic
     llm_stage = normalize_enum(data.get("new_stage"), ConversationStage, context.conversation_stage)
-    confidence = float(data.get("confidence", 0.5))
+    confidence = float(data.get("confidence") or 0.5)
     
     # Prevent low-confidence stage jumps
     if confidence < 0.4 and llm_stage != context.conversation_stage:
@@ -99,7 +99,7 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> BrainOutpu
         should_respond=data.get("should_respond", False),
         selected_cta_id=data.get("selected_cta_id"),
         cta_scheduled_at=data.get("cta_scheduled_at"),
-        followup_in_minutes=max(0, data.get("followup_in_minutes", 0)),
+        followup_in_minutes=max(0, data.get("followup_in_minutes") or 0),
         followup_reason=data.get("followup_reason", ""),
         confidence=confidence,
         needs_human_attention=bool(data.get("needs_human_attention", False)),
