@@ -4,12 +4,15 @@ Analyzes conversation state and produces observation for Brain.
 """
 import logging
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 from llm.api_helpers import make_api_call
 from llm.schemas import PipelineInput, EyesOutput, RiskFlags
 from llm.prompts import EYES_SYSTEM_PROMPT, EYES_USER_TEMPLATE
 from llm.utils import normalize_enum
 from server.enums import IntentLevel, UserSentiment, RiskLevel
+
+# Optional: Import Tracer for type hinting if needed, but avoid circular imports
+# from llm.tracing import PipelineTracer
 
 logger = logging.getLogger(__name__)
 
@@ -115,9 +118,9 @@ def _validate_and_build_output(data: dict) -> EyesOutput:
     )
 
 
-def run_eyes(context: PipelineInput) -> Tuple[EyesOutput, int, int]:
+async def run_eyes(context: PipelineInput, tracer: Optional[object] = None) -> Tuple[EyesOutput, int, int]:
     """
-    Run the Eyes step.
+    Run the Eyes step (Async).
     Observes and analyzes conversation state.
     """
     user_prompt = _build_user_prompt(context)
@@ -125,7 +128,8 @@ def run_eyes(context: PipelineInput) -> Tuple[EyesOutput, int, int]:
     start_time = time.time()
     
     try:
-        data = make_api_call(
+        # returns (data, usage_dict)
+        data, usage = await make_api_call(
             messages=[
                 {"role": "system", "content": EYES_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
@@ -139,11 +143,24 @@ def run_eyes(context: PipelineInput) -> Tuple[EyesOutput, int, int]:
         latency_ms = int((time.time() - start_time) * 1000)
         output = _validate_and_build_output(data)
         
+        # Log to Tracer if available
+        if tracer:
+            tracer.log_step(
+                step_name="Eyes",
+                input_data={"user_prompt_preview": user_prompt[:200]},
+                output_data=data,
+                latency_ms=latency_ms,
+                model="llama3-70b-8192",  # Defaulting, should probably get from config/response
+                token_usage=usage
+            )
+        
         logger.info(f"Eyes: intent={output.intent_level.value}, sentiment={output.user_sentiment.value}")
-        return output, latency_ms, 0
+        
+        total_tokens = usage.get("prompt", 0) + usage.get("completion", 0)
+        return output, latency_ms, total_tokens
         
     except Exception as e:
-        logger.error(f"Eyes failed: {e}")
+        logger.error(f"Eyes failed: {e}", exc_info=True)
         # Fallback: pass through input enums
         fallback_output = EyesOutput(
             observation="System error during observation. Falling back to safe state.",

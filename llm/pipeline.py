@@ -8,13 +8,14 @@ from llm.steps.eyes import run_eyes
 from llm.steps.brain import run_brain
 from llm.steps.mouth import run_mouth
 from server.enums import DecisionAction
+from llm.tracing import PipelineTracer
 
 logger = logging.getLogger(__name__)
 
 
-def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
+async def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
     """
-    Run the Eyes → Brain → Mouth → Memory pipeline.
+    Run the Eyes → Brain → Mouth → Memory pipeline (Async).
     
     Steps:
     1. EYES: Observe and analyze
@@ -22,6 +23,7 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
     3. MOUTH: Communicate (if Brain says so)
     4. MEMORY: Backgrounded (not in this call)
     """
+    tracer = PipelineTracer()
     total_latency_ms = 0
     total_tokens = 0
     
@@ -30,7 +32,7 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         # Step 1: EYES
         # ========================================
         logger.info("Running Step 1: Eyes")
-        eyes_output, latency, tokens = run_eyes(context)
+        eyes_output, latency, tokens = await run_eyes(context, tracer=tracer)
         total_latency_ms += latency
         total_tokens += tokens
         
@@ -38,7 +40,7 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         # Step 2: BRAIN
         # ========================================
         logger.info("Running Step 2: Brain")
-        brain_output, latency, tokens = run_brain(context, eyes_output)
+        brain_output, latency, tokens = await run_brain(context, eyes_output, tracer=tracer)
         total_latency_ms += latency
         total_tokens += tokens
         
@@ -49,7 +51,7 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         
         if brain_output.should_respond:
             logger.info(f"Running Step 3: Mouth - Action: {brain_output.action.value}")
-            mouth_output, latency, tokens = run_mouth(context, brain_output)
+            mouth_output, latency, tokens = await run_mouth(context, brain_output, tracer=tracer)
             total_latency_ms += latency
             total_tokens += tokens
         else:
@@ -69,6 +71,8 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         )
         
         logger.info(f"Pipeline Complete: {total_latency_ms}ms. Response: {bool(mouth_output)}")
+        tracer.end_trace(final_output=result.model_dump_json(exclude={"eyes", "brain"})) # Summary log
+        
         return result
 
     except Exception as e:
@@ -108,9 +112,9 @@ def _get_emergency_result(context: PipelineInput) -> PipelineResult:
     )
 
 
-def run_followup_pipeline(context: PipelineInput) -> PipelineResult:
+async def run_followup_pipeline(context: PipelineInput) -> PipelineResult:
     """
-    Run pipeline for scheduled follow-ups.
+    Run pipeline for scheduled follow-ups (Async).
     """
     synthetic_message = "[System: Scheduled follow-up triggered]"
-    return run_pipeline(context, synthetic_message)
+    return await run_pipeline(context, synthetic_message)

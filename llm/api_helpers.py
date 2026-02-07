@@ -1,17 +1,26 @@
 import json
 import re
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Tuple
 
-from openai import OpenAI
+from openai import AsyncOpenAI, APIConnectionError, RateLimitError, APIStatusError
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    retry_if_exception_type,
+    before_sleep_log
+)
+
 from llm.config import llm_config
 
 logger = logging.getLogger(__name__)
+# Keep these disabled to reduce noise
 logging.getLogger("llm").disabled = True
 logging.getLogger("llm.api_helpers").disabled = True
 
-# Initialize single OpenAI client
-client = OpenAI(
+# Initialize Async Client
+client = AsyncOpenAI(
     api_key=llm_config.api_key,
     base_url=llm_config.base_url,
 )
@@ -50,16 +59,22 @@ def extract_json_from_text(text: str) -> Optional[Dict[str, Any]]:
     
     return None
 
-def make_api_call(
+@retry(
+    retry=retry_if_exception_type((RateLimitError, APIConnectionError, APIStatusError)),
+    wait=wait_exponential(multiplier=1, min=2, max=60),
+    stop=stop_after_attempt(5),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
+async def make_api_call(
     messages: List[Dict[str, str]],
     response_format: Optional[Dict[str, Any]] = None,
     temperature: float = 0.7,
     max_tokens: Optional[int] = None,
     step_name: str = "LLM",
     strict: bool = False
-) -> Dict[str, Any]:
+) -> Tuple[Dict[str, Any], Dict[str, int]]:
     """
-    Execute LLM API call.
+    Execute LLM API call with retries and async support.
     
     Args:
         messages: List of message dicts
@@ -70,18 +85,15 @@ def make_api_call(
         strict: If True, enforces strict JSON schema adherence (Groq specific)
     
     Returns:
-        Parsed JSON response dict
+        Tuple[Dict, Dict]: (Parsed JSON response dict, Token usage dict)
     """
-    llm_logger = logging.getLogger("llm")
-
-    # Set to True to see full prompts in terminal
+    # Debug flag (can be moved to config or env)
     DEBUG_PROMPTS = True
 
     try:
-        # Print full request for debugging
         if DEBUG_PROMPTS:
             print(f"\n{'='*60}")
-            print(f"[{step_name}] REQUEST")
+            print(f"[{step_name}] REQUEST (Async)")
             print(f"{'='*60}")
             for msg in messages:
                 print(f"--- {msg['role'].upper()} ---")
@@ -97,8 +109,7 @@ def make_api_call(
         if response_format:
             # GROQ SPECIFIC: Enable key ordering and strict mode if requested
             if strict:
-                # Ensure json_schema structure is correct for Groq
-                if "json_schema" in response_format:
+                 if "json_schema" in response_format:
                      response_format["json_schema"]["strict"] = True
             
             kwargs["response_format"] = response_format
@@ -106,10 +117,17 @@ def make_api_call(
         if max_tokens:
             kwargs["max_tokens"] = max_tokens
 
-        response = client.chat.completions.create(**kwargs)
+        # Async API Call
+        response = await client.chat.completions.create(**kwargs)
+        
         content = response.choices[0].message.content
+        usage = response.usage
+        
+        usage_dict = {
+            "prompt": usage.prompt_tokens if usage else 0,
+            "completion": usage.completion_tokens if usage else 0
+        }
 
-        # Print full response for debugging
         if DEBUG_PROMPTS:
             print(f"\n{'='*60}")
             print(f"[{step_name}] RESPONSE")
@@ -117,23 +135,26 @@ def make_api_call(
             print(content)
             print(f"{'='*60}\n")
         
-        # If strict mode was used, we can trust the JSON
+        # Parse JSON
+        parsed_data = None
+        
+        # If strict mode, trust JSON
         if strict:
-            return json.loads(content)
+            parsed_data = json.loads(content)
+        else:
+            try:
+                parsed_data = json.loads(content)
+            except json.JSONDecodeError:
+                parsed_data = extract_json_from_text(content)
+                if parsed_data:
+                    logger.warning(f"{step_name}: Invalid JSON, but extracted from text.")
+                else:
+                     raise ValueError(f"{step_name}: Could not parse JSON: {content[:100]}...")
 
-        # Fallback logic for non-strict mode
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError:
-            # Try extraction from text
-            extracted = extract_json_from_text(content)
-            if extracted:
-                logger.warning(f"{step_name}: Invalid JSON, but successfully extracted from text fallback.")
-                return extracted
-            raise ValueError(f"{step_name}: Could not parse JSON from response: {content[:100]}...")
+        return parsed_data, usage_dict
             
     except Exception as e:
-        print(f"[LLM ERROR] {step_name}: {e}")
         logger.error(f"{step_name} API call failed: {e}")
+        # Tenacity will handle retries for specific exceptions.
+        # Other exceptions will propagate.
         raise
-

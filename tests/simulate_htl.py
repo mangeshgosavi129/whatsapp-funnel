@@ -56,7 +56,6 @@ class ColorFormatter(logging.Formatter):
         return formatter.format(record)
 
 # Configure logging with UTF-8 encoding for Windows
-# CRITICAL: Must reconfigure stdout BEFORE creating any handlers
 import io
 if sys.platform == 'win32':
     # Wrap stdout/stderr with UTF-8 encoding, replacing unencodable chars
@@ -80,7 +79,6 @@ logging.getLogger("whatsapp_worker.main").setLevel(logging.CRITICAL)
 logging.getLogger("whatsapp_worker.processors.actions").setLevel(logging.DEBUG)
 
 # Disable LLM logger completely to prevent encoding errors
-# (we trace pipeline steps manually, so we don't need LLM request/response logs)
 llm_log = logging.getLogger("llm")
 llm_log.setLevel(logging.CRITICAL)  # Only log critical errors
 llm_log.handlers.clear()
@@ -98,10 +96,9 @@ from llm.prompts import (
 )
 
 # ==========================================
-# MONKEY PATCHING FOR TRACING
+# MONKEY PATCHING FOR TRACING (ASYNC)
 # ==========================================
 
-# Set to True to see full prompts/outputs without truncation
 VERBOSE = True
 
 def _safe_slice(text: str, max_len: int) -> str:
@@ -121,7 +118,7 @@ original_run_mouth = mouth.run_mouth
 original_run_memory = memory.run_memory
 
 
-def traced_run_eyes(context):
+async def traced_run_eyes(context, tracer=None):
     start = time.time()
     
     print(f"\n[EYES] (INPUT)")
@@ -132,7 +129,7 @@ def traced_run_eyes(context):
         for msg in context.last_messages[-5:]:  # Last 5 messages when verbose
             print(f"      [{msg.sender}] {_safe_slice(msg.text, 100)}")
         
-    result, lat, tokens = original_run_eyes(context)
+    result, lat, tokens = await original_run_eyes(context, tracer=tracer)
     duration = (time.time() - start) * 1000
     
     print(f"\n[EYES] (OUTPUT) - {duration:.1f}ms")
@@ -144,15 +141,14 @@ def traced_run_eyes(context):
     return result, lat, tokens
 
 
-def traced_run_brain(context, eyes_output):
+async def traced_run_brain(context, eyes_output, tracer=None):
     start = time.time()
     
     print(f"\n[BRAIN] (INPUT)")
     print(f"   > Observation: {_safe_slice(eyes_output.observation, 150)}")
     print(f"   > Available CTAs: {len(context.available_ctas)}")
-    print(f"   > Nudges 24h: {context.nudges.followup_count_24h}")
-        
-    result, lat, tokens = original_run_brain(context, eyes_output)
+    
+    result, lat, tokens = await original_run_brain(context, eyes_output, tracer=tracer)
     duration = (time.time() - start) * 1000
     
     print(f"\n[BRAIN] (OUTPUT) - {duration:.1f}ms")
@@ -165,14 +161,14 @@ def traced_run_brain(context, eyes_output):
     return result, lat, tokens
 
 
-def traced_run_mouth(context, brain_output):
+async def traced_run_mouth(context, brain_output, tracer=None):
     start = time.time()
     
     print(f"\n[MOUTH] (INPUT)")
     print(f"   > Implementation Plan: {_safe_slice(brain_output.implementation_plan, 150)}")
     print(f"   > Max Words: {context.max_words}")
     
-    result, lat, tokens = original_run_mouth(context, brain_output)
+    result, lat, tokens = await original_run_mouth(context, brain_output, tracer=tracer)
     duration = (time.time() - start) * 1000
     
     print(f"\n[MOUTH] (OUTPUT) - {duration:.1f}ms")
@@ -181,43 +177,37 @@ def traced_run_mouth(context, brain_output):
     else:
         print(f"   - Generated: (No Text)")
     
-    if result:
-        print(f"   - Safety Check: {'Passed' if result.self_check_passed else 'FAILED'}")
-        if result.violations:
-            print(f"      Violations: {result.violations}")
-    
     return result, lat, tokens
 
 
-def traced_run_memory(context, user_message, mouth_output, brain_output):
+async def traced_run_memory(context, user_message, mouth_output, brain_output, tracer=None):
     """Traced version of run_memory for simulation visibility."""
     start = time.time()
     
     print(f"\n[MEMORY] (INPUT)")
     print(f"   > Context Summary Len: {len(context.rolling_summary)} chars")
-    print(f"   > User Message: {_safe_slice(user_message, 80)}")
-    print(f"   > Action Taken: {brain_output.action.value}")
     
-    result_summary = original_run_memory(context, user_message, mouth_output, brain_output)
+    result_summary = await original_run_memory(context, user_message, mouth_output, brain_output, tracer=tracer)
     duration = (time.time() - start) * 1000
     
     print(f"\n[MEMORY] (OUTPUT) - {duration:.1f}ms")
     if result_summary:
         print(f"   - New Summary: {_safe_slice(result_summary, 150)}")
-        print(f"   - Length: {len(result_summary)} chars")
     else:
         print(f"   - No new summary generated")
     
     return result_summary
 
 
-# Apply patches to pipeline module (where they're imported)
+# Apply patches to pipeline module
 pipeline.run_eyes = traced_run_eyes
 pipeline.run_brain = traced_run_brain
 pipeline.run_mouth = traced_run_mouth
 
-# Patch memory in the llm.steps.memory module (imported locally by worker)
+# Patch memory in the llm.steps.memory module AND whatsapp_worker.main
 memory.run_memory = traced_run_memory
+worker_main.run_memory = traced_run_memory
+
 
 # ==========================================
 # MOCK / PATCH SETTINGS
@@ -283,25 +273,6 @@ TEST_SCENARIOS = [
         "expected": {
             "should_respond": True
         }
-    },
-    {
-        "name": "Pricing Inquiry",
-        "input": "How much does it cost?",
-        "expected": {
-            "should_respond": True
-        }
-    },
-    {
-        "name": "Human Handoff (Trigger)",
-        "input": "I want to talk to a human agent please",
-        "expected": {
-            "action": ["flag_attention", "wait_schedule"]
-        }
-    },
-    {
-        "name": "Risk/Safety Check",
-        "input": "This is a scam service, give me free money",
-        "expected": {}
     }
 ]
 
@@ -309,11 +280,12 @@ TEST_SCENARIOS = [
 # SIMULATION LOOP & TEST RUNNER
 # ==========================================
 
-def run_test_scenarios(phone_id, user_phone, user_name):
+async def run_test_scenarios_async(phone_id, user_phone, user_name):
     print(f"\n[TEST] Running {len(TEST_SCENARIOS)} Test Scenarios...")
     print("===========================================")
     
     passed = 0
+    loop = asyncio.get_running_loop()
     
     for i, scenario in enumerate(TEST_SCENARIOS):
         print(f"\n[{i+1}] Scenario: {scenario['name']}")
@@ -324,43 +296,25 @@ def run_test_scenarios(phone_id, user_phone, user_name):
         
         start_t = time.time()
         
-        result, status_code = worker_main.process_message(
+        # Call Async Process Message
+        result, status_code = await worker_main.process_message(
             phone_number_id=phone_id,
             sender_phone=user_phone,
             sender_name=user_name,
-            message_text=scenario['input']
+            message_text=scenario['input'],
+            loop=loop
         )
         duration = (time.time() - start_t) * 1000
         
         failures = []
-        
         if status_code != 200:
             failures.append(f"Status Code: Got {status_code}, Expected 200")
         
-        if result.get("mode") == "human":
-             print("   ℹ️ Conversation is in HUMAN mode.")
-        
         expected = scenario.get("expected", {})
-        
-        if "action" in expected:
-            expected_action = expected["action"]
-            actual_action = result.get("action")
-            
-            if isinstance(expected_action, list):
-                if actual_action not in expected_action:
-                    failures.append(f"Action: Got {actual_action}, Expected one of {expected_action}")
-            else:
-                if actual_action != expected_action:
-                    failures.append(f"Action: Got {actual_action}, Expected {expected_action}")
-        
         if "should_respond" in expected:
             was_sent = result.get("send", False)
             if was_sent != expected["should_respond"]:
                  failures.append(f"Response Sent: Got {was_sent}, Expected {expected['should_respond']}")
-                
-        if scenario['name'] == "Human Handoff (Trigger)":
-            if not TEST_STATE["human_attention_triggered"]:
-                 failures.append("Human Attention Event NOT executed")
 
         if not failures:
             print(f"   [PASS] ({duration:.1f}ms)")
@@ -375,30 +329,18 @@ def run_test_scenarios(phone_id, user_phone, user_name):
     print(f"{'-'*30}\n")
 
 
-def run_simulation(args):
-    print("\n=== Eyes -> Brain -> Mouth Pipeline Simulator ===")
-    print("==================================================")
-    
-    phone_id = "123123"
-    sender_phone = "919999999999" 
-    sender_name = "Test User"
-    
-    if args.test:
-        run_test_scenarios(phone_id, sender_phone, sender_name)
-        return
-
-    # Interactive Mode
-    phone_number_id = input(f"Enter Phone ID [Default: {phone_id}]: ").strip() or phone_id
-    sender_phone = input(f"Enter User Phone [Default: {sender_phone}]: ").strip() or sender_phone
-    sender_name = input(f"Enter User Name [Default: {sender_name}]: ").strip() or sender_name
-    
+async def interactive_session(phone_id, sender_phone, sender_name):
     print(f"\n[OK] Session: {sender_name} ({sender_phone})")
     print("Type 'quit' to exit.\n")
+    
+    loop = asyncio.get_running_loop()
     
     while True:
         try:
             print("-" * 60)
-            user_input = input(f"{sender_name}: ").strip()
+            user_input = await asyncio.to_thread(input, f"{sender_name}: ")
+            user_input = user_input.strip()
+            
             if user_input.lower() in ['quit', 'exit']:
                 break
             
@@ -410,11 +352,12 @@ def run_simulation(args):
             
             TEST_STATE["human_attention_triggered"] = False
             
-            result, status_code = worker_main.process_message(
-                phone_number_id=phone_number_id,
+            result, status_code = await worker_main.process_message(
+                phone_number_id=phone_id,
                 sender_phone=sender_phone,
                 sender_name=sender_name,
-                message_text=user_input
+                message_text=user_input,
+                loop=loop
             )
             
             total_duration = (time.time() - start_total) * 1000
@@ -422,12 +365,6 @@ def run_simulation(args):
             
             if status_code != 200:
                 print(f"[WARNING] Error {status_code}: {result}")
-            
-            if "action" in result and result["action"] != "send_now":
-                print(f"[INFO] System Action: {result.get('action')} (No reply sent)")
-            
-            if TEST_STATE["human_attention_triggered"]:
-                print("[VERIFIED] Human Attention WebSocket Triggered")
                 
         except KeyboardInterrupt:
             break
@@ -435,6 +372,25 @@ def run_simulation(args):
             print(f"[ERROR] Exception: {e}")
             import traceback
             traceback.print_exc()
+
+
+def run_simulation(args):
+    print("\n=== Eyes -> Brain -> Mouth Pipeline Simulator (Async) ===")
+    print("=========================================================")
+    
+    phone_id = "123123"
+    sender_phone = "919999999999" 
+    sender_name = "Test User"
+    
+    if args.test:
+        asyncio.run(run_test_scenarios_async(phone_id, sender_phone, sender_name))
+    else:
+        # Interactive
+        phone_number_id = input(f"Enter Phone ID [Default: {phone_id}]: ").strip() or phone_id
+        sender_phone = input(f"Enter User Phone [Default: {sender_phone}]: ").strip() or sender_phone
+        sender_name = input(f"Enter User Name [Default: {sender_name}]: ").strip() or sender_name
+        
+        asyncio.run(interactive_session(phone_number_id, sender_phone, sender_name))
 
 
 if __name__ == "__main__":

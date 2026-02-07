@@ -83,9 +83,9 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> MouthOutpu
     )
 
 
-def run_mouth(context: PipelineInput, brain_output: BrainOutput) -> Tuple[Optional[MouthOutput], int, int]:
+async def run_mouth(context: PipelineInput, brain_output: BrainOutput, tracer: Optional[object] = None) -> Tuple[Optional[MouthOutput], int, int]:
     """
-    Run the Mouth step.
+    Run the Mouth step (Async).
     Only runs if brain_output.should_respond is True.
     """
     if not brain_output.should_respond:
@@ -97,7 +97,7 @@ def run_mouth(context: PipelineInput, brain_output: BrainOutput) -> Tuple[Option
     start_time = time.time()
     
     try:
-        data = make_api_call(
+        data, usage = await make_api_call(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -110,11 +110,23 @@ def run_mouth(context: PipelineInput, brain_output: BrainOutput) -> Tuple[Option
         latency_ms = int((time.time() - start_time) * 1000)
         output = _validate_and_build_output(data, context)
         
+        # Log to Tracer
+        if tracer:
+            tracer.log_step(
+                step_name="Mouth",
+                input_data={"user_prompt_preview": user_prompt[:200]},
+                output_data=data,
+                latency_ms=latency_ms,
+                model="llama3-70b-8192",
+                token_usage=usage
+            )
+
         logger.info(f"Mouth: {len(output.message_text)} chars")
-        return output, latency_ms, 0
+        total_tokens = usage.get("prompt", 0) + usage.get("completion", 0)
+        return output, latency_ms, total_tokens
         
     except Exception as e:
-        logger.error(f"Mouth failed: {e}")
+        logger.error(f"Mouth failed: {e}", exc_info=True)
         fallback_output = MouthOutput(
             message_text="I'm sorry, I'm having a bit of trouble connecting. Could you please try again in a moment?",
             message_language="en",

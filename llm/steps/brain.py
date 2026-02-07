@@ -4,7 +4,7 @@ Makes decisions based on Eyes observation.
 """
 import logging
 import time
-from typing import Tuple
+from typing import Tuple, Optional
 from llm.api_helpers import make_api_call
 from llm.schemas import PipelineInput, EyesOutput, BrainOutput
 from llm.prompts import BRAIN_SYSTEM_PROMPT, BRAIN_USER_TEMPLATE
@@ -106,9 +106,9 @@ def _validate_and_build_output(data: dict, context: PipelineInput) -> BrainOutpu
     )
 
 
-def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOutput, int, int]:
+async def run_brain(context: PipelineInput, eyes_output: EyesOutput, tracer: Optional[object] = None) -> Tuple[BrainOutput, int, int]:
     """
-    Run the Brain step.
+    Run the Brain step (Async).
     Makes strategic decisions based on Eyes observation.
     """
     user_prompt = _build_user_prompt(context, eyes_output)
@@ -116,7 +116,7 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
     start_time = time.time()
     
     try:
-        data = make_api_call(
+        data, usage = await make_api_call(
             messages=[
                 {"role": "system", "content": BRAIN_SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
@@ -130,14 +130,26 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
         latency_ms = int((time.time() - start_time) * 1000)
         output = _validate_and_build_output(data, context)
         
+        # Log to Tracer
+        if tracer:
+            tracer.log_step(
+                step_name="Brain",
+                input_data={"user_prompt_preview": user_prompt[:200]},
+                output_data=data,
+                latency_ms=latency_ms,
+                model="llama3-70b-8192", 
+                token_usage=usage
+            )
+        
         logger.info(f"Brain: {output.action.value} -> {output.new_stage.value} (Conf: {output.confidence})")
         if output.needs_human_attention:
             logger.info(f"Human attention flagged")
         
-        return output, latency_ms, 0
+        total_tokens = usage.get("prompt", 0) + usage.get("completion", 0)
+        return output, latency_ms, total_tokens
         
     except Exception as e:
-        logger.error(f"Brain failed: {e}")
+        logger.error(f"Brain failed: {e}", exc_info=True)
         fallback_output = BrainOutput(
             implementation_plan="System error. Send a polite acknowledgment.",
             action=DecisionAction.WAIT_SCHEDULE,

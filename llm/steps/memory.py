@@ -5,8 +5,8 @@ Updates the rolling summary after Mouth responds.
 import logging
 import time
 from typing import Tuple, Optional
-from llm.api_helpers import make_api_call
 from llm.schemas import PipelineInput, BrainOutput, MouthOutput, MemoryOutput
+from llm.api_helpers import make_api_call
 from llm.prompts import MEMORY_SYSTEM_PROMPT, MEMORY_USER_TEMPLATE
 
 logger = logging.getLogger(__name__)
@@ -33,34 +33,52 @@ MEMORY_SCHEMA = {
 }
 
 
-def run_memory(
+async def run_memory(
     context: PipelineInput,
     user_message: str,
     mouth_output: Optional[MouthOutput],
-    brain_output: BrainOutput
+    brain_output: BrainOutput,
+    tracer: Optional[object] = None
 ) -> Optional[str]:
     """
-    Run the Memory step.
+    Run the Memory step (Async).
     Returns the new summary string so the worker can save it.
     Runs AFTER Mouth output is available.
     """
     try:
-        output, latency, tokens = _run_memory_llm(
+        data, usage_dict, latency = await _run_memory_llm(
             context, user_message, mouth_output, brain_output
         )
+
+        output = MemoryOutput(
+            updated_rolling_summary=data.get("updated_rolling_summary", ""),
+            needs_recursive_summary=data.get("needs_recursive_summary", False),
+        )
+
+        if tracer:
+            tracer.log_step(
+                step_name="Memory",
+                input_data={"user_message": user_message[:50]},
+                output_data=data,
+                latency_ms=latency,
+                model="llama3-70b-8192",
+                token_usage=usage_dict
+            )
+
+        logger.info(f"Memory: {len(output.updated_rolling_summary)} chars")
         return output.updated_rolling_summary
         
     except Exception as e:
-        logger.error(f"Memory failed: {e}")
+        logger.error(f"Memory failed: {e}", exc_info=True)
         return context.rolling_summary or "No summary available"
 
 
-def _run_memory_llm(
+async def _run_memory_llm(
     context: PipelineInput,
     user_message: str,
     mouth_output: Optional[MouthOutput],
     brain_output: BrainOutput
-) -> Tuple[MemoryOutput, int, int]:
+) -> Tuple[dict, dict, int]:
     """Core LLM Logic."""
     bot_message = mouth_output.message_text if mouth_output else "(No response sent)"
     action_taken = f"Action: {brain_output.action.value}, Stage: {brain_output.new_stage.value}"
@@ -74,7 +92,7 @@ def _run_memory_llm(
     
     start_time = time.time()
 
-    data = make_api_call(
+    data, usage = await make_api_call(
         messages=[
             {"role": "system", "content": MEMORY_SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt},
@@ -85,10 +103,5 @@ def _run_memory_llm(
         strict=False
     )
     
-    output = MemoryOutput(
-        updated_rolling_summary=data.get("updated_rolling_summary", ""),
-        needs_recursive_summary=data.get("needs_recursive_summary", False),
-    )
-    
-    logger.info(f"Memory: {len(output.updated_rolling_summary)} chars")
-    return output, int((time.time() - start_time) * 1000), 0
+    latency = int((time.time() - start_time) * 1000)
+    return data, usage, latency
