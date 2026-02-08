@@ -594,3 +594,12 @@ class KnowledgeItemOut(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class KnowledgeMetadataOut(BaseModel):
+    id: UUID
+    title: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

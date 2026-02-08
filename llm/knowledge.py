@@ -164,7 +164,7 @@ def search_knowledge(
     query: str, 
     organization_id: uuid.UUID, 
     top_k: int = 5,
-    vector_threshold: float = 0.75,
+    vector_threshold: float = 0.65,
     keyword_rank_threshold: int = 5
 ) -> List[Dict]:
     """

@@ -3327,3 +3327,526 @@
 2026-02-07 17:17:14,979 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
 2026-02-07 17:17:16,696 - server - INFO - WebSocket connection attempt from 127.0.0.1
 2026-02-07 17:17:16,708 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:39:21,573 - server - INFO - OPTIONS /auth/login - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,792 - server - INFO - POST /auth/login - Status: 200 - Time: 0.216s
+2026-02-08 16:39:21,794 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,798 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-08 16:39:21,801 - server - INFO - OPTIONS /templates - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,801 - server - INFO - OPTIONS /dashboard/stats - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,801 - server - INFO - OPTIONS /analytics - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,803 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,808 - server - INFO - GET /templates - Status: 200 - Time: 0.005s
+2026-02-08 16:39:21,808 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-08 16:39:21,825 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.015s
+2026-02-08 16:39:21,836 - server - INFO - GET /analytics - Status: 200 - Time: 0.011s
+2026-02-08 16:39:21,843 - server - INFO - GET /conversations - Status: 200 - Time: 0.005s
+2026-02-08 16:39:21,858 - server - INFO - GET /organisations - Status: 200 - Time: 0.032s
+2026-02-08 16:39:22,178 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:39:22,180 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:39:29,675 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.000s
+2026-02-08 16:39:29,675 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.000s
+2026-02-08 16:39:29,680 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:39:29,682 - server - INFO - OPTIONS /settings/whatsapp/config - Status: 200 - Time: 0.000s
+2026-02-08 16:39:29,685 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:39:29,711 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.028s
+2026-02-08 16:39:29,716 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:41:19,548 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:41:25,798 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:41:25,812 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:41:35,371 - server - INFO - OPTIONS /knowledge/ingest - Status: 200 - Time: 0.001s
+2026-02-08 16:41:36,800 - server - ERROR - POST /knowledge/ingest - Status: 500 - Time: 1.428s
+2026-02-08 16:42:17,750 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.007s
+2026-02-08 16:42:17,755 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-08 16:42:17,758 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.002s
+2026-02-08 16:42:17,764 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.005s
+2026-02-08 16:42:17,770 - server - INFO - GET /templates - Status: 200 - Time: 0.005s
+2026-02-08 16:42:17,791 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.020s
+2026-02-08 16:42:17,805 - server - INFO - GET /analytics - Status: 200 - Time: 0.013s
+2026-02-08 16:42:17,810 - server - INFO - GET /organisations - Status: 200 - Time: 0.005s
+2026-02-08 16:42:17,817 - server - INFO - GET /conversations - Status: 200 - Time: 0.006s
+2026-02-08 16:42:17,820 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.002s
+2026-02-08 16:42:17,825 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:42:17,831 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:42:20,739 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.005s
+2026-02-08 16:42:20,739 - server - INFO - GET /auth/me - Status: 200 - Time: 0.004s
+2026-02-08 16:42:20,744 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:42:20,747 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.006s
+2026-02-08 16:42:20,753 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.005s
+2026-02-08 16:42:20,753 - server - INFO - GET /conversations - Status: 200 - Time: 0.006s
+2026-02-08 16:42:20,757 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:42:20,764 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.005s
+2026-02-08 16:42:20,781 - server - INFO - GET /templates - Status: 200 - Time: 0.039s
+2026-02-08 16:42:20,788 - server - INFO - GET /organisations - Status: 200 - Time: 0.045s
+2026-02-08 16:42:20,790 - server - INFO - GET /analytics - Status: 200 - Time: 0.048s
+2026-02-08 16:42:20,791 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.049s
+2026-02-08 16:43:40,034 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.003s
+2026-02-08 16:43:40,038 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.002s
+2026-02-08 16:44:43,950 - server - INFO - OPTIONS /knowledge/ - Status: 200 - Time: 0.000s
+2026-02-08 16:44:43,956 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 16:44:53,122 - server - ERROR - POST /knowledge/ingest - Status: 500 - Time: 0.774s
+2026-02-08 16:48:08,126 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:48:08,503 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-08 16:48:08,505 - server - INFO - GET /auth/me - Status: 200 - Time: 0.002s
+2026-02-08 16:48:08,508 - server - INFO - GET /templates - Status: 200 - Time: 0.002s
+2026-02-08 16:48:08,517 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.008s
+2026-02-08 16:48:08,522 - server - INFO - GET /analytics - Status: 200 - Time: 0.004s
+2026-02-08 16:48:08,525 - server - INFO - GET /organisations - Status: 200 - Time: 0.002s
+2026-02-08 16:48:08,532 - server - INFO - GET /conversations - Status: 200 - Time: 0.006s
+2026-02-08 16:48:08,536 - server - INFO - GET /templates - Status: 200 - Time: 0.003s
+2026-02-08 16:48:08,542 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.005s
+2026-02-08 16:48:08,549 - server - INFO - GET /analytics - Status: 200 - Time: 0.006s
+2026-02-08 16:48:08,553 - server - INFO - GET /organisations - Status: 200 - Time: 0.004s
+2026-02-08 16:48:08,558 - server - INFO - GET /conversations - Status: 200 - Time: 0.004s
+2026-02-08 16:48:08,562 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:48:08,566 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.003s
+2026-02-08 16:48:08,570 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:48:08,572 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.002s
+2026-02-08 16:48:08,844 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:48:08,846 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:48:09,831 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 16:48:22,047 - server - ERROR - POST /knowledge/ingest - Status: 500 - Time: 0.779s
+2026-02-08 16:48:40,304 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:49:12,030 - server - INFO - GET /auth/me - Status: 200 - Time: 0.019s
+2026-02-08 16:49:12,033 - server - INFO - GET /auth/me - Status: 200 - Time: 0.002s
+2026-02-08 16:49:12,038 - server - INFO - GET /templates - Status: 200 - Time: 0.004s
+2026-02-08 16:49:12,053 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.014s
+2026-02-08 16:49:12,065 - server - INFO - GET /analytics - Status: 200 - Time: 0.010s
+2026-02-08 16:49:12,070 - server - INFO - GET /organisations - Status: 200 - Time: 0.004s
+2026-02-08 16:49:12,076 - server - INFO - GET /conversations - Status: 200 - Time: 0.005s
+2026-02-08 16:49:12,078 - server - INFO - GET /templates - Status: 200 - Time: 0.001s
+2026-02-08 16:49:12,084 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.004s
+2026-02-08 16:49:12,091 - server - INFO - GET /analytics - Status: 200 - Time: 0.005s
+2026-02-08 16:49:12,094 - server - INFO - GET /organisations - Status: 200 - Time: 0.002s
+2026-02-08 16:49:12,098 - server - INFO - GET /conversations - Status: 200 - Time: 0.004s
+2026-02-08 16:49:12,103 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.005s
+2026-02-08 16:49:12,105 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.002s
+2026-02-08 16:49:12,108 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:49:12,112 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:49:12,396 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:49:12,397 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:49:13,098 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.032s
+2026-02-08 16:49:31,118 - server - ERROR - POST /knowledge/ingest - Status: 500 - Time: 1.365s
+2026-02-08 16:52:54,364 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:52:56,775 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:52:56,794 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:53:08,893 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:53:11,200 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:53:11,213 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:55:37,660 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:55:40,040 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:55:40,054 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:57:30,671 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:57:32,968 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:57:32,981 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:57:54,014 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:57:54,443 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-08 16:57:54,443 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-08 16:57:54,447 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-08 16:57:54,450 - server - INFO - OPTIONS /templates - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,450 - server - INFO - GET /auth/me - Status: 200 - Time: 0.002s
+2026-02-08 16:57:54,452 - server - INFO - OPTIONS /dashboard/stats - Status: 200 - Time: 0.002s
+2026-02-08 16:57:54,452 - server - INFO - OPTIONS /analytics - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,453 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,453 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,460 - server - INFO - GET /templates - Status: 200 - Time: 0.006s
+2026-02-08 16:57:54,472 - server - INFO - GET /analytics - Status: 200 - Time: 0.011s
+2026-02-08 16:57:54,478 - server - INFO - GET /organisations - Status: 200 - Time: 0.005s
+2026-02-08 16:57:54,485 - server - INFO - GET /conversations - Status: 200 - Time: 0.007s
+2026-02-08 16:57:54,497 - server - INFO - GET /templates - Status: 200 - Time: 0.008s
+2026-02-08 16:57:54,500 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.046s
+2026-02-08 16:57:54,505 - server - INFO - GET /analytics - Status: 200 - Time: 0.007s
+2026-02-08 16:57:54,507 - server - INFO - GET /organisations - Status: 200 - Time: 0.005s
+2026-02-08 16:57:54,512 - server - INFO - GET /conversations - Status: 200 - Time: 0.006s
+2026-02-08 16:57:54,515 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.007s
+2026-02-08 16:57:54,515 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.001s
+2026-02-08 16:57:54,515 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,521 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.006s
+2026-02-08 16:57:54,522 - server - INFO - OPTIONS /settings/whatsapp/config - Status: 200 - Time: 0.000s
+2026-02-08 16:57:54,525 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:57:54,527 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.004s
+2026-02-08 16:57:54,530 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.002s
+2026-02-08 16:57:54,830 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:57:54,831 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:57:55,201 - server - INFO - OPTIONS /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 16:57:55,208 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.007s
+2026-02-08 16:58:07,757 - server - INFO - OPTIONS /knowledge/ingest - Status: 200 - Time: 0.000s
+2026-02-08 16:58:09,076 - server - INFO - POST /knowledge/ingest - Status: 200 - Time: 1.318s
+2026-02-08 16:58:09,083 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 16:58:14,165 - server - INFO - OPTIONS /knowledge/eafa186c-0963-47a6-b77c-a8a5c8a9a2bf - Status: 200 - Time: 0.000s
+2026-02-08 16:58:14,172 - server - INFO - DELETE /knowledge/eafa186c-0963-47a6-b77c-a8a5c8a9a2bf - Status: 200 - Time: 0.006s
+2026-02-08 16:58:14,177 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 16:58:16,687 - server - INFO - OPTIONS /knowledge/dc8e0dce-724b-4c1d-8954-ceb2ff93029d - Status: 200 - Time: 0.000s
+2026-02-08 16:58:16,692 - server - INFO - DELETE /knowledge/dc8e0dce-724b-4c1d-8954-ceb2ff93029d - Status: 200 - Time: 0.004s
+2026-02-08 16:58:16,696 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 16:58:20,207 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 16:58:20,275 - server - INFO - GET /auth/me - Status: 200 - Time: 0.001s
+2026-02-08 16:58:20,280 - server - INFO - GET /auth/me - Status: 200 - Time: 0.005s
+2026-02-08 16:58:20,283 - server - INFO - GET /templates - Status: 200 - Time: 0.006s
+2026-02-08 16:58:20,284 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.008s
+2026-02-08 16:58:20,290 - server - INFO - GET /organisations - Status: 200 - Time: 0.006s
+2026-02-08 16:58:20,293 - server - INFO - GET /conversations - Status: 200 - Time: 0.007s
+2026-02-08 16:58:20,294 - server - INFO - GET /analytics - Status: 200 - Time: 0.012s
+2026-02-08 16:58:20,298 - server - INFO - GET /templates - Status: 200 - Time: 0.005s
+2026-02-08 16:58:20,300 - server - INFO - GET /organisations - Status: 200 - Time: 0.005s
+2026-02-08 16:58:20,304 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.009s
+2026-02-08 16:58:20,308 - server - INFO - GET /conversations - Status: 200 - Time: 0.009s
+2026-02-08 16:58:20,311 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.005s
+2026-02-08 16:58:20,312 - server - INFO - GET /analytics - Status: 200 - Time: 0.010s
+2026-02-08 16:58:20,315 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.004s
+2026-02-08 16:58:20,317 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 16:58:20,322 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.004s
+2026-02-08 16:58:20,618 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 16:58:20,620 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 16:58:21,400 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 16:58:40,744 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.004s
+2026-02-08 16:58:40,747 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.002s
+2026-02-08 16:58:40,753 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.005s
+2026-02-08 16:58:40,756 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 16:58:40,768 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.012s
+2026-02-08 16:58:40,782 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.014s
+2026-02-08 16:58:40,786 - server - INFO - GET /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5 - Status: 200 - Time: 0.002s
+2026-02-08 16:58:40,789 - server - INFO - GET /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5/messages - Status: 200 - Time: 0.002s
+2026-02-08 16:58:40,792 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 16:58:41,814 - server - INFO - PATCH /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5 - Status: 200 - Time: 0.003s
+2026-02-08 16:58:41,818 - server - INFO - PATCH /internals/leads/a5085f0c-de6e-49b9-bdee-3438f610fc0b - Status: 200 - Time: 0.003s
+2026-02-08 16:58:41,831 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.013s
+2026-02-08 17:00:30,194 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.003s
+2026-02-08 17:00:30,196 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.001s
+2026-02-08 17:00:30,198 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 17:00:30,203 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.005s
+2026-02-08 17:00:30,204 - server - INFO - GET /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5 - Status: 200 - Time: 0.001s
+2026-02-08 17:00:30,206 - server - INFO - GET /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5/messages - Status: 200 - Time: 0.001s
+2026-02-08 17:00:30,208 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:00:31,175 - server - INFO - PATCH /internals/conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5 - Status: 200 - Time: 0.003s
+2026-02-08 17:00:31,178 - server - INFO - PATCH /internals/leads/a5085f0c-de6e-49b9-bdee-3438f610fc0b - Status: 200 - Time: 0.002s
+2026-02-08 17:00:31,181 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.003s
+2026-02-08 17:16:13,960 - server - INFO - OPTIONS /knowledge/7bc48ae9-1283-4196-bd9b-f46dd499cc08 - Status: 200 - Time: 0.000s
+2026-02-08 17:16:13,965 - server - INFO - DELETE /knowledge/7bc48ae9-1283-4196-bd9b-f46dd499cc08 - Status: 200 - Time: 0.004s
+2026-02-08 17:16:13,966 - server - INFO - OPTIONS /knowledge/ - Status: 200 - Time: 0.000s
+2026-02-08 17:16:13,970 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 17:17:21,353 - server - INFO - OPTIONS /knowledge/ingest - Status: 200 - Time: 0.000s
+2026-02-08 17:17:23,091 - server - INFO - POST /knowledge/ingest - Status: 200 - Time: 1.738s
+2026-02-08 17:17:23,098 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 17:21:32,700 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-08 17:21:32,708 - server - INFO - PATCH /organisations - Status: 200 - Time: 0.008s
+2026-02-08 17:21:36,355 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 17:21:51,758 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.002s
+2026-02-08 17:21:51,761 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.002s
+2026-02-08 17:21:51,765 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.004s
+2026-02-08 17:21:51,768 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.003s
+2026-02-08 17:21:51,772 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.004s
+2026-02-08 17:21:51,779 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.006s
+2026-02-08 17:21:51,781 - server - INFO - GET /internals/conversations/11c2e63c-a4e0-4343-8014-345aa59cb970 - Status: 200 - Time: 0.001s
+2026-02-08 17:21:51,784 - server - INFO - GET /internals/conversations/11c2e63c-a4e0-4343-8014-345aa59cb970/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:21:51,787 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:21:53,127 - server - INFO - PATCH /internals/conversations/11c2e63c-a4e0-4343-8014-345aa59cb970 - Status: 200 - Time: 0.004s
+2026-02-08 17:21:53,130 - server - INFO - PATCH /internals/leads/fa98e191-72a6-44d4-afd1-d47613222616 - Status: 200 - Time: 0.002s
+2026-02-08 17:21:53,135 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.004s
+2026-02-08 17:23:00,341 - server - INFO - PATCH /organisations - Status: 200 - Time: 0.004s
+2026-02-08 17:23:04,780 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 17:24:43,556 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:24:45,587 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:24:45,600 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:25:32,850 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:25:32,851 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.001s
+2026-02-08 17:25:32,882 - server - INFO - GET /leads - Status: 200 - Time: 0.031s
+2026-02-08 17:25:32,885 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.001s
+2026-02-08 17:25:32,887 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:25:32,891 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:25:32,895 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:25:32,922 - server - INFO - GET /conversations - Status: 200 - Time: 0.037s
+2026-02-08 17:25:32,926 - server - INFO - GET /conversations - Status: 200 - Time: 0.003s
+2026-02-08 17:25:33,665 - server - INFO - OPTIONS /conversations/11c2e63c-a4e0-4343-8014-345aa59cb970/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:25:33,672 - server - INFO - GET /conversations/11c2e63c-a4e0-4343-8014-345aa59cb970/messages - Status: 200 - Time: 0.006s
+2026-02-08 17:25:45,426 - server - INFO - OPTIONS /conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:25:45,434 - server - INFO - GET /conversations/5a1e0c2f-a2f6-4a9a-9f42-ee2c690e41a5/messages - Status: 200 - Time: 0.007s
+2026-02-08 17:25:46,497 - server - INFO - OPTIONS /conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:25:46,506 - server - INFO - GET /conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7/messages - Status: 200 - Time: 0.009s
+2026-02-08 17:25:48,741 - server - INFO - GET /conversations/11c2e63c-a4e0-4343-8014-345aa59cb970/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:27:32,703 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.006s
+2026-02-08 17:27:32,706 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.002s
+2026-02-08 17:27:32,709 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 17:27:32,718 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.008s
+2026-02-08 17:27:32,720 - server - INFO - GET /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7 - Status: 200 - Time: 0.002s
+2026-02-08 17:27:32,723 - server - INFO - GET /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:27:32,726 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.003s
+2026-02-08 17:27:33,042 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:27:35,031 - server - INFO - PATCH /internals/conversations/ca5dd9ef-ca10-430c-a832-31b5370ae2f7 - Status: 200 - Time: 0.004s
+2026-02-08 17:27:35,036 - server - INFO - PATCH /internals/leads/3c0729a8-0fad-442b-a983-939f780c01d7 - Status: 200 - Time: 0.004s
+2026-02-08 17:27:35,042 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.006s
+2026-02-08 17:27:35,051 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,086 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.003s
+2026-02-08 17:31:19,088 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.001s
+2026-02-08 17:31:19,093 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.004s
+2026-02-08 17:31:19,095 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,168 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.073s
+2026-02-08 17:31:19,173 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.004s
+2026-02-08 17:31:19,176 - server - INFO - GET /internals/conversations/5c52b6f7-5834-4788-90ac-6e27b5342d7b - Status: 200 - Time: 0.003s
+2026-02-08 17:31:19,178 - server - INFO - GET /internals/conversations/5c52b6f7-5834-4788-90ac-6e27b5342d7b/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,180 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,473 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,477 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,480 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:31:19,483 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:31:20,461 - server - INFO - PATCH /internals/conversations/5c52b6f7-5834-4788-90ac-6e27b5342d7b - Status: 200 - Time: 0.003s
+2026-02-08 17:31:20,464 - server - INFO - PATCH /internals/leads/1e05b663-0978-49b4-a65e-969056004cd8 - Status: 200 - Time: 0.002s
+2026-02-08 17:31:20,468 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.005s
+2026-02-08 17:31:20,481 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:33:56,846 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:33:59,138 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:33:59,153 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:35:35,782 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.028s
+2026-02-08 17:35:35,787 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.003s
+2026-02-08 17:35:35,791 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.004s
+2026-02-08 17:35:35,796 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.003s
+2026-02-08 17:35:35,801 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.005s
+2026-02-08 17:35:35,808 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.007s
+2026-02-08 17:35:35,811 - server - INFO - GET /internals/conversations/279c2fc6-aade-40be-a750-8fdc4ce103f5 - Status: 200 - Time: 0.002s
+2026-02-08 17:35:35,814 - server - INFO - GET /internals/conversations/279c2fc6-aade-40be-a750-8fdc4ce103f5/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:35:35,818 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.003s
+2026-02-08 17:35:36,112 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:35:36,114 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:35:36,114 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:35:36,115 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:35:36,120 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:35:36,122 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:35:36,125 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:35:36,128 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:35:36,684 - server - INFO - PATCH /internals/conversations/279c2fc6-aade-40be-a750-8fdc4ce103f5 - Status: 200 - Time: 0.003s
+2026-02-08 17:35:36,687 - server - INFO - PATCH /internals/leads/a6028315-63ce-4eba-ba67-3c6143fd198c - Status: 200 - Time: 0.003s
+2026-02-08 17:35:36,692 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.004s
+2026-02-08 17:35:36,703 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:35:56,815 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:35:59,056 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:35:59,071 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:36:23,394 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:36:25,616 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:36:25,629 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:38:09,953 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:38:12,043 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:38:12,057 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:38:57,814 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.028s
+2026-02-08 17:38:57,818 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.003s
+2026-02-08 17:38:57,824 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.005s
+2026-02-08 17:38:57,827 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.003s
+2026-02-08 17:38:57,832 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.004s
+2026-02-08 17:38:57,840 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.008s
+2026-02-08 17:38:57,843 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.002s
+2026-02-08 17:38:57,845 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:38:57,850 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.004s
+2026-02-08 17:38:58,151 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:38:58,154 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:38:58,156 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:38:58,158 - server - INFO - GET /leads - Status: 200 - Time: 0.001s
+2026-02-08 17:38:59,734 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.002s
+2026-02-08 17:38:59,740 - server - INFO - POST /internals/messages/outgoing - Status: 201 - Time: 0.006s
+2026-02-08 17:38:59,744 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.003s
+2026-02-08 17:38:59,746 - server - INFO - PATCH /internals/leads/ebe33186-e2f3-4689-8726-4eec4311e70c - Status: 200 - Time: 0.002s
+2026-02-08 17:38:59,751 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.004s
+2026-02-08 17:38:59,760 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:38:59,773 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:39:00,920 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.005s
+2026-02-08 17:39:00,937 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:39:05,823 - server - INFO - OPTIONS /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:39:05,830 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.005s
+2026-02-08 17:39:40,180 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.003s
+2026-02-08 17:39:40,182 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.001s
+2026-02-08 17:39:40,184 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 17:39:40,189 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.004s
+2026-02-08 17:39:40,191 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.001s
+2026-02-08 17:39:40,194 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:39:40,196 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:39:40,221 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.030s
+2026-02-08 17:39:40,223 - server - INFO - GET /leads - Status: 200 - Time: 0.002s
+2026-02-08 17:39:40,227 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,085 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.002s
+2026-02-08 17:39:43,091 - server - INFO - POST /internals/messages/outgoing - Status: 201 - Time: 0.004s
+2026-02-08 17:39:43,097 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,100 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.006s
+2026-02-08 17:39:43,102 - server - INFO - PATCH /internals/leads/ebe33186-e2f3-4689-8726-4eec4311e70c - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,105 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.004s
+2026-02-08 17:39:43,173 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.065s
+2026-02-08 17:39:43,175 - server - INFO - GET /leads - Status: 200 - Time: 0.065s
+2026-02-08 17:39:43,179 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,180 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,182 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:39:43,688 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.004s
+2026-02-08 17:39:43,691 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:39:43,707 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:39:43,708 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:40:56,616 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.002s
+2026-02-08 17:40:56,619 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.002s
+2026-02-08 17:40:56,620 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.000s
+2026-02-08 17:40:56,626 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.004s
+2026-02-08 17:40:56,627 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.001s
+2026-02-08 17:40:56,630 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:40:56,631 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.001s
+2026-02-08 17:40:56,945 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:40:56,949 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:40:56,950 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:40:59,108 - server - INFO - GET /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.003s
+2026-02-08 17:40:59,114 - server - INFO - POST /internals/messages/outgoing - Status: 201 - Time: 0.006s
+2026-02-08 17:40:59,118 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.004s
+2026-02-08 17:40:59,121 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.006s
+2026-02-08 17:40:59,122 - server - INFO - PATCH /internals/leads/ebe33186-e2f3-4689-8726-4eec4311e70c - Status: 200 - Time: 0.002s
+2026-02-08 17:40:59,126 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.003s
+2026-02-08 17:40:59,132 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:40:59,134 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.005s
+2026-02-08 17:40:59,137 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:40:59,148 - server - INFO - GET /leads - Status: 200 - Time: 0.004s
+2026-02-08 17:40:59,148 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:41:00,315 - server - INFO - PATCH /internals/conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8 - Status: 200 - Time: 0.004s
+2026-02-08 17:41:00,318 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.002s
+2026-02-08 17:41:00,334 - server - INFO - GET /leads - Status: 200 - Time: 0.005s
+2026-02-08 17:41:00,334 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:42:53,135 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.001s
+2026-02-08 17:42:53,135 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.001s
+2026-02-08 17:42:53,139 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.003s
+2026-02-08 17:42:53,141 - server - INFO - OPTIONS /settings/whatsapp/config - Status: 200 - Time: 0.000s
+2026-02-08 17:42:53,143 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.003s
+2026-02-08 17:42:53,145 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.003s
+2026-02-08 17:42:53,147 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.002s
+2026-02-08 17:43:00,854 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-08 17:43:00,871 - server - INFO - PATCH /organisations - Status: 200 - Time: 0.016s
+2026-02-08 17:45:22,426 - server - INFO - OPTIONS /knowledge/ - Status: 200 - Time: 0.000s
+2026-02-08 17:45:22,436 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.009s
+2026-02-08 17:45:24,602 - server - INFO - OPTIONS /knowledge/43ff3553-cd1d-445c-9852-e103cb9cfb18 - Status: 200 - Time: 0.000s
+2026-02-08 17:45:24,610 - server - INFO - DELETE /knowledge/43ff3553-cd1d-445c-9852-e103cb9cfb18 - Status: 200 - Time: 0.008s
+2026-02-08 17:45:24,616 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 17:45:26,872 - server - INFO - OPTIONS /knowledge/b364cf46-85e7-431b-9229-77d214145e4c - Status: 200 - Time: 0.001s
+2026-02-08 17:45:26,876 - server - INFO - DELETE /knowledge/b364cf46-85e7-431b-9229-77d214145e4c - Status: 200 - Time: 0.004s
+2026-02-08 17:45:26,881 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 17:45:29,162 - server - INFO - OPTIONS /knowledge/59c76b49-a663-4000-a007-5a697fb633ee - Status: 200 - Time: 0.000s
+2026-02-08 17:45:29,167 - server - INFO - DELETE /knowledge/59c76b49-a663-4000-a007-5a697fb633ee - Status: 200 - Time: 0.004s
+2026-02-08 17:45:29,171 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:45:31,837 - server - INFO - OPTIONS /knowledge/8c4c937c-1937-4674-86d6-d0c2e310a218 - Status: 200 - Time: 0.000s
+2026-02-08 17:45:31,841 - server - INFO - DELETE /knowledge/8c4c937c-1937-4674-86d6-d0c2e310a218 - Status: 200 - Time: 0.003s
+2026-02-08 17:45:31,846 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:45:33,920 - server - INFO - OPTIONS /knowledge/1829b034-9b9b-458a-b043-69d111f2d32f - Status: 200 - Time: 0.000s
+2026-02-08 17:45:33,925 - server - INFO - DELETE /knowledge/1829b034-9b9b-458a-b043-69d111f2d32f - Status: 200 - Time: 0.004s
+2026-02-08 17:45:33,930 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 17:45:36,306 - server - INFO - OPTIONS /knowledge/14ee4d04-8216-4b94-bade-2d3809cb96c7 - Status: 200 - Time: 0.000s
+2026-02-08 17:45:36,311 - server - INFO - DELETE /knowledge/14ee4d04-8216-4b94-bade-2d3809cb96c7 - Status: 200 - Time: 0.004s
+2026-02-08 17:45:36,316 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 17:45:38,136 - server - INFO - OPTIONS /knowledge/1e7ca3a1-cbe0-416a-9544-f269a0dd573e - Status: 200 - Time: 0.000s
+2026-02-08 17:45:38,140 - server - INFO - DELETE /knowledge/1e7ca3a1-cbe0-416a-9544-f269a0dd573e - Status: 200 - Time: 0.003s
+2026-02-08 17:45:38,144 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:45:39,861 - server - INFO - OPTIONS /knowledge/6c1faea1-7394-48d0-9424-c388d9eeae3c - Status: 200 - Time: 0.000s
+2026-02-08 17:45:39,866 - server - INFO - DELETE /knowledge/6c1faea1-7394-48d0-9424-c388d9eeae3c - Status: 200 - Time: 0.004s
+2026-02-08 17:45:39,870 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:45:41,448 - server - INFO - OPTIONS /knowledge/e52f3859-fd02-465f-8015-73460e230f43 - Status: 200 - Time: 0.001s
+2026-02-08 17:45:41,453 - server - INFO - DELETE /knowledge/e52f3859-fd02-465f-8015-73460e230f43 - Status: 200 - Time: 0.004s
+2026-02-08 17:45:41,458 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:45:43,193 - server - INFO - OPTIONS /knowledge/b6470232-6440-4c5b-a7a2-62f09566358f - Status: 200 - Time: 0.000s
+2026-02-08 17:45:43,198 - server - INFO - DELETE /knowledge/b6470232-6440-4c5b-a7a2-62f09566358f - Status: 200 - Time: 0.004s
+2026-02-08 17:45:43,201 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 17:48:42,889 - server - INFO - OPTIONS /knowledge/ingest - Status: 200 - Time: 0.000s
+2026-02-08 17:48:45,167 - server - INFO - POST /knowledge/ingest - Status: 200 - Time: 2.277s
+2026-02-08 17:48:45,174 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 17:49:04,610 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.001s
+2026-02-08 17:49:04,612 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.001s
+2026-02-08 17:49:04,616 - server - INFO - POST /internals/leads - Status: 201 - Time: 0.004s
+2026-02-08 17:49:04,618 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.002s
+2026-02-08 17:49:04,622 - server - INFO - POST /internals/conversations - Status: 201 - Time: 0.004s
+2026-02-08 17:49:04,627 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.005s
+2026-02-08 17:49:04,628 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.001s
+2026-02-08 17:49:04,631 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.001s
+2026-02-08 17:49:04,634 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:49:06,760 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.002s
+2026-02-08 17:49:06,765 - server - INFO - POST /internals/messages/outgoing - Status: 201 - Time: 0.004s
+2026-02-08 17:49:06,770 - server - INFO - PATCH /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.004s
+2026-02-08 17:49:06,773 - server - INFO - PATCH /internals/leads/35359afb-f950-49d2-8de7-79625f6b4a76 - Status: 200 - Time: 0.003s
+2026-02-08 17:49:06,776 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.003s
+2026-02-08 17:49:07,320 - server - INFO - PATCH /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.005s
+2026-02-08 17:49:14,636 - server - INFO - GET /internals/whatsapp/by-phone-number-id/123123/with-org - Status: 200 - Time: 0.002s
+2026-02-08 17:49:14,637 - server - INFO - GET /internals/leads/by-phone - Status: 200 - Time: 0.001s
+2026-02-08 17:49:14,640 - server - INFO - GET /internals/conversations/by-lead - Status: 200 - Time: 0.001s
+2026-02-08 17:49:14,645 - server - INFO - POST /internals/messages/incoming - Status: 201 - Time: 0.004s
+2026-02-08 17:49:14,647 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.002s
+2026-02-08 17:49:14,650 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:49:14,651 - server - INFO - GET /internals/organizations/1c48f782-6630-462b-b3f0-e96bac0b6138/ctas - Status: 200 - Time: 0.002s
+2026-02-08 17:49:17,378 - server - INFO - GET /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.002s
+2026-02-08 17:49:17,382 - server - INFO - POST /internals/messages/outgoing - Status: 201 - Time: 0.004s
+2026-02-08 17:49:17,386 - server - INFO - PATCH /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.003s
+2026-02-08 17:49:17,388 - server - INFO - PATCH /internals/leads/35359afb-f950-49d2-8de7-79625f6b4a76 - Status: 200 - Time: 0.001s
+2026-02-08 17:49:17,392 - server - INFO - POST /internals/conversation-events - Status: 201 - Time: 0.002s
+2026-02-08 17:49:18,380 - server - INFO - PATCH /internals/conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d - Status: 200 - Time: 0.004s
+2026-02-08 17:49:21,757 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:49:21,758 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 17:49:21,762 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:49:21,767 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 17:49:22,437 - server - INFO - OPTIONS /conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:49:22,441 - server - INFO - GET /conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.003s
+2026-02-08 17:52:03,000 - server - INFO - OPTIONS /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.000s
+2026-02-08 17:52:03,005 - server - INFO - GET /conversations/a7726e82-693d-4358-8fa2-ec76a7a1dcb8/messages - Status: 200 - Time: 0.004s
+2026-02-08 17:52:04,271 - server - INFO - GET /conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.005s
+2026-02-08 17:58:40,560 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:58:42,868 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:58:42,880 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 17:58:51,345 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 17:58:53,475 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 17:58:53,488 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 18:01:17,209 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 18:01:19,211 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 18:01:19,222 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 18:01:58,292 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 18:02:00,351 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 18:02:00,364 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 18:02:14,900 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 18:02:17,043 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 18:02:17,055 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 18:07:51,069 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-08 18:07:53,198 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-08 18:07:53,211 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-08 18:08:19,928 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.001s
+2026-02-08 18:08:19,929 - server - INFO - OPTIONS /settings/whatsapp/status - Status: 200 - Time: 0.001s
+2026-02-08 18:08:19,957 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.028s
+2026-02-08 18:08:19,959 - server - INFO - OPTIONS /settings/whatsapp/config - Status: 200 - Time: 0.000s
+2026-02-08 18:08:19,961 - server - INFO - GET /settings/whatsapp/status - Status: 200 - Time: 0.003s
+2026-02-08 18:08:19,988 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.028s
+2026-02-08 18:08:19,991 - server - INFO - GET /settings/whatsapp/config - Status: 200 - Time: 0.002s
+2026-02-08 18:08:34,760 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.002s
+2026-02-08 18:08:34,770 - server - INFO - PATCH /organisations - Status: 200 - Time: 0.010s
+2026-02-08 18:09:42,807 - server - INFO - OPTIONS /knowledge/ - Status: 200 - Time: 0.001s
+2026-02-08 18:09:42,815 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.008s
+2026-02-08 18:09:45,647 - server - INFO - OPTIONS /knowledge/1041e528-f319-4de5-beac-11e13ac2f8c4 - Status: 200 - Time: 0.000s
+2026-02-08 18:09:45,656 - server - INFO - DELETE /knowledge/1041e528-f319-4de5-beac-11e13ac2f8c4 - Status: 200 - Time: 0.008s
+2026-02-08 18:09:45,661 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 18:09:48,248 - server - INFO - OPTIONS /knowledge/5e8337da-2cd3-46cd-b4b8-6e95c86b6d7d - Status: 200 - Time: 0.000s
+2026-02-08 18:09:48,253 - server - INFO - DELETE /knowledge/5e8337da-2cd3-46cd-b4b8-6e95c86b6d7d - Status: 200 - Time: 0.004s
+2026-02-08 18:09:48,258 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 18:09:49,975 - server - INFO - OPTIONS /knowledge/86b11f68-a996-49d4-b7ef-617c4e1a299f - Status: 200 - Time: 0.000s
+2026-02-08 18:09:49,978 - server - INFO - DELETE /knowledge/86b11f68-a996-49d4-b7ef-617c4e1a299f - Status: 200 - Time: 0.003s
+2026-02-08 18:09:49,985 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 18:09:51,461 - server - INFO - OPTIONS /knowledge/680f69e4-e305-40a9-ad0d-322ea88f2393 - Status: 200 - Time: 0.001s
+2026-02-08 18:09:51,465 - server - INFO - DELETE /knowledge/680f69e4-e305-40a9-ad0d-322ea88f2393 - Status: 200 - Time: 0.004s
+2026-02-08 18:09:51,471 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.005s
+2026-02-08 18:09:53,062 - server - INFO - OPTIONS /knowledge/94abea67-4348-44fd-b23f-b3eae3fe23b9 - Status: 200 - Time: 0.000s
+2026-02-08 18:09:53,068 - server - INFO - DELETE /knowledge/94abea67-4348-44fd-b23f-b3eae3fe23b9 - Status: 200 - Time: 0.004s
+2026-02-08 18:09:53,073 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 18:09:54,512 - server - INFO - OPTIONS /knowledge/ff4b19dd-4625-45ba-9c0a-396e8a937f7e - Status: 200 - Time: 0.000s
+2026-02-08 18:09:54,516 - server - INFO - DELETE /knowledge/ff4b19dd-4625-45ba-9c0a-396e8a937f7e - Status: 200 - Time: 0.002s
+2026-02-08 18:09:54,522 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 18:09:56,158 - server - INFO - OPTIONS /knowledge/ed86f3d6-31cd-45ec-a777-ceff1ef0e0d7 - Status: 200 - Time: 0.000s
+2026-02-08 18:09:56,162 - server - INFO - DELETE /knowledge/ed86f3d6-31cd-45ec-a777-ceff1ef0e0d7 - Status: 200 - Time: 0.004s
+2026-02-08 18:09:56,166 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 18:09:57,981 - server - INFO - OPTIONS /knowledge/c721628e-9272-415c-8e65-e3a278c4c44b - Status: 200 - Time: 0.000s
+2026-02-08 18:09:57,986 - server - INFO - DELETE /knowledge/c721628e-9272-415c-8e65-e3a278c4c44b - Status: 200 - Time: 0.003s
+2026-02-08 18:09:57,989 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 18:09:59,390 - server - INFO - OPTIONS /knowledge/240db755-8f0b-448e-888c-9b7efc6f4f28 - Status: 200 - Time: 0.000s
+2026-02-08 18:09:59,395 - server - INFO - DELETE /knowledge/240db755-8f0b-448e-888c-9b7efc6f4f28 - Status: 200 - Time: 0.004s
+2026-02-08 18:09:59,398 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 18:10:00,990 - server - INFO - OPTIONS /knowledge/6388ff0d-5a5a-4ff3-ba43-b742a6eaccea - Status: 200 - Time: 0.000s
+2026-02-08 18:10:00,995 - server - INFO - DELETE /knowledge/6388ff0d-5a5a-4ff3-ba43-b742a6eaccea - Status: 200 - Time: 0.004s
+2026-02-08 18:10:00,998 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 18:10:19,950 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.002s
+2026-02-08 18:10:23,414 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.003s
+2026-02-08 18:10:52,092 - server - INFO - OPTIONS /knowledge/ingest - Status: 200 - Time: 0.000s
+2026-02-08 18:10:54,513 - server - INFO - POST /knowledge/ingest - Status: 200 - Time: 2.420s
+2026-02-08 18:10:54,521 - server - INFO - GET /knowledge/ - Status: 200 - Time: 0.004s
+2026-02-08 18:11:16,289 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.000s
+2026-02-08 18:11:16,290 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.001s
+2026-02-08 18:11:16,298 - server - INFO - GET /leads - Status: 200 - Time: 0.008s
+2026-02-08 18:11:16,303 - server - INFO - GET /leads - Status: 200 - Time: 0.003s
+2026-02-08 18:11:18,095 - server - INFO - OPTIONS /conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.000s
+2026-02-08 18:11:18,103 - server - INFO - GET /conversations/c5ffdfaa-ef23-40b6-96e3-4966832c560d/messages - Status: 200 - Time: 0.007s

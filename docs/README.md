@@ -1,199 +1,175 @@
-# WhatsApp Funnel AI: Eyes → Brain → Mouth → Memory Architecture
+# Whatsapp-Funnel
 
-## 1. Project Overview
-This project is an **AI-Driven Sales Agent** for WhatsApp using a **4-Stage Pipeline** that mimics human cognitive processing.
+## 📖 Project Overview
+**Whatsapp-Funnel** is a robust, production-ready WhatsApp automation platform designed to handle complex conversational flows using a **4-Stage Human-in-the-Loop (HTL) LLM Pipeline**. 
 
-### Core Philosophy
-- **Intentionality**: The AI never "just talks". It observes, strategizes, then communicates.
-- **Separation of Concerns**: Each stage has ONE job — Eyes observe, Brain decides, Mouth speaks, Memory remembers.
-- **Micro-State Management**: Conversations tracked via explicit stages (`GREETING`, `QUALIFICATION`, `PRICING`, etc.).
-- **Self-Healing**: Background workers handle follow-ups if users go silent.
+Unlike simple chatbots, this system observes, reasons, plans, and then acts. It features a scalable architecture with a **FastAPI** backend, **AWS SQS** for reliable message queuing, and a decoupled **Worker** for asynchronous processing.
 
----
-
-## 2. The 4-Stage Pipeline
-
-```
-┌─────────────┐    observation    ┌─────────────┐    implementation_plan    ┌─────────────┐
-│    EYES     │ ───────────────► │    BRAIN    │ ─────────────────────────►│    MOUTH    │
-│  (Observer) │                   │ (Strategist)│                           │(Communicator)│
-└─────────────┘                   └─────────────┘                           └─────────────┘
-       │                                 │                                         │
-       │ intent, sentiment               │ action, stage                           │ message_text
-       │ risk_flags                      │ needs_human_attention                   │
-       ▼                                 ▼                                         ▼
-                                                                            ┌─────────────┐
-                                        ◄───────────────────────────────────│   MEMORY    │
-                                                                            │ (Archivist) │
-                                                                            └─────────────┘
-```
-
-### Stage Responsibilities
-
-| Stage | Role | Input | Output |
-|-------|------|-------|--------|
-| **Eyes** | Observe & Analyze | `PipelineInput` | `observation`, intent, sentiment, risks |
-| **Brain** | Decide & Strategize | Eyes observation | `implementation_plan`, action, stage, CTA |
-| **Mouth** | Communicate | Brain's plan | `message_text` |
-| **Memory** | Compress & Retain | Mouth's output | `updated_rolling_summary` |
-
-### Key Handoff: `implementation_plan`
-Brain passes a natural language instruction to Mouth:
-```
-"Send a friendly follow-up asking about their timeline. Mention the free consultation CTA."
-```
+### Key Features
+- **4-Stage LLM Pipeline**: Eyes (Observe) → Brain (Decide) → Mouth (Respond) → Memory (Summarize).
+- **Asynchronous Architecture**: Decouples webhook reception from processing using AWS SQS.
+- **Human-in-the-Loop**: Seamlessly hands off conversations to humans when needed.
+- **Scalable**: Built with FastAPI and designed for serverless (AWS Lambda) or containerized deployment.
+- **Observability**: Structured logging and detailed pipeline tracing.
 
 ---
 
-## 3. Architecture & Components
+## 📂 Folder Structure
 
-### A. The Server (`/server`)
-- **Framework**: FastAPI (Python)
-- **Role**: Source of Truth — DB, API endpoints, WebSockets, Auth
-- **Database**: PostgreSQL
+The project is organized into distinct services to maintain separation of concerns:
 
-### B. The Worker (`/whatsapp_worker`)
-- **Technique**: Celery + Redis
-- **Flow**: Webhook → Fetch Context → Run Pipeline → Send Response → Persist State
-
-### C. The LLM Pipeline (`/llm`)
-| File | Purpose |
-|------|---------|
-| `pipeline.py` | Orchestrates Eyes → Brain → Mouth |
-| `prompts.py` | 8 prompts (4 SYSTEM + 4 USER_TEMPLATE) |
-| `schemas.py` | `EyesOutput`, `BrainOutput`, `MouthOutput`, `MemoryOutput`, `PipelineResult` |
-| `steps/eyes.py` | Observer — analyzes conversation |
-| `steps/brain.py` | Strategist — decides action |
-| `steps/mouth.py` | Communicator — generates message |
-| `steps/memory.py` | Archivist — updates rolling summary |
-| `utils.py` | Enum normalization, formatting |
-
-### D. The Frontend (`/frontend`)
-- **Framework**: Next.js + React
-- **Role**: Dashboard for monitoring and intervention
+- **`server/`**: The core Backend API built with FastAPI. Handles database interactions, API routes, and business logic.
+- **`llm/`**: Contains the intelligence of the system.
+    - `steps/`: Individual steps of the pipeline (Eyes, Brain, Mouth, Memory).
+    - `prompts.py`: Centralized prompt management.
+    - `pipeline.py`: Orchestrator for the HTL flow.
+- **`whatsapp_worker/`**: A standalone worker service that:
+    - Long-polls AWS SQS for incoming messages.
+    - Executes the `llm` pipeline.
+    - Sends responses back via the WhatsApp API.
+- **`whatsapp_receive/`**: A lightweight webhook receiver (likely deployed as a Lambda function) that validates incoming WhatsApp webhooks and pushes them to SQS.
+- **`frontend/`**: The user interface for managing conversations, analytics, and settings.
+- **`scripts/`**: Utility scripts for deployment, testing, or maintenance.
 
 ---
 
-## 4. Pipeline Flow Example
+## 🔌 API Documentation
 
-**Scenario**: User asks about price during qualification.
+The backend API is structured around RESTful principles. The main `server` application invokes the following routers:
 
-### Step 1: EYES (Observer)
-```json
-{
-  "observation": "User asking about pricing. Shows buying intent. Ready for price discussion.",
-  "intent_level": "high",
-  "user_sentiment": "curious",
-  "confidence": 0.85
-}
-```
+| Prefix | Tag | Description |
+| :--- | :--- | :--- |
+| `/auth` | Authentication | User login, registration, and token management. |
+| `/dashboard` | Dashboard | Aggregated metrics for the main dashboard. |
+| `/leads` | Leads | Management of leads (potential customers) captured via WhatsApp. |
+| `/conversations` | Conversations | Retrieving and managing chat histories. |
+| `/messages` | Messages | Sending manual messages or retrieving specific message details. |
+| `/ctas` | CTAs | Call-to-Action management and tracking. |
+| `/templates` | Templates | WhatsApp template message management. |
+| `/analytics` | Analytics | Detailed performance metrics and reporting. |
+| `/settings` | Settings | System and user configuration. |
+| `/users` | Users | User management (admin tasks). |
+| `/organisations` | Organisations | Multi-tenancy support for different business units. |
+| `/internals` | Internals | Internal tools or system-level endpoints. |
+| `/debug` | Debug | Endpoints for testing and debugging system internals. |
 
-### Step 2: BRAIN (Strategist)
-```json
-{
-  "implementation_plan": "Provide pricing range based on 100 units. Ask about budget fit.",
-  "action": "send_now",
-  "new_stage": "pricing",
-  "should_respond": true
-}
-```
-
-### Step 3: MOUTH (Communicator)
-```json
-{
-  "message_text": "For 100 units, pricing starts at $500/mo. Does that fit your budget?"
-}
-```
-
-### Step 4: MEMORY (Archivist)
-Updates rolling summary with the exchange.
+> **Note**: Interactive API documentation (Swagger UI) is available at `/docs` when running the server locally.
 
 ---
 
-## 5. Key Files
+## 🧠 HTL Pipeline: The Core Intelligence
 
-### `/llm` (Intelligence Core)
-| File | Purpose |
-|------|---------|
-| `pipeline.py` | Entry point (`run_pipeline`) |
-| `prompts.py` | All 8 prompts (SYSTEM + USER_TEMPLATE) |
-| `schemas.py` | Pydantic schemas for all stages |
-| `steps/eyes.py` | Observer implementation |
-| `steps/brain.py` | Strategist implementation |
-| `steps/mouth.py` | Communicator implementation |
-| `steps/memory.py` | Archivist implementation |
+The system processes every message through a 4-step pipeline to ensure high-quality, safe, and context-aware responses.
 
-### `/server` (Backend)
-| File | Purpose |
-|------|---------|
-| `main.py` | FastAPI entry point |
-| `routes/internals.py` | Internal API for Worker |
-| `enums.py` | `ConversationStage`, `IntentLevel`, `DecisionAction`, etc. |
+### 1. Eyes (The Observer)
+- **Role**: Analyzes the raw conversation.
+- **Output**: Determines `Intent`, `Sentiment`, `Risk Flags`, and generates a `Situation Summary`.
+- **Why**: Ensures the bot understands *before* it tries to solve.
 
-### `/whatsapp_worker` (Hands)
-| File | Purpose |
-|------|---------|
-| `main.py` | Webhook receiver |
-| `processors/context.py` | Builds `PipelineInput` |
-| `processors/actions.py` | Handles post-pipeline actions |
+### 2. Brain (The Strategist)
+- **Role**: Decides *what* to do based on the Eyes' observation.
+- **Output**: `Implementation Plan`, `Decision Action` (e.g., RESPOND, IGNORE, WAIT, HUMAN_HANDOFF).
+- **Why**: Separates strategy from execution. Prevents hallucinations by planning first.
+
+### 3. Mouth (The Speaker)
+- **Role**: Generates the final response text *only if* the Brain decided to respond.
+- **Output**: The actual text message sent to the user.
+- **Why**: Ensures the tone, style, and content match the Brain's plan.
+
+### 4. Memory (The Scribe)
+- **Role**: Runs in the background *after* the response.
+- **Action**: Updates the `Rolling Summary` of the conversation.
+- **Why**: Keeps the context window small and efficient by summarizing past events.
 
 ---
 
-## 6. Development Setup
+## 📚 RAG Setup (Knowledge Base)
+
+The system implements a **Retrieval-Augmented Generation (RAG)** pipeline to ground LLM responses in business-specific knowledge. It uses a **Hybrid Search** approach combining semantic vector search with keyword search.
+
+### 1. Architecture
+
+| Component | Technology | Configuration |
+| :--- | :--- | :--- |
+| **Embedding Model** | Google Gemini | `models/gemini-embedding-001` |
+| **Dimensionality** | MRL (Matryoshka) | **768 dimensions** (Sliced from 3072d) |
+| **Vector Store** | PostgreSQL | `pgvector` extension |
+| **Search Strategy** | Hybrid (Vector + Keyword) | Cosine Similarity + `tsvectors` |
+
+### 2. Data Flow
+
+#### Ingestion (Frontend -> Backend -> DB)
+1. **Upload**: User uploads a PDF/MD/TXT file via `Settings > Knowledge Base`.
+2. **Processing** (`llm/knowledge.py`):
+   - **Text Extraction**: Uses `pypdf` for PDFs.
+   - **Chunking**: Splits text into 1000-character chunks with 200-character overlap using `RecursiveCharacterTextSplitter`.
+   - **Embedding**: Generates embeddings using `models/gemini-embedding-001` with `task_type="retrieval_document"`.
+   - **Optimization**: Slices the 3072d output to **768d** and applies **L2 Normalization**.
+3. **Storage**: Saves the chunk text, 768d vector, and metadata to the `knowledge_items` table in Postgres.
+
+#### Retrieval (Brain -> DB -> Context)
+1. **Query**: The `Brain` step (`llm/steps/brain.py`) extracts a search query from the conversation.
+2. **Embedding**: Embeds the query using `models/gemini-embedding-001` with `task_type="retrieval_query"`.
+3. **Search**:
+   - **Vector Search**: Finds top-k chunks by Cosine Similarity (using `<=>` operator in pgvector).
+   - **Keyword Search**: Uses Postgres `ts_rank` for keyword matching (Planned/Optional).
+4. **Context Injection**: The most relevant chunks are injected into the LLM's system prompt under a `## Relevant Business Knowledge` section.
+
+### 3. Database Schema
+
+The `knowledge_items` table is optimized for vector search:
+
+```sql
+CREATE TABLE knowledge_items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID REFERENCES organizations(id),
+    title VARCHAR NOT NULL,
+    content TEXT NOT NULL,
+    embedding VECTOR(768), -- Gemini MRL 768d
+    search_vector TSVECTOR, -- For hybrid keyword search
+    metadata JSONB,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### 4. Setup & Configuration
+
+**Prerequisites:**
+- **PostgreSQL**: Must have `pgvector` extension installed (`CREATE EXTENSION vector;`).
+- **Google API Key**: Must be set in `.env` as `GOOGLE_API_KEY`.
+
+**Environment Variables:**
+```bash
+GOOGLE_API_KEY=your_gemini_api_key
+DATABASE_URL=postgresql://user:password@localhost:5432/whatsapp_funnel
+```
+
+### 5. API Endpoints
+
+- **GET /knowledge/**: List all uploaded documents for the organization.
+- **POST /knowledge/ingest**: Upload a file (PDF/MD/TXT) for ingestion.
+- **DELETE /knowledge/{id}**: Delete a specific document and its chunks.
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.10+, Node.js 18+, PostgreSQL, Redis
+- Python 3.10+
+- Docker (optional)
+- AWS Credentials (for SQS/S3/Bedrock if used)
 
-### Installation
-```bash
-# Python
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-# Environment
-cp .env.example .env
-# Edit .env with API keys, DATABASE_URL, etc.
-```
-
-### Run Services
-```bash
-# Server
-uvicorn server.main:app --reload
-
-# Worker
-celery -A whatsapp_worker.celery_app worker --loglevel=info -P solo
-
-# Frontend
-cd frontend && npm install && npm run dev
-```
-
-### Testing the Pipeline
-```bash
-# Interactive mode
-python tests/simulate_htl.py
-
-# Automated tests
-python tests/simulate_htl.py --test
-```
+### Running Locally
+1. **Start the Server**:
+   ```bash
+   uvicorn server.main:app --reload
+   ```
+2. **Start the Worker**:
+   ```bash
+   python -m whatsapp_worker.main
+   ```
+3. **Start Frontend** (if applicable):
+   ```bash
+   cd frontend && npm run dev
+   ```
 
 ---
-
-## 7. Important Context for AI Agents
-
-1. **Stage Separation**:
-   - Eyes: Only observes (no decisions)
-   - Brain: Only decides (no message generation)
-   - Mouth: Only generates (follows Brain's `implementation_plan`)
-   - Memory: Only summarizes (runs after Mouth)
-
-2. **Prompt Structure**:
-   - 4 `*_SYSTEM_PROMPT` constants (static persona/rules)
-   - 4 `*_USER_TEMPLATE` constants (dynamic context injection)
-   - All in `llm/prompts.py`
-
-3. **Enum Synchronization**:
-   - If you change `server/enums.py`, update the inline schemas in step files.
-
-4. **Internal API Pattern**:
-   - Worker doesn't touch DB directly — uses `server/routes/internals.py`.
+*Built with ❤️ by the Whatsapp-Funnel Team*

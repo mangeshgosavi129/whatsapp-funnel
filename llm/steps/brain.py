@@ -76,6 +76,7 @@ def _build_user_prompt(context: PipelineInput, eyes_output: EyesOutput) -> str:
         total_nudges=context.nudges.total_nudges,
         now_local=context.timing.now_local,
         whatsapp_window_open=context.timing.whatsapp_window_open,
+        dynamic_knowledge_context=context.dynamic_knowledge_context or "None",
     )
 
 
@@ -138,6 +139,7 @@ def run_brain(context: PipelineInput, eyes_output: EyesOutput) -> Tuple[BrainOut
         
     except Exception as e:
         logger.error(f"Brain failed: {e}")
+        print(f"\n[BRAIN ERROR] {e}")  # Force print to console for debugging
         fallback_output = BrainOutput(
             implementation_plan="System error. Send a polite acknowledgment.",
             action=DecisionAction.WAIT_SCHEDULE,

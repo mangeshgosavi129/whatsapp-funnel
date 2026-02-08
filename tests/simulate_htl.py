@@ -3,6 +3,7 @@ import os
 
 # Force UTF-8 encoding on Windows to prevent UnicodeEncodeError in logging
 os.environ['PYTHONIOENCODING'] = 'utf-8'
+sys.path.append(os.getcwd())
 
 import asyncio
 import logging
@@ -10,9 +11,21 @@ import time
 from unittest.mock import MagicMock
 from uuid import uuid4
 from datetime import datetime
+from llm.knowledge import search_knowledge as original_search_knowledge
+import io
+import whatsapp_worker.processors.actions as actions_module
+import llm.pipeline
+from whatsapp_worker import main as worker_main
+from whatsapp_worker.processors.api_client import api_client
+from llm.schemas import EyesOutput, BrainOutput, MouthOutput
+from llm import pipeline
+from llm.steps import eyes, brain, mouth, memory
+from llm.prompts import (
+    EYES_SYSTEM_PROMPT, EYES_USER_TEMPLATE,
+    BRAIN_SYSTEM_PROMPT, BRAIN_USER_TEMPLATE,
+    MOUTH_SYSTEM_PROMPT, MOUTH_USER_TEMPLATE
+)
 
-# Add project root to path
-sys.path.append(os.getcwd())
 
 # === CUSTOM LOGGING FOR SIMULATION ===
 class ColorFormatter(logging.Formatter):
@@ -57,7 +70,6 @@ class ColorFormatter(logging.Formatter):
 
 # Configure logging with UTF-8 encoding for Windows
 # CRITICAL: Must reconfigure stdout BEFORE creating any handlers
-import io
 if sys.platform == 'win32':
     # Wrap stdout/stderr with UTF-8 encoding, replacing unencodable chars
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
@@ -86,16 +98,7 @@ llm_log.setLevel(logging.CRITICAL)  # Only log critical errors
 llm_log.handlers.clear()
 llm_log.propagate = False 
 
-from whatsapp_worker import main as worker_main
-from whatsapp_worker.processors.api_client import api_client
-from llm.schemas import EyesOutput, BrainOutput, MouthOutput
-from llm import pipeline
-from llm.steps import eyes, brain, mouth, memory
-from llm.prompts import (
-    EYES_SYSTEM_PROMPT, EYES_USER_TEMPLATE,
-    BRAIN_SYSTEM_PROMPT, BRAIN_USER_TEMPLATE,
-    MOUTH_SYSTEM_PROMPT, MOUTH_USER_TEMPLATE
-)
+
 
 # ==========================================
 # MONKEY PATCHING FOR TRACING
@@ -144,6 +147,42 @@ def traced_run_eyes(context):
     return result, lat, tokens
 
 
+
+# Import original search_knowledge
+
+
+def traced_search_knowledge(query, organization_id, **kwargs):
+    """Traced version of search_knowledge."""
+    start = time.time()
+    print(f"\n[RAG] (SEARCH)")
+    print(f"   > Query: {query}")
+    print(f"   > Org ID: {organization_id}")
+    
+    results = original_search_knowledge(query, organization_id, **kwargs)
+    duration = (time.time() - start) * 1000
+    
+    print(f"\n[RAG] (RESULTS) - {duration:.1f}ms")
+    if results:
+        print(f"   > Found {len(results)} chunks")
+        for i, res in enumerate(results):
+            print(f"   [{i+1}] {bold_green}{res.get('title', 'Unknown')}{reset} (Score: {res.get('score', 0.0):.4f})")
+            print(f"       {_safe_slice(res.get('content', ''), 100).replace(newline, ' ')}")
+    else:
+        print(f"   > No results found")
+        
+    return results
+
+# Apply patch
+pipeline.search_knowledge = traced_search_knowledge
+# Also patch the module directly just in case
+llm.pipeline.search_knowledge = traced_search_knowledge
+
+# ANSI codes for helper - redefining here since they are in class scope above
+bold_green = "\x1b[32;1m"
+reset = "\x1b[0m"
+newline = "\n"
+
+
 def traced_run_brain(context, eyes_output):
     start = time.time()
     
@@ -151,6 +190,14 @@ def traced_run_brain(context, eyes_output):
     print(f"   > Observation: {_safe_slice(eyes_output.observation, 150)}")
     print(f"   > Available CTAs: {len(context.available_ctas)}")
     print(f"   > Nudges 24h: {context.nudges.followup_count_24h}")
+    
+    # Trace RAG Context if present
+    if hasattr(context, 'dynamic_knowledge_context') and context.dynamic_knowledge_context:
+        print(f"   > RAG Context Injected: Yes ({len(context.dynamic_knowledge_context)} chars)")
+        if VERBOSE:
+             print(f"   --> {_safe_slice(context.dynamic_knowledge_context, 200).replace(newline, ' ')}")
+    else:
+        print(f"   > RAG Context: None")
         
     result, lat, tokens = original_run_brain(context, eyes_output)
     duration = (time.time() - start) * 1000
@@ -266,7 +313,6 @@ def mocked_emit_human_attention(conversation_id, organization_id):
 
 
 # Patch the api_client instances
-import whatsapp_worker.processors.actions as actions_module
 actions_module.api_client.emit_human_attention = mocked_emit_human_attention
 actions_module.api_client.send_bot_message = mocked_send_bot_message
 api_client.emit_human_attention = mocked_emit_human_attention

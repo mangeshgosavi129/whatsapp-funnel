@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS knowledge_items (
     organization_id UUID NOT NULL REFERENCES organizations(id),
     title VARCHAR NOT NULL,
     content TEXT NOT NULL,
-    embedding VECTOR(1536), -- Open AI text-embedding-3-small
+    embedding VECTOR(768), -- Gemini embedding-001 (MRL 768d)
     search_vector TSVECTOR,
     metadata JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW(),

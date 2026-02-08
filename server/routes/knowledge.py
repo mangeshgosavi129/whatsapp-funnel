@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import shutil
 import os
+import uuid
 import tempfile
 from server.dependencies import get_db, get_auth_context
 from server.schemas import (
     AuthContext, 
     KnowledgeSearchRequest, 
-    KnowledgeItemOut
+    KnowledgeItemOut,
+    KnowledgeMetadataOut
 )
 import llm.knowledge as knowledge_service
 
@@ -82,4 +84,53 @@ def search_knowledge(
         ]
     except Exception as e:
         print(f"Search error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/", response_model=List[KnowledgeMetadataOut])
+def list_knowledge(
+    auth: AuthContext = Depends(get_auth_context),
+    db: Session = Depends(get_db)
+):
+    """
+    List all knowledge items for the organization.
+    """
+    try:
+        from server.models import KnowledgeItem
+        items = db.query(KnowledgeItem).filter(
+            KnowledgeItem.organization_id == auth.organization_id
+        ).order_by(KnowledgeItem.created_at.desc()).all()
+        return items
+    except Exception as e:
+        print(f"List error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{item_id}")
+def delete_knowledge(
+    item_id: uuid.UUID,
+    auth: AuthContext = Depends(get_auth_context),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a specific knowledge item.
+    """
+    try:
+        from server.models import KnowledgeItem
+        item = db.query(KnowledgeItem).filter(
+            KnowledgeItem.id == item_id,
+            KnowledgeItem.organization_id == auth.organization_id
+        ).first()
+        
+        if not item:
+            raise HTTPException(status_code=404, detail="Knowledge item not found")
+            
+        db.delete(item)
+        db.commit()
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        print(f"Delete error: {e}")
         raise HTTPException(status_code=500, detail=str(e))

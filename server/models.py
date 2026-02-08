@@ -302,8 +302,8 @@ class KnowledgeItem(Base):
     title = Column(String, nullable=False)
     content = Column(Text, nullable=False)
     
-    # 1536 dimensions for text-embedding-3-small
-    embedding = Column(Vector(1536), nullable=True)
+    # 768 dimensions for Gemini embedding-001 (MRL)
+    embedding = Column(Vector(768), nullable=True)
     
     # Full-text search vector (auto-updated via trigger or app logic)
     search_vector = Column(TSVECTOR, nullable=True)
