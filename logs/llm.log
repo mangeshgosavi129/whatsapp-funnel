@@ -4335,3 +4335,16 @@ KeyError: 'business_description'
 2026-02-07 15:11:17,723 - llm.steps.mouth - INFO - Mouth: 103 chars
 2026-02-07 15:11:17,723 - llm.pipeline - INFO - Pipeline Complete: 2163ms. Response: True
 2026-02-07 15:11:18,827 - llm.steps.memory - INFO - Memory: 737 chars
+2026-02-07 16:09:57,732 - llm.pipeline - INFO - Running Step 1: Eyes
+2026-02-07 16:09:58,970 - llm.tracing - INFO - [Eyes] 1236ms | $0.002030 | llama3-70b-8192
+2026-02-07 16:09:58,970 - llm.steps.eyes - INFO - Eyes: intent=high, sentiment=distrustful
+2026-02-07 16:09:58,970 - llm.pipeline - INFO - Running Step 2: Brain
+2026-02-07 16:10:00,358 - llm.tracing - INFO - [Brain] 1388ms | $0.002328 | llama3-70b-8192
+2026-02-07 16:10:00,358 - llm.steps.brain - INFO - Brain: flag_attention -> lost (Conf: 0.95)
+2026-02-07 16:10:00,358 - llm.steps.brain - INFO - Human attention flagged
+2026-02-07 16:10:00,359 - llm.pipeline - INFO - Running Step 3: Mouth - Action: flag_attention
+2026-02-07 16:10:00,812 - llm.tracing - INFO - [Mouth] 452ms | $0.001298 | llama3-70b-8192
+2026-02-07 16:10:00,812 - llm.steps.mouth - INFO - Mouth: 104 chars
+2026-02-07 16:10:00,812 - llm.pipeline - INFO - Pipeline Complete: 3076ms. Response: True
+2026-02-07 16:10:00,814 - llm.tracing - INFO - Trace 709f225d-1f43-44c7-ac5c-16eb300a12e7 complete: 3081ms, $0.005656
+2026-02-07 16:10:01,705 - llm.steps.memory - INFO - Memory: 709 chars

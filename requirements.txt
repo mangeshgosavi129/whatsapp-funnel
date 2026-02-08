@@ -72,3 +72,8 @@ watchfiles==1.1.1
 wcwidth==0.3.1
 websockets==16.0
 rapidfuzz==3.12.1
+pgvector==0.3.6
+langchain-openai==0.3.3
+langchain-text-splitters==0.3.6
+pypdf==4.0.1
+langchain-google-genai==0.0.9

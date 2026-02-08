@@ -309,7 +309,6 @@ class LeadOut(BaseModel):
     phone: str
     email: Optional[str]
     company: Optional[str]
-
     conversation_stage: Optional[ConversationStage]
     intent_level: Optional[IntentLevel]
     user_sentiment: Optional[UserSentiment]
@@ -570,3 +569,28 @@ class InternalPipelineEventOut(BaseModel):
     latency_ms: Optional[int]
     tokens_used: Optional[int]
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# --------------------
+# Knowledge (RAG)
+# --------------------
+
+class KnowledgeIngestRequest(BaseModel):
+    content: str  # Markdown content
+    title_prefix: Optional[str] = None # e.g. "Refund Policy"
+
+class KnowledgeSearchRequest(BaseModel):
+    query: str
+    top_k: int = 5
+
+class KnowledgeItemOut(BaseModel):
+    id: UUID
+    title: str
+    content: str
+    score: Optional[float] = None
+    
+    class Config:
+        from_attributes = True

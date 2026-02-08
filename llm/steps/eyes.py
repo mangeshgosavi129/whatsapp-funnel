@@ -54,11 +54,20 @@ EYES_SCHEMA = {
             "confidence": {
                 "type": "number",
                 "description": "Confidence 0.0-1.0"
+            },
+            "knowledge_needed": {
+                "type": "boolean",
+                "description": "True if external knowledge (policies, facts) is needed to answer."
+            },
+            "knowledge_topic": {
+                "type": "string",
+                "description": "Topic category if knowledge is needed (e.g. 'POLICY_REFUND', 'PRICING'). Keep it high-level."
             }
         },
         "required": [
             "observation", "thought_process", "situation_summary",
-            "intent_level", "user_sentiment", "risk_flags", "confidence"
+            "intent_level", "user_sentiment", "risk_flags", "confidence",
+            "knowledge_needed"
         ],
         "additionalProperties": False
     }
@@ -112,6 +121,8 @@ def _validate_and_build_output(data: dict) -> EyesOutput:
         user_sentiment=normalize_enum(data.get("user_sentiment"), UserSentiment, UserSentiment.NEUTRAL),
         risk_flags=risk_flags,
         confidence=float(data.get("confidence") or 0.5),
+        knowledge_needed=data.get("knowledge_needed", False),
+        knowledge_topic=data.get("knowledge_topic")
     )
 
 
@@ -153,5 +164,7 @@ def run_eyes(context: PipelineInput) -> Tuple[EyesOutput, int, int]:
             user_sentiment=context.user_sentiment,
             risk_flags=RiskFlags(),
             confidence=0.0,
+            knowledge_needed=False,
+            knowledge_topic=None
         )
         return fallback_output, int((time.time() - start_time) * 1000), 0

@@ -7,6 +7,7 @@ from llm.schemas import PipelineInput, PipelineResult, BrainOutput, EyesOutput
 from llm.steps.eyes import run_eyes
 from llm.steps.brain import run_brain
 from llm.steps.mouth import run_mouth
+from llm.knowledge import search_knowledge
 from server.enums import DecisionAction
 
 logger = logging.getLogger(__name__)
@@ -34,10 +35,48 @@ def run_pipeline(context: PipelineInput, user_message: str) -> PipelineResult:
         total_latency_ms += latency
         total_tokens += tokens
         
+        total_tokens += tokens
+
+        # ========================================
+        # Step 1.5: KNOWLEDGE RETRIEVAL (Conditional)
+        # ========================================
+        if eyes_output.knowledge_needed:
+            logger.info(f"Running Step 1.5: Knowledge Retrieval - Topic: {eyes_output.knowledge_topic}")
+            try:
+                # Construct query: User message + Context if needed
+                # Ideally we use the raw user message for keywords
+                query = user_message
+                if eyes_output.knowledge_topic:
+                    query = f"{eyes_output.knowledge_topic}: {query}"
+                
+                start_rag = 0 # timestamp usually, but let's just log
+                # We reuse the organization_id from context
+                results = search_knowledge(
+                    query=query,
+                    organization_id=context.organization_id
+                )
+                
+                if results:
+                    # Format results for Brain
+                    knowledge_text = "\n\n".join([
+                        f"Source: {r['title']} (Confidence: {r['score']:.2f})\nContent: {r['content']}"
+                        for r in results
+                    ])
+                    context.dynamic_knowledge_context = knowledge_text
+                    logger.info(f"RAG: Retrieved {len(results)} chunks.")
+                else:
+                    context.dynamic_knowledge_context = "No relevant knowledge found."
+                    logger.info("RAG: No results found (filtered by threshold).")
+                    
+            except Exception as e:
+                logger.error(f"RAG Failed: {e}")
+                context.dynamic_knowledge_context = "Error retrieving knowledge."
+
         # ========================================
         # Step 2: BRAIN
         # ========================================
         logger.info("Running Step 2: Brain")
+        # Brain now sees context.dynamic_knowledge_context populated
         brain_output, latency, tokens = run_brain(context, eyes_output)
         total_latency_ms += latency
         total_tokens += tokens

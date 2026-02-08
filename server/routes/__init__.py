@@ -13,7 +13,8 @@ from . import (
     websockets,
     users,
     organisations,
-    internals
+    internals,
+    knowledge
 )
 
 router = APIRouter()
@@ -31,3 +32,4 @@ router.include_router(users.router, prefix="/users", tags=["Users"])
 router.include_router(organisations.router, prefix="/organisations", tags=["Organisations"])
 router.include_router(websockets.router, tags=["WebSockets"])
 router.include_router(internals.router, prefix="/internals", tags=["Internals"])
+router.include_router(knowledge.router, prefix="/knowledge", tags=["Knowledge Base"])

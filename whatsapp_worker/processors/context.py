@@ -130,6 +130,7 @@ def build_pipeline_context(
     # Build pipeline input
     context = PipelineInput(
         # Business context (from organization config)
+        organization_id=UUID(org_config["organization_id"]),
         business_name=business_name,
         business_description=business_description,
         flow_prompt=flow_prompt,

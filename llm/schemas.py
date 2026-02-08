@@ -45,6 +45,7 @@ class PipelineInput(BaseModel):
     Kept minimal for token efficiency.
     """
     # Business context
+    organization_id: UUID
     business_name: str
     business_description: str = ""
     flow_prompt: str = ""  # Conversation flow/sales script instructions
@@ -71,6 +72,9 @@ class PipelineInput(BaseModel):
     max_words: int = 80
     questions_per_message: int = 1
     language_pref: str = "en"
+    
+    # RAG Context (injected by Pipeline)
+    dynamic_knowledge_context: Optional[str] = None
 
 
 # ============================================================
@@ -102,7 +106,12 @@ class EyesOutput(BaseModel):
     risk_flags: RiskFlags
     
     # Confidence
+    # Confidence
     confidence: float = Field(..., ge=0.0, le=1.0)
+    
+    # RAG Triggers
+    knowledge_needed: bool = False
+    knowledge_topic: Optional[str] = None
 
 
 # ============================================================

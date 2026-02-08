@@ -10,7 +10,8 @@ from sqlalchemy import (
     Enum as SQLEnum,
     JSON,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, TSVECTOR
+from pgvector.sqlalchemy import Vector
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from server.enums import (
@@ -281,3 +282,37 @@ class ConversationEvent(Base):
     tokens_used = Column(Integer, nullable=True)  # For cost tracking
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+# --------------------
+# Knowledge Base (RAG)
+# --------------------
+
+class KnowledgeItem(Base):
+    """
+    RAG Knowledge Base Item.
+    Stores chunks of policies, FAQs, and facts.
+    Uses Hybrid Search: Vector (Semantic) + TSVector (Keyword).
+    """
+    __tablename__ = "knowledge_items"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
+    
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    
+    # 1536 dimensions for text-embedding-3-small
+    embedding = Column(Vector(1536), nullable=True)
+    
+    # Full-text search vector (auto-updated via trigger or app logic)
+    search_vector = Column(TSVECTOR, nullable=True)
+    
+    metadata_ = Column("metadata", JSON, nullable=True)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    organization = relationship("Organization", back_populates="knowledge_items")
+
+Organization.knowledge_items = relationship("KnowledgeItem", order_by=KnowledgeItem.id, back_populates="organization")
