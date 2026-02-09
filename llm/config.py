@@ -19,6 +19,6 @@ class LLMConfig:
         self.api_key=os.getenv("GROQ_API_KEY")
         self.model=os.getenv("LLM_MODEL")
         self.base_url=os.getenv("LLM_BASE_URL")
-
+        self.google_api_key = os.getenv("GOOGLE_API_KEY")
 # Exported configuration object
 llm_config = LLMConfig()
