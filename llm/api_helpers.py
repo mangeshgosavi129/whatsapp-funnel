@@ -75,7 +75,7 @@ def make_api_call(
     llm_logger = logging.getLogger("llm")
 
     # Set to True to see full prompts in terminal
-    DEBUG_PROMPTS = True
+    DEBUG_PROMPTS = False
 
     try:
         # Print full request for debugging
@@ -136,4 +136,3 @@ def make_api_call(
         print(f"[LLM ERROR] {step_name}: {e}")
         logger.error(f"{step_name} API call failed: {e}")
         raise
-

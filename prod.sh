@@ -78,23 +78,23 @@ fi
 
 echo "Starting FastAPI server on 0.0.0.0:8000 (logs in logs/server.log)..."
 nohup gunicorn server.main:app \
-  --workers 4 \
+  --workers 1 \
   --worker-class uvicorn.workers.UvicornWorker \
   --bind 0.0.0.0:8000 \
-  > logs/server.log 2>&1 &
+  >> logs/server.log 2>&1 &
 SERVER_PID=$!
 
 echo "Starting WhatsApp Worker (logs in logs/worker.log)..."
-nohup python3 -m whatsapp_worker.main > logs/worker.log 2>&1 &
+nohup python3 -m whatsapp_worker.main >> logs/worker.log 2>&1 &
 WORKER_PID=$!
 
 # Start Celery Worker and Beat using Python module
 echo "Starting Celery Worker (logs in logs/celery_worker.log)..."
-nohup python3 -m celery -A whatsapp_worker.tasks.celery_app worker --loglevel=info > logs/celery_worker.log 2>&1 &
+nohup python3 -m celery -A whatsapp_worker.tasks.celery_app worker --loglevel=info >> logs/celery_worker.log 2>&1 &
 CELERY_WORKER_PID=$!
 
 echo "Starting Celery Beat (logs in logs/celery_beat.log)..."
-nohup python3 -m celery -A whatsapp_worker.tasks.celery_app beat --loglevel=info > logs/celery_beat.log 2>&1 &
+nohup python3 -m celery -A whatsapp_worker.tasks.celery_app beat --loglevel=info >> logs/celery_beat.log 2>&1 &
 CELERY_BEAT_PID=$!
 
 echo "------------------------------------------"

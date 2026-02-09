@@ -55,12 +55,9 @@ def _format_messages(messages: list) -> str:
 
 def _build_system_prompt(context: PipelineInput) -> str:
     """Build system prompt with business context."""
-    return MOUTH_SYSTEM_PROMPT.format(
-        business_name=context.business_name,
-        business_description=context.business_description,
-        max_words=context.max_words,
-        questions_per_message=context.questions_per_message,
-    )
+    # Note: System prompt no longer uses format placeholders
+    # Business context is now passed in the user prompt instead
+    return MOUTH_SYSTEM_PROMPT
 
 
 def _build_user_prompt(context: PipelineInput, brain_output: BrainOutput) -> str:
@@ -68,6 +65,7 @@ def _build_user_prompt(context: PipelineInput, brain_output: BrainOutput) -> str
     return MOUTH_USER_TEMPLATE.format(
         implementation_plan=brain_output.implementation_plan,
         business_name=context.business_name,
+        business_description=context.business_description,
         available_ctas=format_ctas(context.available_ctas),
         last_messages=_format_messages(context.last_messages),
     )
