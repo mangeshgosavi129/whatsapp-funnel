@@ -54,7 +54,7 @@ intent_level
 
 user_sentiment
 
-conversation_stage or new_stage
+new_stage
 
 spam_risk, policy_risk, hallucination_risk
 
