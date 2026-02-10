@@ -77,11 +77,22 @@ else
 fi
 
 echo "Starting FastAPI server on 0.0.0.0:8000 (logs in logs/server.log)..."
+
 nohup gunicorn server.main:app \
   --workers 1 \
+  --threads 2 \
   --worker-class uvicorn.workers.UvicornWorker \
   --bind 0.0.0.0:8000 \
+  --timeout 120 \
+  --graceful-timeout 30 \
+  --keep-alive 5 \
+  --max-requests 200 \
+  --max-requests-jitter 50 \
+  --log-level info \
+  --access-logfile - \
+  --error-logfile - \
   >> logs/server.log 2>&1 &
+
 SERVER_PID=$!
 
 echo "Starting WhatsApp Worker (logs in logs/worker.log)..."
