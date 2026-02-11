@@ -19,7 +19,9 @@ setup_logging()
 app = FastAPI(title="Whatsapp-Bot")
 
 origins = [
-    "*"
+    "https://wabot-sigma.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
