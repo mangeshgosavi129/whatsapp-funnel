@@ -1,17 +1,16 @@
 import os
 import uuid
 import math
-from typing import List, Dict, Optional
-from sqlalchemy.orm import Session
+from typing import List, Dict
 from sqlalchemy import text, select, func
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pypdf import PdfReader
 from server.models import KnowledgeItem
 from server.database import SessionLocal
-
+from llm.config import llm_config
 # --- Configuration ---
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
 EMBEDDING_MODEL = "models/gemini-embedding-001"
 EMBEDDING_DIM = 768
 
@@ -26,7 +25,7 @@ def _get_doc_embedder():
     """Returns embedder optimized for document storage."""
     global _doc_embedder
     if _doc_embedder is None:
-        key = os.getenv("GOOGLE_API_KEY")
+        key = llm_config.google_api_key
         if not key:
             raise ValueError("GOOGLE_API_KEY is missing.")
         
@@ -42,7 +41,7 @@ def _get_query_embedder():
     """Returns embedder optimized for search queries."""
     global _query_embedder
     if _query_embedder is None:
-        key = os.getenv("GOOGLE_API_KEY")
+        key = llm_config.google_api_key
         if not key:
             raise ValueError("GOOGLE_API_KEY is missing.")
             

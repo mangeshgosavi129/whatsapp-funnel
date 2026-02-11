@@ -102,6 +102,7 @@ def process_realtime_followup(context: dict):
 
     # Build org config dict from context
     org_config = {
+        "organization_id": context["organization_id"],
         "organization_name": context["organization_name"],
         "business_name": context.get("business_name"),
         "business_description": context.get("business_description"),
