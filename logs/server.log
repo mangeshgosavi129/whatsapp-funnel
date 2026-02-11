@@ -4025,3 +4025,112 @@
 2026-02-11 16:19:21,127 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
 2026-02-11 16:19:23,345 - server - INFO - WebSocket connection attempt from 127.0.0.1
 2026-02-11 16:19:23,359 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 17:47:22,095 - server - INFO - OPTIONS /auth/login - Status: 200 - Time: 0.001s
+2026-02-11 17:47:22,314 - server - INFO - POST /auth/login - Status: 200 - Time: 0.217s
+2026-02-11 17:47:22,315 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,320 - server - INFO - GET /auth/me - Status: 200 - Time: 0.005s
+2026-02-11 17:47:22,322 - server - INFO - OPTIONS /templates - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,323 - server - INFO - OPTIONS /dashboard/stats - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,323 - server - INFO - OPTIONS /analytics - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,325 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,331 - server - INFO - GET /templates - Status: 200 - Time: 0.005s
+2026-02-11 17:47:22,332 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-11 17:47:22,349 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.017s
+2026-02-11 17:47:22,359 - server - INFO - GET /organisations - Status: 200 - Time: 0.007s
+2026-02-11 17:47:22,684 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 17:47:22,685 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 17:47:34,216 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:01:15,262 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-11 18:01:15,264 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-11 18:01:15,284 - server - INFO - GET /auth/me - Status: 200 - Time: 0.020s
+2026-02-11 18:01:15,288 - server - INFO - OPTIONS /templates - Status: 200 - Time: 0.001s
+2026-02-11 18:01:15,288 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-11 18:01:15,290 - server - INFO - OPTIONS /dashboard/stats - Status: 200 - Time: 0.001s
+2026-02-11 18:01:15,290 - server - INFO - OPTIONS /analytics - Status: 200 - Time: 0.000s
+2026-02-11 18:01:15,291 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-11 18:01:15,291 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-11 18:01:15,298 - server - INFO - GET /templates - Status: 200 - Time: 0.006s
+2026-02-11 18:01:15,342 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.049s
+2026-02-11 18:01:15,603 - server - INFO - GET /templates - Status: 200 - Time: 0.007s
+2026-02-11 18:01:15,608 - server - INFO - GET /organisations - Status: 200 - Time: 0.004s
+2026-02-11 18:01:15,613 - server - INFO - GET /organisations - Status: 200 - Time: 0.004s
+2026-02-11 18:01:15,631 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.036s
+2026-02-11 18:03:35,556 - server - INFO - GET /auth/me - Status: 200 - Time: 0.017s
+2026-02-11 18:03:35,559 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-11 18:03:35,564 - server - INFO - GET /templates - Status: 200 - Time: 0.004s
+2026-02-11 18:03:35,574 - server - INFO - GET /analytics - Status: 200 - Time: 0.010s
+2026-02-11 18:03:35,589 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.014s
+2026-02-11 18:03:35,595 - server - INFO - GET /conversations - Status: 200 - Time: 0.005s
+2026-02-11 18:03:35,600 - server - INFO - GET /organisations - Status: 200 - Time: 0.004s
+2026-02-11 18:03:35,603 - server - INFO - GET /templates - Status: 200 - Time: 0.002s
+2026-02-11 18:03:35,608 - server - INFO - GET /analytics - Status: 200 - Time: 0.004s
+2026-02-11 18:03:35,614 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.004s
+2026-02-11 18:03:35,619 - server - INFO - GET /conversations - Status: 200 - Time: 0.004s
+2026-02-11 18:03:35,622 - server - INFO - GET /organisations - Status: 200 - Time: 0.003s
+2026-02-11 18:03:35,950 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:03:35,952 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:03:42,632 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:03:45,147 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:03:45,164 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:03:46,590 - server - INFO - GET /auth/me - Status: 200 - Time: 0.029s
+2026-02-11 18:03:46,597 - server - INFO - GET /templates - Status: 200 - Time: 0.004s
+2026-02-11 18:03:46,614 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.016s
+2026-02-11 18:03:46,903 - server - INFO - GET /organisations - Status: 200 - Time: 0.005s
+2026-02-11 18:04:05,770 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:04:08,264 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:04:08,279 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:09:56,039 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:09:58,350 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:09:58,365 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:12:21,251 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:12:23,549 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:12:23,563 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:12:35,138 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:12:37,469 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:12:37,484 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:13:47,596 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.001s
+2026-02-11 18:13:47,596 - server - INFO - OPTIONS /leads - Status: 200 - Time: 0.001s
+2026-02-11 18:13:49,160 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-11 18:13:49,464 - server - INFO - OPTIONS /conversations - Status: 200 - Time: 0.000s
+2026-02-11 18:13:54,198 - server - INFO - OPTIONS /users - Status: 200 - Time: 0.000s
+2026-02-11 18:13:54,198 - server - INFO - OPTIONS /users - Status: 200 - Time: 0.000s
+2026-02-11 18:13:54,203 - server - INFO - GET /users - Status: 200 - Time: 0.004s
+2026-02-11 18:13:54,206 - server - INFO - GET /users - Status: 200 - Time: 0.002s
+2026-02-11 18:13:58,137 - server - INFO - OPTIONS /ctas - Status: 200 - Time: 0.000s
+2026-02-11 18:13:58,142 - server - INFO - GET /ctas - Status: 200 - Time: 0.004s
+2026-02-11 18:14:00,009 - server - INFO - GET /ctas - Status: 200 - Time: 0.004s
+2026-02-11 18:16:03,172 - server - INFO - GET /ctas - Status: 200 - Time: 0.002s
+2026-02-11 18:16:04,663 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:16:05,140 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-11 18:16:05,140 - server - INFO - OPTIONS /auth/me - Status: 200 - Time: 0.001s
+2026-02-11 18:16:05,143 - server - INFO - GET /auth/me - Status: 200 - Time: 0.003s
+2026-02-11 18:16:05,148 - server - INFO - OPTIONS /templates - Status: 200 - Time: 0.001s
+2026-02-11 18:16:05,149 - server - INFO - GET /auth/me - Status: 200 - Time: 0.004s
+2026-02-11 18:16:05,149 - server - INFO - OPTIONS /dashboard/stats - Status: 200 - Time: 0.000s
+2026-02-11 18:16:05,150 - server - INFO - OPTIONS /analytics - Status: 200 - Time: 0.000s
+2026-02-11 18:16:05,150 - server - INFO - OPTIONS /organisations - Status: 200 - Time: 0.000s
+2026-02-11 18:16:05,158 - server - INFO - GET /templates - Status: 200 - Time: 0.007s
+2026-02-11 18:16:05,295 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.133s
+2026-02-11 18:16:05,304 - server - INFO - GET /organisations - Status: 200 - Time: 0.006s
+2026-02-11 18:16:05,312 - server - INFO - GET /templates - Status: 200 - Time: 0.003s
+2026-02-11 18:16:05,454 - server - INFO - GET /organisations - Status: 200 - Time: 0.006s
+2026-02-11 18:16:05,472 - server - INFO - GET /dashboard/stats - Status: 200 - Time: 0.015s
+2026-02-11 18:16:05,488 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:16:05,491 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:16:11,892 - server - INFO - GET /users - Status: 200 - Time: 0.003s
+2026-02-11 18:16:11,895 - server - INFO - GET /users - Status: 200 - Time: 0.002s
+2026-02-11 18:17:03,034 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:17:05,394 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:17:05,407 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:18:40,093 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:18:42,520 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:18:42,534 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:21:29,344 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:21:31,999 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:21:32,014 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:22:22,836 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:22:25,422 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:22:25,438 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138
+2026-02-11 18:23:12,574 - server - INFO - WebSocket disconnected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9
+2026-02-11 18:23:14,531 - server - INFO - WebSocket connection attempt from 127.0.0.1
+2026-02-11 18:23:14,545 - server - INFO - WebSocket connected: User b07d22c6-9b8a-4ab5-a06d-2d1d47b7f6f9, Org 1c48f782-6630-462b-b3f0-e96bac0b6138

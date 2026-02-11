@@ -84,8 +84,6 @@ TECH_SUPPORT: app/login/OTP/payment/referral issues, troubleshooting
 
 CTA_READINESS: user seems ready for next step (e.g., app download/onboarding)
 
-FOLLOWUP: re-engagement after silence or pending action
-
 CLOSING: confirmation, thanks, wrap-up
 
 You MUST include this classification explicitly inside the observation using this exact line:
@@ -350,7 +348,6 @@ KEEP IT UNDER 1000 CHARACTERS.
 - qualification
 - pricing
 - cta
-- followup
 - closed
 - lost
 - ghosted
