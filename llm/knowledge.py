@@ -1,7 +1,7 @@
 import os
 import uuid
 import math
-from typing import List, Dict
+from typing import List, Dict, Optional
 from sqlalchemy import text, select, func
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings

@@ -118,6 +118,12 @@ class Message(Base):
     assigned_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     content = Column(Text, nullable=False)
     status = Column(String(30), nullable=False, default="sent")
+
+    # Media fields (nullable — text messages have these as NULL)
+    media_type = Column(String(20), nullable=True)       # "image", "document", or None
+    media_url = Column(String(500), nullable=True)        # WhatsApp media URL for display
+    media_filename = Column(String(255), nullable=True)   # Original filename for documents
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     conversation = relationship("Conversation", back_populates="messages")

@@ -202,6 +202,11 @@ class MessageOut(BaseModel):
 
     content: str
     status: Literal["sent", "delivered", "read", "failed", "received"]
+
+    media_type: Optional[str] = None
+    media_url: Optional[str] = None
+    media_filename: Optional[str] = None
+
     created_at: datetime
 
 
