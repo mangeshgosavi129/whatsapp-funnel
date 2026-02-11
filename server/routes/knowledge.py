@@ -39,7 +39,8 @@ async def ingest_knowledge(
                 chunks_count = knowledge_service.ingest_pdf(
                     file_path=tmp_path,
                     organization_id=auth.organization_id,
-                    title_prefix=title_prefix
+                    title_prefix=title_prefix,
+                    filename=filename
                 )
             finally:
                 os.remove(tmp_path)
@@ -97,10 +98,41 @@ def list_knowledge(
     """
     try:
         from server.models import KnowledgeItem
+        from server.models import KnowledgeItem
         items = db.query(KnowledgeItem).filter(
             KnowledgeItem.organization_id == auth.organization_id
         ).order_by(KnowledgeItem.created_at.desc()).all()
-        return items
+        
+        # Group by doc_id (new items) or title (legacy items with same prefix)
+        grouped_items = {}
+        
+        for item in items:
+            # Determine grouping key
+            doc_id = None
+            source = None
+            if item.metadata_ and "doc_id" in item.metadata_:
+                doc_id = item.metadata_["doc_id"]
+                key = f"doc_{doc_id}"
+                source = item.metadata_.get("source")
+            else:
+                # Legacy fallback: use title as key
+                # This might group unintended items if titles are identical, 
+                # but better than showing 50 chunks.
+                key = f"title_{item.title}"
+
+            if key not in grouped_items:
+                grouped_items[key] = {
+                    "id": item.id, # Use newest item's ID as representative
+                    "title": item.title,
+                    "created_at": item.created_at,
+                    "doc_id": uuid.UUID(doc_id) if doc_id else None,
+                    "chunk_count": 0,
+                    "source": source
+                }
+            
+            grouped_items[key]["chunk_count"] += 1
+            
+        return list(grouped_items.values())
     except Exception as e:
         print(f"List error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -117,15 +149,56 @@ def delete_knowledge(
     """
     try:
         from server.models import KnowledgeItem
-        item = db.query(KnowledgeItem).filter(
+        from server.models import KnowledgeItem
+        
+        # Check if this item is part of a document
+        target_item = db.query(KnowledgeItem).filter(
             KnowledgeItem.id == item_id,
             KnowledgeItem.organization_id == auth.organization_id
         ).first()
         
-        if not item:
+        if not target_item:
             raise HTTPException(status_code=404, detail="Knowledge item not found")
             
-        db.delete(item)
+        # If it has a doc_id, delete all items with that doc_id
+        if target_item.metadata_ and "doc_id" in target_item.metadata_:
+            doc_id = target_item.metadata_["doc_id"]
+            # Delete all chunks with this doc_id
+            # Fetch all items first to avoid dialect specific JSON operators if possible, 
+            # or use python-side filtering if volume is low, but better to use SQL.
+            # Using cast for safety with standard SQLAlchemy JSON
+            from sqlalchemy import cast, String
+            
+            # Note: We can't easily use .astext with generic JSON, so we rely on python loop for safety 
+            # OR we try the filter. Given chunks are usually < 100, we can fetch all for org and filter IPs?
+            # No, that's inefficient.
+            # Let's use the explicit cast if we can.
+            
+            # Alternative: Since we know the doc_id, we can find items where metadata_['doc_id'] == doc_id
+            # For Postgres, json_field['key'].astext works if using PG dialect, but we used generic JSON.
+            # Let's try to trust the ORM or use a raw SQL delete for this specific condition if needed.
+            # But actually, explicit cast is standard:
+            
+            stmt = db.query(KnowledgeItem).filter(
+                KnowledgeItem.organization_id == auth.organization_id,
+                cast(KnowledgeItem.metadata_['doc_id'], String) == f'"{doc_id}"' # JSON stringifies values
+            )
+            # Wait, cast(json['key'], String) might result in '"value"' (quoted) if strictly JSON.
+            # If doc_id was stored as string "uuid", it looks like "uuid" in JSON.
+            
+            # Use a simpler approach: Iterate and delete. It's robust and volume is low.
+            items_to_delete = db.query(KnowledgeItem).filter(
+                KnowledgeItem.organization_id == auth.organization_id
+            ).all()
+            
+            for i in items_to_delete:
+                if i.metadata_ and i.metadata_.get("doc_id") == doc_id:
+                    db.delete(i)
+            
+        else:
+            # Legacy or single item delete
+            db.delete(target_item)
+            
         db.commit()
         return {"success": True}
     except HTTPException:

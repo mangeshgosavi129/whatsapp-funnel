@@ -25,9 +25,6 @@ ENUM_ALIASES = {
     "greet": "greeting",
     "price": "pricing",
     "close": "closed",
-    "followups": "followup",
-    "follow_up": "followup",
-    "follow-up": "followup",
     "ghost": "ghosted",
     # DecisionAction
     "send": "send_now",

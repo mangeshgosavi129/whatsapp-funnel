@@ -81,6 +81,10 @@ class Conversation(Base):
     needs_human_attention = Column(Boolean, default=False)
     human_attention_resolved_at = Column(DateTime(timezone=True), nullable=True)
     
+    # === CTA State ===
+    cta_dismissed = Column(Boolean, default=False)
+    cta_dismissed_at = Column(DateTime(timezone=True), nullable=True)
+    
     # === Context ===
     rolling_summary = Column(Text, nullable=True)
     last_message = Column(Text, nullable=True)

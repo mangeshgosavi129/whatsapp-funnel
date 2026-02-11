@@ -31,7 +31,7 @@ BRAIN_SCHEMA = {
             },
             "new_stage": {
                 "type": "string",
-                "enum": ["greeting", "qualification", "pricing", "cta", "followup", "closed", "lost", "ghosted"]
+                "enum": ["greeting", "qualification", "pricing", "cta", "closed", "lost", "ghosted"]
             },
             "should_respond": {
                 "type": "boolean"

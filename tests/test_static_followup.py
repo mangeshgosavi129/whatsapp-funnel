@@ -28,8 +28,8 @@ def test_realtime_followup_processing():
         
         mock_api.get_due_followups.return_value = [
             {
-                "followup_type": ConversationStage.FOLLOWUP_10M,
-                "conversation": {"id": str(conv_id), "mode": "bot", "stage": "greeting"},
+                "followup_number": 1,
+                "conversation": {"id": str(conv_id), "mode": "bot", "stage": "greeting", "followup_count_24h": 0},
                 "lead": {"id": str(lead_id), "phone": "123456789"},
                 "organization_id": str(org_id),
                 "organization_name": "Test Org",
@@ -45,7 +45,8 @@ def test_realtime_followup_processing():
              patch('whatsapp_worker.tasks.build_pipeline_context'):
             
             mock_pipeline.return_value = PipelineResult(
-                classification=ClassifyOutput(
+                brain=ClassifyOutput(
+                    implementation_plan="Send a followup nudge",
                     thought_process="Thinking...",
                     situation_summary="Nudge",
                     intent_level="unknown",
@@ -56,7 +57,7 @@ def test_realtime_followup_processing():
                     should_respond=True,
                     confidence=1.0
                 ),
-                response=GenerateOutput(message_text="Followup text")
+                mouth=GenerateOutput(message_text="Followup text")
             )
             mock_handle_res.return_value = "Followup text"
             

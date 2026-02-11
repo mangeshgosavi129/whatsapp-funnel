@@ -79,15 +79,17 @@ def process_due_followups():
 def process_realtime_followup(context: dict):
     """
     Process a single real-time follow-up via API.
+    The conversation stage is NOT changed — it stays at its original sales funnel position.
+    Only followup_count_24h is updated to track followup progress.
     """
     conversation = context["conversation"]
     lead = context["lead"]
-    followup_type = context["followup_type"]
+    followup_number = context["followup_number"]
     
-    logger.info(f"Processing {followup_type} for conversation {conversation['id']}")
+    logger.info(f"Processing followup #{followup_number} for conversation {conversation['id']}")
 
     # Special handling for GHOSTED - no message, just update stage to close out
-    if followup_type == ConversationStage.GHOSTED or followup_type == "ghosted":
+    if followup_number == -1:
         try:
             api_client.update_conversation(
                 UUID(conversation["id"]),
@@ -98,10 +100,6 @@ def process_realtime_followup(context: dict):
             logger.error(f"Failed to mark conversation as GHOSTED: {e}")
         return
 
-    # Override the stage for the prompt registry to pick the correct warmup
-    # We don't save this stage change to DB yet, it's just for generation
-    conversation["stage"] = followup_type
-    
     # Build org config dict from context
     org_config = {
         "organization_name": context["organization_name"],
@@ -110,7 +108,7 @@ def process_realtime_followup(context: dict):
         "flow_prompt": context.get("flow_prompt"),
     }
     
-    # Build pipeline context
+    # Build pipeline context (stage stays as the original sales funnel position)
     pipeline_context = build_pipeline_context(
         org_config,
         conversation,
@@ -137,13 +135,12 @@ def process_realtime_followup(context: dict):
                 version=context["version"],
                 to=lead["phone"],
             )
-            # Update conversation tracking state
+            # Only increment followup counter — do NOT change the stage
             current_count = conversation.get("followup_count_24h", 0)
             api_client.update_conversation(
                 UUID(conversation["id"]),
-                stage=followup_type,
                 followup_count_24h=current_count + 1
             )
-            logger.info(f"Sent {followup_type} to {lead['phone']}")
+            logger.info(f"Sent followup #{followup_number} to {lead['phone']}")
         except Exception as e:
             logger.error(f"Failed to send followup message via API: {e}")

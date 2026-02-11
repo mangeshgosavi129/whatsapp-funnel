@@ -193,7 +193,6 @@ VALID STAGES (you MUST use one of these exactly):
 - qualification: Understanding needs, asking questions
 - pricing: Discussing costs, plans, offers
 - cta: Proposing a call-to-action
-- followup: Re-engaging after silence
 - closed: Deal completed successfully
 - lost: User explicitly declined or not interested
 - ghosted: User stopped responding

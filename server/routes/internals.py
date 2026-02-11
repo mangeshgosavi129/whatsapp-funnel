@@ -330,42 +330,35 @@ def get_due_followups(
 ):
     """
     Fetch conversations due for follow-ups based on real-time evaluation.
+    Uses followup_count_24h counter to determine which followup tier is due.
     Buckets:
-    - 10 minutes (1st follow-up)
-    - 180 minutes / 3 hours (2nd follow-up)
-    - 360 minutes / 6 hours (3rd follow-up)
+    - 10 minutes (1st follow-up, count == 0)
+    - 180 minutes / 3 hours (2nd follow-up, count == 1)
+    - 360 minutes / 6 hours (3rd follow-up, count == 2)
+    - 1440+ minutes / 24h+ (ghosted, count == 3)
     """
     now = datetime.now(timezone.utc)
 
-    # (min_elapsed, max_elapsed, target_stage, eligible_stages)
-    # Buckets based on time since LEAD's LAST MESSAGE (not bot's):
-    # - FOLLOWUP_10M: 10 min ± 2 min tolerance (1st followup)
-    # - FOLLOWUP_3H: 180 min ± 10 min tolerance (2nd followup)
-    # - FOLLOWUP_6H: 360 min ± 20 min tolerance (3rd followup)
-    # - GHOSTED: 1440-2880 min / 24-48h (marks as ghosted after no response)
-    # eligible_stages: stages that are allowed to transition to the target_stage
+    # (min_elapsed, max_elapsed, followup_number, required_count)
+    # followup_number: which followup this is (1, 2, 3), or -1 for ghosted
+    # required_count: the followup_count_24h value the conversation must have
     buckets = [
-        (8, 12, ConversationStage.FOLLOWUP_10M, [
-            ConversationStage.GREETING,
-            ConversationStage.QUALIFICATION,
-            ConversationStage.PRICING,
-            ConversationStage.CTA,
-            ConversationStage.FOLLOWUP,
-        ]),
-        (170, 190, ConversationStage.FOLLOWUP_3H, [
-            ConversationStage.FOLLOWUP_10M,
-        ]),
-        (340, 380, ConversationStage.FOLLOWUP_6H, [
-            ConversationStage.FOLLOWUP_3H,
-        ]),
-        (1440, 2880, ConversationStage.GHOSTED, [
-            ConversationStage.FOLLOWUP_6H,
-        ]),
+        (8, 12, 1, 0),       # 1st followup: 10min ± 2min, must have 0 followups sent
+        (170, 190, 2, 1),    # 2nd followup: 3h ± 10min, must have 1 followup sent
+        (340, 380, 3, 2),    # 3rd followup: 6h ± 20min, must have 2 followups sent
+        (1440, 2880, -1, 3), # ghosted: 24-48h, must have 3 followups sent
+    ]
+
+    # Stages that should NOT receive followups (terminal stages)
+    terminal_stages = [
+        ConversationStage.CLOSED,
+        ConversationStage.LOST,
+        ConversationStage.GHOSTED,
     ]
 
     results: list[InternalDueFollowupOut] = []
 
-    for min_m, max_m, target_stage, eligible_stages in buckets:
+    for min_m, max_m, followup_number, required_count in buckets:
         start_time = now - timedelta(minutes=max_m)
         end_time = now - timedelta(minutes=min_m)
 
@@ -389,8 +382,11 @@ def get_due_followups(
                 Conversation.mode == ConversationMode.BOT,
                 Conversation.needs_human_attention.is_(False),
 
-                # Only pick up conversations in eligible stages (prevents duplicates)
-                Conversation.stage.in_(eligible_stages),
+                # Counter-based: only pick conversations with the right followup count
+                Conversation.followup_count_24h == required_count,
+
+                # Exclude terminal stages
+                ~Conversation.stage.in_(terminal_stages),
 
                 # WhatsApp must be connected
                 WhatsAppIntegration.is_connected.is_(True),
@@ -401,7 +397,7 @@ def get_due_followups(
         for conv, lead, org, integration in due_convs:
             results.append(
                 InternalDueFollowupOut(
-                    followup_type=target_stage,
+                    followup_number=followup_number,
                     conversation=_conversation_to_schema(conv),
                     lead=_lead_to_schema(lead),
                     organization_id=org.id,
@@ -414,7 +410,7 @@ def get_due_followups(
                     flow_prompt=org.flow_prompt,
                 )
             )
-    logger.info(f"Found {results} due follow-ups")
+    logger.info(f"Found {len(results)} due follow-ups")
     return results
 
 

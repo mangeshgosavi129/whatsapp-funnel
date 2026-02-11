@@ -166,6 +166,9 @@ class ConversationOut(BaseModel):
     mode: ConversationMode
     user_sentiment: Optional[UserSentiment]
     needs_human_attention: bool = False
+    
+    cta_dismissed: bool = False
+    cta_dismissed_at: Optional[datetime] = None
 
     rolling_summary: Optional[str]
     last_message: Optional[str]
@@ -495,6 +498,7 @@ class InternalConversationUpdate(BaseModel):
     scheduled_followup_at: Optional[datetime] = None
     cta_id: Optional[UUID] = None
     cta_scheduled_at: Optional[datetime] = None
+    cta_dismissed: Optional[bool] = None
 
 
 class InternalMessageContext(BaseModel):
@@ -533,7 +537,7 @@ class InternalMessageOut(BaseModel):
 
 class InternalDueFollowupOut(BaseModel):
     """Details for a conversation that is due for a followup."""
-    followup_type: ConversationStage  # FOLLOWUP_10M, FOLLOWUP_3H, or FOLLOWUP_6H
+    followup_number: int  # 1, 2, 3 (which followup), or -1 for ghosted
     conversation: InternalConversationOut
     lead: InternalLeadOut
     organization_id: UUID
@@ -600,6 +604,9 @@ class KnowledgeMetadataOut(BaseModel):
     id: UUID
     title: str
     created_at: datetime
+    doc_id: Optional[UUID] = None
+    chunk_count: int = 1
+    source: Optional[str] = None
     
     class Config:
         from_attributes = True

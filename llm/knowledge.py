@@ -69,7 +69,7 @@ def _process_vector(vec: List[float], target_dim: int = 768) -> List[float]:
         return [x / norm for x in vec]
     return vec
 
-def _save_splits(splits, organization_id: uuid.UUID, title_prefix: str) -> int:
+def _save_splits(splits, organization_id: uuid.UUID, title_prefix: str, doc_id: Optional[uuid.UUID] = None, filename: Optional[str] = None) -> int:
     """Helper to save splits to DB."""
     db = SessionLocal()
     embedder = _get_doc_embedder()
@@ -92,9 +92,19 @@ def _save_splits(splits, organization_id: uuid.UUID, title_prefix: str) -> int:
             vector = _process_vector(raw_vectors[i], EMBEDDING_DIM)
             
             # Metadata handling
+            # Ensure metadata exists
+            if split.metadata is None:
+                split.metadata = {}
+                
+            # Add grouping metadata
+            if doc_id:
+                split.metadata["doc_id"] = str(doc_id)
+            if filename:
+                split.metadata["source"] = filename
+
             meta_header = ""
             if split.metadata:
-                meta_header = " > ".join([str(v) for k, v in split.metadata.items() if k != 'source'])
+                meta_header = " > ".join([str(v) for k, v in split.metadata.items() if k not in ['source', 'doc_id']])
             
             full_title = f"{title_prefix}"
             if meta_header:
@@ -135,7 +145,7 @@ def ingest_knowledge(text_content: str, organization_id: uuid.UUID, title_prefix
     
     return _save_splits(splits, organization_id, title_prefix)
 
-def ingest_pdf(file_path: str, organization_id: uuid.UUID, title_prefix: str = "") -> int:
+def ingest_pdf(file_path: str, organization_id: uuid.UUID, title_prefix: str = "", filename: str = "") -> int:
     """
     Ingests a PDF document from a local file path.
     """
@@ -155,7 +165,8 @@ def ingest_pdf(file_path: str, organization_id: uuid.UUID, title_prefix: str = "
         )
         splits = splitter.create_documents([full_text])
         
-        return _save_splits(splits, organization_id, title_prefix)
+        doc_id = uuid.uuid4()
+        return _save_splits(splits, organization_id, title_prefix, doc_id=doc_id, filename=filename)
     except Exception as e:
         print(f"Error ingesting PDF: {e}")
         raise e

@@ -16,6 +16,9 @@ def get_conversations(
     needs_human_attention: bool = None,
     actionable: bool = None,
     attended_only: bool = False,
+    dismissed: bool = False,
+    start_date: datetime = None,
+    end_date: datetime = None,
     db: Session = Depends(get_db),
     auth: AuthContext = Depends(get_auth_context)
 ):
@@ -26,13 +29,29 @@ def get_conversations(
         
     if needs_human_attention is not None:
         query = query.filter(Conversation.needs_human_attention == needs_human_attention)
+
+    # Date filtering (e.g. for dismissed view)
+    if start_date:
+        query = query.filter(Conversation.updated_at >= start_date)
+    if end_date:
+        query = query.filter(Conversation.updated_at <= end_date)
         
-    if actionable is True:
-        from sqlalchemy import or_
-        query = query.filter(or_(
-            Conversation.needs_human_attention == True,
-            Conversation.cta_id.isnot(None)
-        ))
+    if dismissed:
+        # Show only dismissed CTAs
+        query = query.filter(
+            Conversation.cta_id.isnot(None),
+            Conversation.cta_dismissed == True
+        )
+    else:
+        # Default behavior: hide dismissed CTAs unless specifically asked
+        query = query.filter(Conversation.cta_dismissed == False)
+
+        if actionable is True:
+            from sqlalchemy import or_
+            query = query.filter(or_(
+                Conversation.needs_human_attention == True,
+                Conversation.cta_id.isnot(None)
+            ))
         
     if attended_only:
         query = query.filter(Conversation.human_attention_resolved_at.isnot(None))\
@@ -63,7 +82,7 @@ def update_conversation(
     if not db_conv:
         raise HTTPException(status_code=404, detail="Conversation not found")
         
-    allowed_fields = ['needs_human_attention', 'user_sentiment', 'intent_level', 'stage']
+    allowed_fields = ['needs_human_attention', 'user_sentiment', 'intent_level', 'stage', 'cta_dismissed']
     
     for key, value in payload.items():
         if key in allowed_fields:
@@ -72,6 +91,11 @@ def update_conversation(
                 if key == 'needs_human_attention' and value is False and db_conv.needs_human_attention is True:
                      from datetime import datetime
                      db_conv.human_attention_resolved_at = datetime.utcnow()
+                
+                # If dismissing CTA, set timestamp
+                if key == 'cta_dismissed' and value is True and db_conv.cta_dismissed is False:
+                    from datetime import datetime
+                    db_conv.cta_dismissed_at = datetime.utcnow()
                      
                 setattr(db_conv, key, value)
                 

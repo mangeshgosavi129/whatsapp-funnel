@@ -141,3 +141,9 @@
 2026-02-07 16:10:00,821 - whatsapp_worker.processors.actions - INFO - ACTION REQUIRED: Conversation ca5dd9ef-ca10-430c-a832-31b5370ae2f7 flagged for human attention
 2026-02-08 17:39:43,093 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
 2026-02-08 18:11:58,942 - whatsapp_worker.processors.actions - INFO - Stage transition: greeting -> qualification
+2026-02-11 16:19:53,406 - whatsapp_worker.tasks - INFO - SCHEDULE: Starting process_due_followups check
+2026-02-11 16:19:53,406 - whatsapp_worker.tasks - INFO - SCHEDULE: Found [{'followup_number': 1, 'conversation': {'id': '043c514c-7cd6-416f-9254-26b9c028a625', 'mode': 'bot', 'stage': 'greeting', 'followup_count_24h': 0}, 'lead': {'id': 'c79fb4dd-ded9-4a94-ab16-1a77bde9b271', 'phone': '123456789'}, 'organization_id': '079588dc-9a40-4cfe-85cc-d77544fb7829', 'organization_name': 'Test Org', 'access_token': 'test_token', 'phone_number_id': 'phone_id', 'version': 'v18.0'}] due follow-ups
+2026-02-11 16:19:53,406 - whatsapp_worker.tasks - INFO - Processing followup #1 for conversation 043c514c-7cd6-416f-9254-26b9c028a625
+2026-02-11 16:19:53,406 - whatsapp_worker.tasks - INFO - Sent followup #1 to 123456789
+2026-02-11 16:19:53,406 - whatsapp_worker.tasks - INFO - SCHEDULE: Completed. Processed: 1, Errors: 0
+2026-02-11 16:19:54,073 - whatsapp_worker.main - INFO - Updated rolling summary for 89458812-4e59-48fd-b03f-08f75e2ad778
