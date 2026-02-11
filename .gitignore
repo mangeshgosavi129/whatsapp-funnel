@@ -13,3 +13,6 @@ lambda_build/
 wabot.pem
 ngrok.exe
 logs/
+.agent/
+.gemini/
+.gsd/

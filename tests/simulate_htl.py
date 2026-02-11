@@ -25,6 +25,19 @@ from llm.prompts import (
     GENERATE_SYSTEM_PROMPT, GENERATE_USER_TEMPLATE
 )
 
+def print_simulation_steps():
+    """Prints the steps of the simulation/pipeline flow."""
+    print("\n" + "="*60)
+    print("SIMULATION FLOW STEPS:")
+    print("1. [WEBHOOK] Incoming message received in worker.main.handle_webhook")
+    print("2. [CONTEXT] Worker builds PipelineInput using conversation/lead data")
+    print("3. [RAG] Pipeline runs search_knowledge to get relevant context")
+    print("4. [GENERATE] Pipeline runs run_generate (Observation -> Decision -> Response)")
+    print("5. [ACTION] Worker sends message to WhatsApp if should_respond=True")
+    print("6. [STATE] Worker updates conversation state (stage, intent, etc.)")
+    print("7. [MEMORY] Worker runs run_memory in background to update rolling summary")
+    print("="*60 + "\n")
+
 
 # === CUSTOM LOGGING FOR SIMULATION ===
 class ColorFormatter(logging.Formatter):
@@ -165,14 +178,6 @@ def traced_search_knowledge(query, organization_id, **kwargs):
         
     return results
 
-# Apply patches
-pipeline.search_knowledge = traced_search_knowledge
-llm.pipeline.search_knowledge = traced_search_knowledge
-
-pipeline.run_generate = traced_run_generate
-llm.pipeline.run_generate = traced_run_generate  # Important if module imports it directly
-
-# Memory tracing (if needed, assuming memory module still exists)
 def traced_run_memory(context, user_message, generate_output):
     start = time.time()
     
@@ -190,7 +195,17 @@ def traced_run_memory(context, user_message, generate_output):
     
     return result_summary
 
+# Apply patches to both the module itself and where it might be imported
+pipeline.search_knowledge = traced_search_knowledge
+llm.pipeline.search_knowledge = traced_search_knowledge
+
+generate.run_generate = traced_run_generate
+llm.pipeline.run_generate = traced_run_generate  # The pipeline module uses run_generate
+
 memory.run_memory = traced_run_memory
+# worker_main imports run_memory directly from llm.steps.memory
+import llm.steps.memory
+llm.steps.memory.run_memory = traced_run_memory
 
 
 # ==========================================
@@ -218,10 +233,73 @@ def mocked_emit_human_attention(conversation_id, organization_id):
     return {"status": "success"}
 
 
-actions_module.api_client.emit_human_attention = mocked_emit_human_attention
-actions_module.api_client.send_bot_message = mocked_send_bot_message
+def mocked_get_integration_with_org(phone_id):
+    return {
+        "organization_id": str(uuid4()),
+        "access_token": "mock_token",
+        "version": "v17.0",
+        "organization_name": "Test Org",
+        "business_name": "Test Business",
+        "business_description": "A test business for simulation",
+        "flow_prompt": "Help the user with their inquiry."
+    }
+
+def mocked_get_or_create_lead(org_id, phone, name):
+    return {"id": str(uuid4()), "phone": phone, "name": name}
+
+def mocked_get_or_create_conversation(org_id, lead_id):
+    return {"id": str(uuid4()), "rolling_summary": "", "mode": "bot"}, True
+
+def mocked_get_conversation(conv_id):
+    return {"id": str(conv_id), "rolling_summary": "", "mode": "bot"}
+
+def mocked_store_incoming_message(conv_id, lead_id, text):
+    return {"status": "success"}
+
+def mocked_update_conversation(conv_id, **kwargs):
+    return {"status": "success"}
+
+def mocked_update_lead(lead_id, **kwargs):
+    return {"status": "success"}
+
+def mocked_get_organization_ctas(org_id):
+    return []
+
+def mocked_emit_cta_initiated(conversation_id, organization_id, cta_type, **kwargs):
+    print(f"\n[EVENT] CTA {cta_type} initiated!")
+    return {"status": "success"}
+
+def mocked_log_pipeline_event(conversation_id, **kwargs):
+    return {"status": "success"}
+
+def mocked_store_outgoing_message(conv_id, lead_id, content, message_from):
+    return {"status": "success"}
+
+def mocked_get_conversation_messages(conv_id, limit=3):
+    return []
+
+api_client.get_integration_with_org = mocked_get_integration_with_org
+api_client.get_or_create_lead = mocked_get_or_create_lead
+api_client.get_or_create_conversation = mocked_get_or_create_conversation
+api_client.get_conversation = mocked_get_conversation
+api_client.store_incoming_message = mocked_store_incoming_message
+api_client.update_conversation = mocked_update_conversation
 api_client.emit_human_attention = mocked_emit_human_attention
 api_client.send_bot_message = mocked_send_bot_message
+api_client.update_lead = mocked_update_lead
+api_client.get_organization_ctas = mocked_get_organization_ctas
+api_client.emit_cta_initiated = mocked_emit_cta_initiated
+api_client.log_pipeline_event = mocked_log_pipeline_event
+api_client.store_outgoing_message = mocked_store_outgoing_message
+api_client.get_conversation_messages = mocked_get_conversation_messages
+
+actions_module.api_client.emit_human_attention = mocked_emit_human_attention
+actions_module.api_client.send_bot_message = mocked_send_bot_message
+actions_module.api_client.update_conversation = mocked_update_conversation
+actions_module.api_client.update_lead = mocked_update_lead
+actions_module.api_client.get_organization_ctas = mocked_get_organization_ctas
+actions_module.api_client.emit_cta_initiated = mocked_emit_cta_initiated
+actions_module.api_client.log_pipeline_event = mocked_log_pipeline_event
 
 
 # ==========================================
@@ -284,6 +362,7 @@ def run_test_scenarios(phone_id, user_phone, user_name):
 
 
 def run_simulation(args):
+    print_simulation_steps()
     print("\n=== Unified Pipeline Simulator ===")
     
     phone_id = "123123"
