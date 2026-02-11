@@ -1,5 +1,5 @@
 """
-Pydantic schemas for Eyes → Brain → Mouth → Memory Pipeline.
+Pydantic schemas for Unified Generation Pipeline.
 Strict JSON schemas ensure LLM outputs are validated and typed.
 """
 from typing import Optional, List, Literal, Dict
@@ -78,7 +78,7 @@ class PipelineInput(BaseModel):
 
 
 # ============================================================
-# Step 1: Eyes Output (Observer)
+# Unified Generation Step
 # ============================================================
 
 class RiskFlags(BaseModel):
@@ -88,43 +88,18 @@ class RiskFlags(BaseModel):
     hallucination_risk: RiskLevel = RiskLevel.LOW
 
 
-class EyesOutput(BaseModel):
+class GenerateOutput(BaseModel):
     """
-    Output from Step 1: Eyes (Observer).
-    Analyzes conversation state and produces observation for Brain.
+    Unified output from the single LLM generation step.
+    Combines reasoning, decision making, and response generation.
     """
-    # Core observation for downstream (Brain)
-    observation: str = Field(..., max_length=1500)
+    # Reasoning
+    thought_process: str = Field(..., description="Chain of thought reasoning")
     
-    # Internal reasoning
-    thought_process: str = Field(..., max_length=2000)
-    situation_summary: str = Field(..., max_length=1000)
-    
-    # Updated enums
+    # Observation / Classification
     intent_level: IntentLevel
     user_sentiment: UserSentiment
     risk_flags: RiskFlags
-    
-    # Confidence
-    # Confidence
-    confidence: float = Field(..., ge=0.0, le=1.0)
-    
-    # RAG Triggers
-    knowledge_needed: bool = False
-    knowledge_topic: Optional[str] = None
-
-
-# ============================================================
-# Step 2: Brain Output (Strategist)
-# ============================================================
-
-class BrainOutput(BaseModel):
-    """
-    Output from Step 2: Brain (Strategist).
-    Makes decisions based on Eyes observation.
-    """
-    # Implementation plan for Mouth (THE KEY HANDOFF)
-    implementation_plan: str = Field(..., max_length=1500)
     
     # Decision
     action: DecisionAction
@@ -133,38 +108,17 @@ class BrainOutput(BaseModel):
     
     # Action Payload
     selected_cta_id: Optional[UUID] = None
-    cta_scheduled_at: Optional[str] = None  # ISO format
+    cta_scheduled_at: Optional[str] = None
     followup_in_minutes: int = 0
     followup_reason: str = ""
+    
+    # Response
+    message_text: str = ""
+    message_language: str = "en"
     
     # Metadata
     confidence: float = Field(..., ge=0.0, le=1.0)
     needs_human_attention: bool = False
-
-
-# Backward compatibility alias
-ClassifyOutput = BrainOutput
-
-
-# ============================================================
-# Step 3: Mouth Output (Communicator)
-# ============================================================
-
-class MouthOutput(BaseModel):
-    """
-    Output from Step 3: Mouth (Communicator).
-    The actual message to send.
-    """
-    message_text: str = ""
-    message_language: str = "en"
-    
-    # Self-check
-    self_check_passed: bool = True
-    violations: List[str] = Field(default_factory=list)
-
-
-# Backward compatibility alias
-GenerateOutput = MouthOutput
 
 
 # ============================================================
@@ -192,24 +146,11 @@ class PipelineResult(BaseModel):
     """
     Complete result from running the pipeline.
     """
-    # Step outputs
-    eyes: Optional[EyesOutput] = None
-    brain: BrainOutput
-    mouth: Optional[MouthOutput] = None
+    # Unified output
+    generate: GenerateOutput
+    
+    # Memory output (separate step)
     memory: Optional[MemoryOutput] = None
-    
-    # Backward compatibility aliases
-    @property
-    def classification(self) -> BrainOutput:
-        return self.brain
-    
-    @property
-    def response(self) -> Optional[MouthOutput]:
-        return self.mouth
-    
-    @property
-    def summary(self) -> Optional[MemoryOutput]:
-        return self.memory
     
     # Metadata
     pipeline_latency_ms: int = 0
@@ -221,16 +162,17 @@ class PipelineResult(BaseModel):
     # Computed action helpers
     @property
     def should_send_message(self) -> bool:
-        return self.brain.should_respond and self.mouth is not None and bool(self.mouth.message_text)
+        return self.generate.should_respond and bool(self.generate.message_text)
     
     @property
     def should_schedule_followup(self) -> bool:
-        return self.brain.action == DecisionAction.WAIT_SCHEDULE
+        return self.generate.action == DecisionAction.WAIT_SCHEDULE
     
     @property
     def should_escalate(self) -> bool:
-        return self.brain.needs_human_attention
+        return self.generate.needs_human_attention
         
     @property
     def should_initiate_cta(self) -> bool:
-        return self.brain.action == DecisionAction.INITIATE_CTA
+        return self.generate.action == DecisionAction.INITIATE_CTA
+

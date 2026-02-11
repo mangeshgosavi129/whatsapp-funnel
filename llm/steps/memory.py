@@ -1,12 +1,12 @@
 """
 Step 4: MEMORY - Archivist.
-Updates the rolling summary after Mouth responds.
+Updates the rolling summary after Generate step responds.
 """
 import logging
 import time
 from typing import Tuple, Optional
 from llm.api_helpers import make_api_call
-from llm.schemas import PipelineInput, BrainOutput, MouthOutput, MemoryOutput
+from llm.schemas import PipelineInput, GenerateOutput, MemoryOutput
 from llm.prompts import MEMORY_SYSTEM_PROMPT, MEMORY_USER_TEMPLATE
 
 logger = logging.getLogger(__name__)
@@ -36,17 +36,16 @@ MEMORY_SCHEMA = {
 def run_memory(
     context: PipelineInput,
     user_message: str,
-    mouth_output: Optional[MouthOutput],
-    brain_output: BrainOutput
+    generate_output: GenerateOutput
 ) -> Optional[str]:
     """
     Run the Memory step.
     Returns the new summary string so the worker can save it.
-    Runs AFTER Mouth output is available.
+    Runs AFTER Generate step is complete.
     """
     try:
         output, latency, tokens = _run_memory_llm(
-            context, user_message, mouth_output, brain_output
+            context, user_message, generate_output
         )
         return output.updated_rolling_summary
         
@@ -58,12 +57,11 @@ def run_memory(
 def _run_memory_llm(
     context: PipelineInput,
     user_message: str,
-    mouth_output: Optional[MouthOutput],
-    brain_output: BrainOutput
+    generate_output: GenerateOutput
 ) -> Tuple[MemoryOutput, int, int]:
     """Core LLM Logic."""
-    bot_message = mouth_output.message_text if mouth_output else "(No response sent)"
-    action_taken = f"Action: {brain_output.action.value}, Stage: {brain_output.new_stage.value}"
+    bot_message = generate_output.message_text if generate_output.message_text else "(No response sent)"
+    action_taken = f"Action: {generate_output.action.value}, Stage: {generate_output.new_stage.value}"
     
     user_prompt = MEMORY_USER_TEMPLATE.format(
         rolling_summary=context.rolling_summary or "No prior summary",

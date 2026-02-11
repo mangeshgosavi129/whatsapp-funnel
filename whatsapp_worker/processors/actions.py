@@ -27,8 +27,8 @@ def handle_pipeline_result(
     message_to_send = None
     updates = {}
     
-    # Use the unified classification output
-    classification = result.classification
+    # Use the unified generate output
+    generate_output = result.generate
     
     # ========================================
     # Update conversation state from classification
@@ -39,20 +39,20 @@ def handle_pipeline_result(
     # ========================================
     
     # Update stage if recommended and confidence is high enough
-    if classification.confidence >= 0.6:
+    if generate_output.confidence >= 0.6:
         current_stage = conversation.get("stage")
-        recommended_stage = classification.new_stage.value
+        recommended_stage = generate_output.new_stage.value
         if recommended_stage != current_stage:
             logger.info(f"Stage transition: {current_stage} -> {recommended_stage}")
             updates["stage"] = recommended_stage
     
     # Reflect Intent & Sentiment
-    # Reflect Intent & Sentiment (from Eyes)
-    if result.eyes:
-        if result.eyes.intent_level:
-            updates["intent_level"] = result.eyes.intent_level.value
-        if result.eyes.user_sentiment:
-            updates["user_sentiment"] = result.eyes.user_sentiment.value
+    # Reflect Intent & Sentiment
+    if result.generate:
+        if result.generate.intent_level:
+            updates["intent_level"] = result.generate.intent_level.value
+        if result.generate.user_sentiment:
+            updates["user_sentiment"] = result.generate.user_sentiment.value
 
     # Check for human attention flag (INDEPENDENT - can happen with any action)
     if result.should_escalate:
@@ -61,24 +61,24 @@ def handle_pipeline_result(
 
     # Collect CTA fields (INDEPENDENT - CTA can be triggered even when sending a message)
     # e.g., "Let's book a call!" message + CTA initiation
-    selected_cta_id = classification.selected_cta_id
-    # Note: MouthOutput (response) does not carry selected_cta_id in current schema.
-    # relying on BrainOutput (classification) is correct.
+    selected_cta_id = generate_output.selected_cta_id
+    # Note: Response does not carry selected_cta_id in current schema.
+    # relying on GenerateOutput (decision) is correct.
         
     if selected_cta_id:
         updates["cta_id"] = str(selected_cta_id)
-        if classification.cta_scheduled_at:
-            updates["cta_scheduled_at"] = classification.cta_scheduled_at
+        if generate_output.cta_scheduled_at:
+            updates["cta_scheduled_at"] = generate_output.cta_scheduled_at
         logger.info(f"📋 CTA selected: {selected_cta_id} for conversation {conversation_id}")
 
     # Handle message sending
-    if result.should_send_message and result.response:
-        message_to_send = result.response.message_text
-        updates["stage"] = classification.new_stage.value
+    if result.should_send_message and result.generate:
+        message_to_send = result.generate.message_text
+        updates["stage"] = generate_output.new_stage.value
         
     # Update rolling summary
-    if result.summary and result.summary.updated_rolling_summary:
-        updates["rolling_summary"] = result.summary.updated_rolling_summary
+    if result.memory and result.memory.updated_rolling_summary:
+        updates["rolling_summary"] = result.memory.updated_rolling_summary
     
     # ========================================
     # 2. Persist state updates to DB first
@@ -160,8 +160,8 @@ def log_pipeline_event(
         conversation_id=conversation_id,
         event_type="pipeline_run",
         pipeline_step="complete",
-        input_summary=f"stage={result.classification.new_stage.value}, conf={result.classification.confidence:.2f}",
-        output_summary=f"action={result.classification.action.value}, send={result.should_send_message}",
+        input_summary=f"stage={result.generate.new_stage.value}, conf={result.generate.confidence:.2f}",
+        output_summary=f"action={result.generate.action.value}, send={result.should_send_message}",
         latency_ms=result.pipeline_latency_ms,
         tokens_used=result.total_tokens_used,
     )

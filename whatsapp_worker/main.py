@@ -218,7 +218,7 @@ def process_message(
             return {"status": "ok", "mode": "human"}, 200
         
         # ========================================
-        # Step 3: Run Pipeline (Brain + Mouth)
+        # Step 3: Run Pipeline (Generate)
         # ========================================
         
         pipeline_context = build_pipeline_context(
@@ -240,8 +240,8 @@ def process_message(
         # ========================================
         
         response_text = None
-        if pipeline_result.should_send_message and pipeline_result.response:
-            response_text = pipeline_result.response.message_text
+        if pipeline_result.should_send_message and pipeline_result.generate:
+            response_text = pipeline_result.generate.message_text
             try:
                 # SEND TO WHATSAPP FIRST (Low Latency)
                 api_client.send_bot_message(
@@ -272,8 +272,7 @@ def process_message(
             new_summary = run_memory(
                 context=pipeline_context, 
                 user_message=message_text,
-                mouth_output=pipeline_result.mouth,
-                brain_output=pipeline_result.brain
+                generate_output=pipeline_result.generate,
             )
             
             # Update DB with new summary if generated
@@ -287,9 +286,10 @@ def process_message(
 
         return {
             "status": "ok",
-            "action": pipeline_result.classification.action.value,
+            "status": "ok",
+            "action": pipeline_result.generate.action.value,
             "send": pipeline_result.should_send_message,
-            "stage": pipeline_result.classification.new_stage.value,
+            "stage": pipeline_result.generate.new_stage.value,
         }, 200
 
     except Exception as e:
