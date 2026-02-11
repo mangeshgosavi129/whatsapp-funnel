@@ -5,6 +5,7 @@ class ConversationStage(str, Enum):
     QUALIFICATION = "qualification"
     PRICING = "pricing"
     CTA = "cta"
+    CLOSED = "closed"
     LOST = "lost"
     GHOSTED = "ghosted"
 
