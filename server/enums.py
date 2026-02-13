@@ -1,25 +1,25 @@
 from enum import Enum
 
 class ConversationStage(str, Enum):
-    GREETING = "greeting"
-    QUALIFICATION = "qualification"
-    PRICING = "pricing"
-    CTA = "cta"
+    GREETING = "GREETING"
+    QUALIFICATION = "QUALIFICATION"
+    PRICING = "PRICING"
+    CTA = "CTA"
     CLOSED = "closed"
-    LOST = "lost"
-    GHOSTED = "ghosted"
+    LOST = "LOST"
+    GHOSTED = "GHOSTED"
 
 class IntentLevel(str, Enum):
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    VERY_HIGH = "very_high"
-    UNKNOWN = "unknown"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    VERY_HIGH = "VERY_HIGH"
+    UNKNOWN = "UNKNOWN"
 
 
 class ConversationMode(str, Enum):
-    BOT = "bot"
-    HUMAN = "human"
+    BOT = "BOT"
+    HUMAN = "HUMAN"
 
 
 class DecisionAction(str, Enum):
@@ -46,26 +46,26 @@ class PipelineStep(str, Enum):
 
 
 class UserSentiment(str, Enum):
-    ANNOYED = "annoyed"
-    DISTRUSTFUL = "distrustful"
-    CONFUSED = "confused"
-    CURIOUS = "curious"
-    DISAPPOINTED = "disappointed"
-    NEUTRAL = "neutral"
-    UNINTERESTED = "uninterested"
+    ANNOYED = "ANNOYED"
+    DISTRUSTFUL = "DISTRUSTFUL"
+    CONFUSED = "CONFUSED"
+    CURIOUS = "CURIOUS"
+    DISAPPOINTED = "DISAPPOINTED"
+    NEUTRAL = "NEUTRAL"
+    UNINTERESTED = "UNINTERESTED"
 
 class TemplateStatus(str, Enum):
     # Legacy compatibility: keep PENDING to avoid enum lookup errors on existing rows
-    PENDING = "pending"
-    DRAFT = "draft"
-    SUBMITTED = "submitted"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    PENDING = "PENDING"
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
 
 class MessageFrom(str, Enum):
-    LEAD = "lead"
-    BOT = "bot"
-    HUMAN = "human"
+    LEAD = "LEAD"
+    BOT = "BOT"
+    HUMAN = "HUMAN"
 
 class WSEvents:
     # Inbox
