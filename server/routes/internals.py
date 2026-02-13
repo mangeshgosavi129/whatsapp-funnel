@@ -351,9 +351,9 @@ def get_due_followups(
 
     # Stages that should NOT receive followups (terminal stages)
     terminal_stages = [
-        ConversationStage.CLOSED,
-        ConversationStage.LOST,
-        ConversationStage.GHOSTED,
+        ConversationStage.CLOSED.value,
+        ConversationStage.LOST.value,
+        ConversationStage.GHOSTED.value,
     ]
 
     results: list[InternalDueFollowupOut] = []
