@@ -47,15 +47,21 @@ def get_conversations(
         query = query.filter(Conversation.cta_dismissed == False)
 
         if actionable is True:
-            from sqlalchemy import or_
-            query = query.filter(or_(
-                Conversation.needs_human_attention == True,
-                Conversation.cta_id.isnot(None)
+            from sqlalchemy import or_, and_
+            query = query.filter(and_(
+                or_(
+                    Conversation.needs_human_attention == True,
+                    Conversation.cta_id.isnot(None)
+                ),
+                Conversation.human_attention_resolved_at.is_(None),
+                Conversation.cta_dismissed == False
             ))
         
     if attended_only:
-        query = query.filter(Conversation.human_attention_resolved_at.isnot(None))\
-                     .order_by(Conversation.human_attention_resolved_at.desc())
+        query = query.filter(
+            Conversation.human_attention_resolved_at.isnot(None),
+            Conversation.cta_dismissed == False
+        ).order_by(Conversation.human_attention_resolved_at.desc())
 
     if not attended_only and needs_human_attention is None and actionable is None and mode is None:
          # Default ordering if no specific filters
@@ -88,9 +94,13 @@ def update_conversation(
         if key in allowed_fields:
             if hasattr(db_conv, key):
                 # If marking as attended (False), set the resolved timestamp
-                if key == 'needs_human_attention' and value is False and db_conv.needs_human_attention is True:
-                     from datetime import datetime
-                     db_conv.human_attention_resolved_at = datetime.utcnow()
+                if key == 'needs_human_attention':
+                    if value is False:
+                        if db_conv.human_attention_resolved_at is None:
+                            from datetime import datetime
+                            db_conv.human_attention_resolved_at = datetime.utcnow()
+                    else:
+                        db_conv.human_attention_resolved_at = None
                 
                 # If dismissing CTA, set timestamp
                 if key == 'cta_dismissed' and value is True and db_conv.cta_dismissed is False:
