@@ -60,23 +60,24 @@ async def log_requests(request: Request, call_next):
 app.include_router(router)
 
 # =========================================================
-# AUTO-CREATE TABLES ON STARTUP
+# AUTO-MIGRATE ON STARTUP
 # =========================================================
 @app.on_event("startup")
-def init_database():
-    print("🔄 Checking database tables...")
-
-    inspector_before = inspect(engine)
-    existing_tables = inspector_before.get_table_names()
-
-    Base.metadata.create_all(bind=engine)
-
-    inspector_after = inspect(engine)  # ✅ IMPORTANT: new inspector instance
-    updated_tables = inspector_after.get_table_names()
-
-    new_tables = set(updated_tables) - set(existing_tables)
-
-    if new_tables:
-        print(f"✅ Created new tables: {sorted(new_tables)}")
-    else:
-        print(f"ℹ️ No new tables created. Tables now: {updated_tables}")
+def run_migrations():
+    from alembic.config import Config
+    from alembic import command
+    
+    print("🔄 Running database migrations...")
+    try:
+        # Create Alembic configuration object
+        # Assumes alembic.ini is in the root (parent of server/)
+        alembic_cfg = Config("alembic.ini")
+        
+        # Run the migration
+        command.upgrade(alembic_cfg, "head")
+        print("✅ Database migrations completed successfully.")
+    except Exception as e:
+        print(f"❌ Migration failed: {e}")
+        # Build might fail if DB isn't ready, but we don't want to crash the app immediately in all cases
+        # relying on subsequent health checks or retries
+        logger.error(f"Migration failed during startup: {e}")
