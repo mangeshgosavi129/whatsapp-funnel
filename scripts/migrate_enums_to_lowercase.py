@@ -73,22 +73,32 @@ def migrate(db, commit: bool):
         if count_result > 0:
             print(f"  {table}.{column}: {count_result} rows to update")
             total_updated += count_result
+        else:
+            print(f"  {table}.{column}: ✅ already lowercase (or empty)")
 
-            if commit:
-                # Step 1: Drop the column's enum type constraint by altering to VARCHAR
-                # Step 2: Update values to lowercase
-                # Since the new code uses native_enum=False (VARCHAR), we convert the column
+    if commit:
+        # Step 1: Convert ALL columns from native enum to VARCHAR first
+        # This must happen before dropping types, otherwise CASCADE removes columns
+        print("\n📐 Converting all enum columns to VARCHAR...")
+        for table, column in ENUM_COLUMNS:
+            try:
                 db.execute(
                     text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE VARCHAR USING CAST({column} AS TEXT)")
                 )
-                db.execute(
-                    text(f"UPDATE {table} SET {column} = LOWER({column}) WHERE {column} IS NOT NULL AND {column} != LOWER({column})")
-                )
-        else:
-            print(f"  {table}.{column}: ✅ already lowercase")
+                print(f"  {table}.{column} → VARCHAR ✅")
+            except Exception as e:
+                # Column might already be VARCHAR
+                db.rollback()
+                print(f"  {table}.{column} → already VARCHAR (skipped)")
 
-    if commit:
-        # Clean up: drop orphaned enum types that are no longer used
+        # Step 2: Update values to lowercase
+        print("\n📝 Lowercasing values...")
+        for table, column in ENUM_COLUMNS:
+            db.execute(
+                text(f"UPDATE {table} SET {column} = LOWER({column}) WHERE {column} IS NOT NULL AND {column} != LOWER({column})")
+            )
+
+        # Step 3: Drop orphaned native enum types
         print("\n🧹 Cleaning up orphaned native enum types...")
         enum_types_to_drop = [
             "conversationstage", "intentlevel", "conversationmode",
@@ -96,10 +106,10 @@ def migrate(db, commit: bool):
         ]
         for enum_type in enum_types_to_drop:
             try:
-                db.execute(text(f"DROP TYPE IF EXISTS {enum_type} CASCADE"))
+                db.execute(text(f"DROP TYPE IF EXISTS {enum_type}"))
                 print(f"  Dropped type: {enum_type}")
-            except Exception as e:
-                print(f"  Could not drop {enum_type}: {e}")
+            except Exception:
+                print(f"  Type {enum_type} not found (already removed)")
 
         db.commit()
         print(f"\n✅ Migration committed. {total_updated} rows updated.")
