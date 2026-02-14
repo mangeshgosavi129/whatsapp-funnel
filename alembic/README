@@ -1,1 +1,32 @@
-Generic single-database configuration.
+# Database Migrations (Alembic)
+
+This directory contains database migration scripts managed by Alembic.
+
+## Migration Workflow
+
+### 1. Update Models
+Modify the SQLAlchemy models in `server/models.py`.
+
+### 2. Generate Migration Script
+Alembic compares your models with the current database and creates a script in `alembic/versions/`.
+```bash
+source .venv/bin/activate
+alembic revision --autogenerate -m "description of change"
+```
+
+### 3. Apply Upgrade
+
+#### Local (Laptop)
+```bash
+alembic upgrade head
+```
+
+#### EC2 Server
+- **Automatic**: Migrations run automatically when the FastAPI server starts (see `server/main.py`).
+- **Manual**: Run `alembic upgrade head` in the terminal.
+
+## Summary of Commands
+- **Check Status**: `alembic current`
+- **View History**: `alembic history`
+- **Apply Changes**: `alembic upgrade head`
+- **Rollback**: `alembic downgrade -1`
