@@ -19,11 +19,14 @@ test_cases = [
     ("qualifying", ConversationStage, ConversationStage.QUALIFICATION),
     ("qualification", ConversationStage, ConversationStage.QUALIFICATION),
     ("Greeting", ConversationStage, ConversationStage.GREETING),
+    ("GREETING", ConversationStage, ConversationStage.GREETING),  # uppercase input -> lowercase value
     ("SEND_NOW", DecisionAction, DecisionAction.SEND_NOW),
     ("send_now", DecisionAction, DecisionAction.SEND_NOW),
     ("high", IntentLevel, IntentLevel.HIGH),
+    ("HIGH", IntentLevel, IntentLevel.HIGH),  # uppercase input
     ("very high", IntentLevel, IntentLevel.VERY_HIGH),  # with space
     ("neutral", UserSentiment, UserSentiment.NEUTRAL),
+    ("NEUTRAL", UserSentiment, UserSentiment.NEUTRAL),  # uppercase input
     (None, ConversationStage, ConversationStage.GREETING),  # None returns default
     ("invalid_value_xyz", ConversationStage, ConversationStage.GREETING),  # fallback
 ]
