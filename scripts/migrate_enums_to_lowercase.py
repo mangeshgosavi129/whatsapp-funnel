@@ -1,11 +1,10 @@
 """
 Database Migration: Standardize all enum columns to lowercase values.
 
-This script updates all VARCHAR enum columns in the database to use lowercase values,
+This script updates all enum columns in the database to use lowercase values,
 matching the standardized Python enums (ENUM_NAME = "lowercase_value").
 
-Since the database uses native_enum=False (VARCHAR columns), this is a simple
-UPDATE ... SET col = LOWER(col) operation with no schema changes needed.
+Handles both native PostgreSQL enum types and VARCHAR columns by casting to TEXT.
 
 Usage:
     # Dry run (default) - shows what would change
@@ -45,7 +44,7 @@ def show_current_values(db):
     print("=" * 60)
     for table, column in ENUM_COLUMNS:
         result = db.execute(
-            text(f"SELECT {column}, COUNT(*) as cnt FROM {table} WHERE {column} IS NOT NULL GROUP BY {column} ORDER BY {column}")
+            text(f"SELECT CAST({column} AS TEXT) as val, COUNT(*) as cnt FROM {table} WHERE {column} IS NOT NULL GROUP BY val ORDER BY val")
         ).fetchall()
         if result:
             print(f"\n  {table}.{column}:")
@@ -66,26 +65,46 @@ def migrate(db, commit: bool):
 
     for table, column in ENUM_COLUMNS:
         # Count rows that need updating (value != lowercase value)
+        # Cast to TEXT to handle native PostgreSQL enum types
         count_result = db.execute(
-            text(f"SELECT COUNT(*) FROM {table} WHERE {column} IS NOT NULL AND {column} != LOWER({column})")
+            text(f"SELECT COUNT(*) FROM {table} WHERE {column} IS NOT NULL AND CAST({column} AS TEXT) != LOWER(CAST({column} AS TEXT))")
         ).scalar()
 
         if count_result > 0:
             print(f"  {table}.{column}: {count_result} rows to update")
+            total_updated += count_result
 
             if commit:
+                # Step 1: Drop the column's enum type constraint by altering to VARCHAR
+                # Step 2: Update values to lowercase
+                # Since the new code uses native_enum=False (VARCHAR), we convert the column
+                db.execute(
+                    text(f"ALTER TABLE {table} ALTER COLUMN {column} TYPE VARCHAR USING CAST({column} AS TEXT)")
+                )
                 db.execute(
                     text(f"UPDATE {table} SET {column} = LOWER({column}) WHERE {column} IS NOT NULL AND {column} != LOWER({column})")
                 )
-                total_updated += count_result
         else:
             print(f"  {table}.{column}: ✅ already lowercase")
 
     if commit:
+        # Clean up: drop orphaned enum types that are no longer used
+        print("\n🧹 Cleaning up orphaned native enum types...")
+        enum_types_to_drop = [
+            "conversationstage", "intentlevel", "conversationmode",
+            "usersentiment", "templatestatus", "messagefrom",
+        ]
+        for enum_type in enum_types_to_drop:
+            try:
+                db.execute(text(f"DROP TYPE IF EXISTS {enum_type} CASCADE"))
+                print(f"  Dropped type: {enum_type}")
+            except Exception as e:
+                print(f"  Could not drop {enum_type}: {e}")
+
         db.commit()
         print(f"\n✅ Migration committed. {total_updated} rows updated.")
     else:
-        print(f"\n⏸️  DRY RUN complete. {total_updated + sum(1 for _ in [])} rows would be updated.")
+        print(f"\n⏸️  DRY RUN complete. {total_updated} rows would be updated.")
         print("   Run with --commit to apply changes.")
 
     return total_updated
